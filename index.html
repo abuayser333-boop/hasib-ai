@@ -18,6 +18,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,500;1,600;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  /* إعدادات Supabase — املأها بعد إنشاء مشروعك (Settings → API).
+     المفتاح anon عام ومصمّم للمتصفح؛ الحارس الفعلي هو Row Level Security.
+     اتركها فارغة ليعمل التطبيق محلياً على localStorage كما كان. */
+  window.HASIB_SUPABASE_URL      = '';
+  window.HASIB_SUPABASE_ANON_KEY = '';
+</script>
 <style>
 /* ============================================================
    حاسِب AI — Design System
@@ -409,6 +417,13 @@ table td { font-variant-numeric:tabular-nums }
     <span id="keyStatus" title="المفتاح محفوظ على الخادم ولا يصل المتصفح" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:#737373;white-space:nowrap;flex-shrink:0;">
       <span style="width:6px;height:6px;border-radius:50%;background:#15803d;flex-shrink:0;"></span>
       <span id="keyStatusTxt">المفتاح محمي على الخادم</span>
+    </span>
+    <span id="orgBar" style="display:none;align-items:center;gap:8px;flex-shrink:0;">
+      <span class="nav-sep"></span>
+      <select id="orgSelect" onchange="switchOrg(this.value)" title="الشركة الحالية"
+        style="background:#fafafa;border:1px solid #e5e5e5;border-radius:6px;padding:6px 10px;font-family:inherit;font-size:12.5px;color:#0a0a0a;outline:none;max-width:190px;"></select>
+      <span id="orgRole" style="font-size:11px;color:#a3a3a3;border:1px solid #e5e5e5;border-radius:20px;padding:2px 9px;white-space:nowrap;"></span>
+      <button class="nav-btn" onclick="doLogout()" id="logoutBtn" title="تسجيل الخروج">خروج</button>
     </span>
     <span class="nav-sep"></span>
     <button class="nav-btn green" onclick="openExcel()" id="openExcelBtn">افتح Excel</button>
@@ -1052,6 +1067,56 @@ table td { font-variant-numeric:tabular-nums }
 <!-- BUDGET ALERT BANNER (fixed bottom-left) -->
 <div id="budgetAlerts" style="position:fixed;bottom:24px;left:24px;z-index:1000;display:flex;flex-direction:column;gap:8px;max-width:320px;"></div>
 
+<!-- AUTH GATE — يظهر فقط عند تفعيل Supabase وعدم وجود جلسة -->
+<div id="authGate" style="display:none;position:fixed;inset:0;background:#ffffff;z-index:1200;align-items:center;justify-content:center;padding:24px;">
+  <div style="width:100%;max-width:390px;">
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:30px;">
+      <svg width="30" height="30" viewBox="0 0 600 600" aria-hidden="true">
+        <circle cx="300" cy="300" r="290" fill="#0a0a0a"/>
+        <clipPath id="ac"><circle cx="300" cy="300" r="290"/></clipPath>
+        <text x="352" y="300" font-family="'Playfair Display',serif" font-style="italic" font-size="380" font-weight="700" fill="#fff" text-anchor="middle" dominant-baseline="middle" clip-path="url(#ac)" opacity=".55">A</text>
+        <text x="212" y="296" font-family="'Playfair Display',serif" font-style="italic" font-size="380" font-weight="700" fill="#fff" text-anchor="middle" dominant-baseline="middle" clip-path="url(#ac)">H</text>
+      </svg>
+      <span style="font-family:'Playfair Display',serif;font-style:italic;font-size:24px;color:#0a0a0a;">حاسِب <span>AI</span></span>
+    </div>
+
+    <!-- تسجيل الدخول -->
+    <div id="authLoginBox">
+      <div style="font-size:19px;font-weight:600;color:#0a0a0a;margin-bottom:6px;letter-spacing:-.01em;">تسجيل الدخول</div>
+      <div style="font-size:13px;color:#a3a3a3;margin-bottom:22px;">دفاتر شركتك محفوظة على الخادم ومعزولة عن غيرها</div>
+      <div class="field" style="margin-bottom:12px;">
+        <label>البريد الإلكتروني</label>
+        <input id="authEmail" type="email" dir="ltr" autocomplete="email" placeholder="you@company.com">
+      </div>
+      <div class="field" style="margin-bottom:18px;">
+        <label>كلمة المرور</label>
+        <input id="authPwd" type="password" dir="ltr" autocomplete="current-password"
+               onkeydown="if(event.key==='Enter')doLogin(document.getElementById('authEmail').value.trim(),document.getElementById('authPwd').value)">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;"
+              onclick="doLogin(document.getElementById('authEmail').value.trim(),document.getElementById('authPwd').value)">دخول</button>
+      <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:9px;"
+              onclick="doSignup(document.getElementById('authEmail').value.trim(),document.getElementById('authPwd').value)">إنشاء حساب جديد</button>
+    </div>
+
+    <!-- أول شركة -->
+    <div id="authOrgBox" style="display:none;">
+      <div style="font-size:19px;font-weight:600;color:#0a0a0a;margin-bottom:6px;letter-spacing:-.01em;">أنشئ شركتك الأولى</div>
+      <div style="font-size:13px;color:#a3a3a3;margin-bottom:22px;">لكل شركة دفاتر منفصلة تماماً — لن يرى أعضاؤها دفاتر شركة أخرى</div>
+      <div class="field" style="margin-bottom:18px;">
+        <label>اسم الشركة</label>
+        <input id="authOrgName" type="text" placeholder="مؤسسة ..."
+               onkeydown="if(event.key==='Enter')createOrg(this.value.trim())">
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;"
+              onclick="createOrg(document.getElementById('authOrgName').value.trim())">إنشاء الشركة</button>
+      <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:9px;" onclick="doLogout()">تسجيل الخروج</button>
+    </div>
+
+    <div id="authMsg" style="font-size:12.5px;margin-top:16px;line-height:1.6;min-height:19px;"></div>
+  </div>
+</div>
+
 <!-- RECONCILIATION MODAL (مطابقة بنكية آلية — ReconciliationAgent) -->
 <div id="reconcileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:800;overflow-y:auto;padding:16px;">
   <div style="max-width:900px;margin:0 auto;background:#fafafa;border-radius:18px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,0.18);">
@@ -1330,7 +1395,9 @@ var wbFileName = '';
 var zatcaVal = false;
 try { invoices = JSON.parse(localStorage.getItem('h_inv') || '[]'); } catch(e) { invoices = []; }
 // ==== Multi-agent / Basis-style additions: chart of accounts, reconciliation, month-close state ====
-var CHART_OF_ACCOUNTS = {
+// حسابات المصروفات — هذه هي القيم الوحيدة المسموح لوكيل الاستخراج باختيارها،
+// وتُحقن حرفياً في الـ prompt حتى لا يصوغ الوكيل تسميات حرة تسقط على الحساب الافتراضي.
+var EXPENSE_ACCOUNTS = {
   'م تشغلية':            '5100',
   'م صيانة':             '5110',
   'م ضيافة':             '5120',
@@ -1338,15 +1405,286 @@ var CHART_OF_ACCOUNTS = {
   'م قطع غيار':          '5140',
   'م وقود ومحروقات':     '5150',
   'م ايجار':             '5160',
-  'م اجور ورواتب':       '6100',
-  'م حكومية':            '5180',
   'م اتصالات':           '5170',
-  'مصروفات تشغيل':       '5100',
-  'مصروفات إدارية':      '6000',
+  'م حكومية':            '5180',
+  'م تأمين':             '5190',
   'مصروفات تسويقية':     '5200',
-  'VAT_ACCOUNT':          '2130',
-  'PAYABLES_ACCOUNT':     '2100'
+  'مصروفات إدارية':      '6000',
+  'م عمومية وادارية':    '6000',
+  'م اجور ورواتب':       '6100',
+  'مصروفات تشغيل':       '5100'
 };
+// الحسابات الخاصة — الطرف الدائن يُختار منها حسب طريقة السداد لا بشكل ثابت.
+// ⚠ راجع هذه الأكواد مقابل دليل حساباتك الفعلي في Odoo قبل الاعتماد على القيود.
+var SPECIAL_ACCOUNTS = {
+  VAT_INPUT: '2130',   // ضريبة القيمة المضافة — المدخلات
+  PAYABLES:  '2100',   // الدائنون (التزام) — للشراء الآجل
+  CASH:      '1010',   // الصندوق (أصل) — للسداد النقدي
+  BANK:      '1020'    // البنك (أصل) — للشبكة/مدى/التحويل
+};
+// إبقاء الاسم القديم للتوافق مع بقية الشيفرة (تكامل Odoo)
+var CHART_OF_ACCOUNTS = Object.assign({}, EXPENSE_ACCOUNTS, {
+  VAT_ACCOUNT:      SPECIAL_ACCOUNTS.VAT_INPUT,
+  PAYABLES_ACCOUNT: SPECIAL_ACCOUNTS.PAYABLES
+});
+// مرادفات شائعة → مفتاح الحساب المعتمد. تُرتَّب من الأخص للأعم.
+var ACCOUNT_ALIASES = {
+  'قطع الغيار':'م قطع غيار', 'قطع غيار':'م قطع غيار', 'spare part':'م قطع غيار', 'parts':'م قطع غيار',
+  'وقود':'م وقود ومحروقات', 'محروقات':'م وقود ومحروقات', 'بنزين':'م وقود ومحروقات', 'ديزل':'م وقود ومحروقات', 'fuel':'م وقود ومحروقات',
+  'صيانة':'م صيانة', 'اصلاح':'م صيانة', 'إصلاح':'م صيانة', 'maintenance':'م صيانة', 'repair':'م صيانة',
+  'ضيافة':'م ضيافة', 'hospitality':'م ضيافة',
+  'دعاية':'م دعاية واعلان', 'اعلان':'م دعاية واعلان', 'إعلان':'م دعاية واعلان', 'advertis':'م دعاية واعلان',
+  'تسويق':'مصروفات تسويقية', 'marketing':'مصروفات تسويقية',
+  'ايجار':'م ايجار', 'إيجار':'م ايجار', 'rent':'م ايجار',
+  'اتصالات':'م اتصالات', 'انترنت':'م اتصالات', 'إنترنت':'م اتصالات', 'telecom':'م اتصالات', 'internet':'م اتصالات',
+  'تأمين':'م تأمين', 'تامين':'م تأمين', 'insurance':'م تأمين',
+  'رواتب':'م اجور ورواتب', 'اجور':'م اجور ورواتب', 'أجور':'م اجور ورواتب', 'salar':'م اجور ورواتب', 'payroll':'م اجور ورواتب',
+  'حكومي':'م حكومية', 'government':'م حكومية',
+  'عمومية':'م عمومية وادارية', 'ادارية':'مصروفات إدارية', 'إدارية':'مصروفات إدارية', 'admin':'مصروفات إدارية',
+  'تشغيل':'مصروفات تشغيل', 'operating':'مصروفات تشغيل'
+};
+// يحوّل تسمية حرة إلى مفتاح معتمد + كود. يرجع matched: exact | alias | none
+function normalizeAccountType(raw) {
+  var s = String(raw || '').trim();
+  if (!s) return { key: null, code: null, matched: 'none' };
+  if (EXPENSE_ACCOUNTS[s]) return { key: s, code: EXPENSE_ACCOUNTS[s], matched: 'exact' };
+  var low = s.toLowerCase();
+  for (var a in ACCOUNT_ALIASES) {
+    if (low.indexOf(a.toLowerCase()) > -1) {
+      var k = ACCOUNT_ALIASES[a];
+      return { key: k, code: EXPENSE_ACCOUNTS[k], matched: 'alias' };
+    }
+  }
+  return { key: null, code: null, matched: 'none' };
+}
+// يختار الطرف الدائن حسب طريقة السداد: نقد → الصندوق، شبكة/تحويل → البنك، وإلا الدائنون
+function resolveCreditAccount(r) {
+  // يُعتمد على حقلي السداد فقط — إدخال الوصف هنا يسبب مطابقات خاطئة
+  // (فاتورة "بطاقات دعائية" مثلاً تُقرأ خطأً كسداد بالبطاقة)
+  var txt = [r.payment_method, r.credit_account].join(' ').toLowerCase();
+  if (/شبك|مدى|بطاق|فيزا|ماستر|صراف|تحويل|حوال|بنك|mada|bank|transfer|card|visa|master|pos/.test(txt))
+    return { code: SPECIAL_ACCOUNTS.BANK, key: 'bank', label: (lang==='ar'?'البنك':'Bank') };
+  if (/نقد|كاش|cash/.test(txt))
+    return { code: SPECIAL_ACCOUNTS.CASH, key: 'cash', label: (lang==='ar'?'الصندوق / النقدية':'Cash on hand') };
+  return { code: SPECIAL_ACCOUNTS.PAYABLES, key: 'payable', label: (lang==='ar'?'الدائنون':'Accounts Payable') };
+}
+
+// ============================================================
+// طبقة البيانات + المصادقة (Supabase) — متعددة الشركات
+//
+// مبدأ التصميم: تحسين تدريجي. إن لم تُضبط إعدادات Supabase يعمل التطبيق
+// تماماً كما كان على localStorage، فلا ينكسر شيء أثناء الإعداد.
+// وحين تُضبط: تسجيل دخول إجباري + بيانات على الخادم + صلاحيات مفروضة
+// في قاعدة البيانات نفسها (RLS) لا في المتصفح.
+// ============================================================
+var SUPABASE_URL      = window.HASIB_SUPABASE_URL      || '';
+var SUPABASE_ANON_KEY = window.HASIB_SUPABASE_ANON_KEY || '';   // مفتاح عام — آمن في المتصفح، RLS هو الحارس
+
+var sb = null;                 // عميل Supabase
+var currentUser = null;        // المستخدم الحالي
+var currentOrg  = null;        // { id, name, role }
+var myOrgs      = [];          // كل الشركات التي ينتمي لها
+var DB_ON       = false;       // هل نعمل على قاعدة البيانات أم localStorage؟
+
+function initSupabase() {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !window.supabase) return false;
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  DB_ON = true;
+  return true;
+}
+
+// ---------- الصلاحيات (نسخة الواجهة — الحارس الحقيقي هو RLS) ----------
+function myRole() { return currentOrg ? currentOrg.role : null; }
+function canEdit()  { return !DB_ON || ['owner','accountant'].indexOf(myRole()) > -1; }
+function canClose() { return !DB_ON || myRole() === 'owner'; }
+function roleLabel(role) {
+  var ar = lang === 'ar';
+  if (role === 'owner')      return ar ? 'مالك' : 'Owner';
+  if (role === 'accountant') return ar ? 'محاسب' : 'Accountant';
+  return ar ? 'مطّلع' : 'Viewer';
+}
+
+// ---------- تحويل بين شكل التطبيق وشكل الجدول ----------
+function invoiceToRow(r) {
+  return {
+    org_id: currentOrg.id,
+    vendor_name: r.vendor_name || null,
+    vendor_tax_number: r.vendor_tax_number || null,
+    invoice_number: r.invoice_number || null,
+    invoice_date: /^\d{4}-\d{2}-\d{2}$/.test(r.invoice_date || '') ? r.invoice_date : null,
+    subtotal: Number(r.subtotal || 0),
+    vat_amount: Number(r.vat_amount || 0),
+    vat_rate: Number(r.vat_rate || 15),
+    total_amount: Number(r.total_amount || 0),
+    currency: r.currency || 'SAR',
+    description: r.description || null,
+    payment_method: r.payment_method || null,
+    account_type: r.account_type || null,
+    debit_account: r.debit_account || null,
+    credit_account: r.credit_account || null,
+    zatca_compliant: !!r.zatca_compliant,
+    confidence: Math.round(Number(r.confidence || 0)),
+    approved: !!r.approved,
+    needs_review: !!r.needs_review,
+    reconciled: !!r.reconciled,
+    payload: r
+  };
+}
+function rowToInvoice(row) {
+  var r = Object.assign({}, row.payload || {});
+  r.id = row.id;
+  r.vendor_name = row.vendor_name; r.vendor_tax_number = row.vendor_tax_number;
+  r.invoice_number = row.invoice_number; r.invoice_date = row.invoice_date;
+  r.subtotal = Number(row.subtotal); r.vat_amount = Number(row.vat_amount);
+  r.vat_rate = Number(row.vat_rate); r.total_amount = Number(row.total_amount);
+  r.currency = row.currency; r.description = row.description;
+  r.payment_method = row.payment_method; r.account_type = row.account_type;
+  r.zatca_compliant = row.zatca_compliant; r.confidence = row.confidence;
+  r.approved = row.approved; r.needs_review = row.needs_review; r.reconciled = row.reconciled;
+  r.saved_at = row.created_at;
+  return r;
+}
+
+// ---------- عمليات البيانات ----------
+async function dbLoadAll() {
+  if (!DB_ON || !currentOrg) return;
+  var inv = await sb.from('invoices').select('*')
+    .eq('org_id', currentOrg.id).order('invoice_date', { ascending: false }).limit(500);
+  if (inv.error) { toast('! ' + inv.error.message, 'error'); return; }
+  invoices = (inv.data || []).map(rowToInvoice);
+
+  var cm = await sb.from('closed_months').select('ym').eq('org_id', currentOrg.id);
+  closedMonths = cm.error ? [] : (cm.data || []).map(function(x) { return x.ym; });
+
+  var bk = await sb.from('bank_transactions').select('*').eq('org_id', currentOrg.id);
+  bankTransactions = bk.error ? [] : (bk.data || []).map(function(b) {
+    return { date: b.txn_date, description: b.description, amount: Number(b.amount), matched: !!b.matched_invoice_id };
+  });
+
+  renderHistory(); updateStats();
+}
+
+async function dbInsertInvoice(r) {
+  var res = await sb.from('invoices').insert(invoiceToRow(r)).select().single();
+  if (res.error) {
+    // 23505 = تكرار مفتاح فريد → الفاتورة مسجّلة مسبقاً لهذه الشركة
+    if (res.error.code === '23505') {
+      toast(lang==='ar' ? '! هذه الفاتورة مسجّلة مسبقاً لهذه الشركة' : '! This invoice already exists for this company', 'warn');
+    } else {
+      toast('! ' + res.error.message, 'error');
+    }
+    return null;
+  }
+  return res.data;
+}
+
+async function dbUpdateInvoice(r) {
+  if (!r.id) return null;
+  var res = await sb.from('invoices').update(invoiceToRow(r)).eq('id', r.id).select().single();
+  if (res.error) {
+    toast(lang==='ar' ? ('! تعذّر الحفظ: ' + res.error.message) : ('! Save failed: ' + res.error.message), 'error');
+    return null;
+  }
+  return res.data;
+}
+
+// ---------- المصادقة ----------
+async function refreshSession() {
+  if (!DB_ON) return;
+  var s = await sb.auth.getSession();
+  currentUser = s.data.session ? s.data.session.user : null;
+  if (!currentUser) { showAuthGate(); return; }
+  await loadMyOrgs();
+}
+
+async function loadMyOrgs() {
+  var res = await sb.from('memberships').select('role, org_id, organizations(id,name)');
+  if (res.error) { toast('! ' + res.error.message, 'error'); return; }
+  myOrgs = (res.data || []).filter(function(m) { return m.organizations; })
+    .map(function(m) { return { id: m.organizations.id, name: m.organizations.name, role: m.role }; });
+  if (!myOrgs.length) { showOrgSetup(); return; }
+  var savedId = localStorage.getItem('h_org');
+  currentOrg = myOrgs.filter(function(o) { return o.id === savedId; })[0] || myOrgs[0];
+  localStorage.setItem('h_org', currentOrg.id);
+  hideAuthGate();
+  applyRoleUI();
+  renderOrgBar();
+  await dbLoadAll();
+}
+
+async function doLogin(email, pwd) {
+  var res = await sb.auth.signInWithPassword({ email: email, password: pwd });
+  if (res.error) { setAuthMsg(res.error.message, true); return; }
+  setAuthMsg('', false);
+  await refreshSession();
+}
+async function doSignup(email, pwd) {
+  var res = await sb.auth.signUp({ email: email, password: pwd });
+  if (res.error) { setAuthMsg(res.error.message, true); return; }
+  if (!res.data.session) { setAuthMsg(lang==='ar' ? 'تحقّق من بريدك لتأكيد الحساب ثم سجّل الدخول' : 'Check your email to confirm, then sign in', false); return; }
+  await refreshSession();
+}
+async function doLogout() {
+  await sb.auth.signOut();
+  currentUser = null; currentOrg = null; myOrgs = [];
+  invoices = []; closedMonths = []; bankTransactions = [];
+  renderHistory(); updateStats();
+  showAuthGate();
+}
+async function createOrg(name) {
+  var res = await sb.from('organizations').insert({ name: name }).select().single();
+  if (res.error) { setAuthMsg(res.error.message, true); return; }
+  await loadMyOrgs();
+}
+async function switchOrg(id) {
+  currentOrg = myOrgs.filter(function(o) { return o.id === id; })[0] || currentOrg;
+  localStorage.setItem('h_org', currentOrg.id);
+  applyRoleUI(); renderOrgBar();
+  await dbLoadAll();
+}
+
+// ---------- واجهة المصادقة ----------
+function setAuthMsg(msg, isErr) {
+  var el = document.getElementById('authMsg');
+  if (!el) return;
+  el.textContent = msg || '';
+  el.style.color = isErr ? '#b91c1c' : '#525252';
+}
+function showAuthGate() {
+  var g = document.getElementById('authGate');
+  if (g) { g.style.display = 'flex'; document.getElementById('authOrgBox').style.display = 'none';
+           document.getElementById('authLoginBox').style.display = 'block'; }
+}
+function showOrgSetup() {
+  var g = document.getElementById('authGate');
+  if (g) { g.style.display = 'flex'; document.getElementById('authLoginBox').style.display = 'none';
+           document.getElementById('authOrgBox').style.display = 'block'; }
+}
+function hideAuthGate() {
+  var g = document.getElementById('authGate');
+  if (g) g.style.display = 'none';
+}
+function renderOrgBar() {
+  var bar = document.getElementById('orgBar');
+  if (!bar || !currentOrg) return;
+  bar.style.display = 'inline-flex';
+  var sel = document.getElementById('orgSelect');
+  sel.innerHTML = myOrgs.map(function(o) {
+    return '<option value="' + o.id + '"' + (o.id === currentOrg.id ? ' selected' : '') + '>' + o.name + '</option>';
+  }).join('');
+  document.getElementById('orgRole').textContent = roleLabel(currentOrg.role);
+}
+// إخفاء ما لا يملك المستخدم صلاحيته — راحة للمستخدم، والمنع الحقيقي في RLS
+function applyRoleUI() {
+  if (!DB_ON) return;
+  var editable = canEdit();
+  ['procBtn','approveBtn','editBtn','saveApproveBtn','saveEditBtn','openQuickBtn'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) { el.disabled = !editable; el.style.opacity = editable ? '' : '.4'; el.title = editable ? '' : (lang==='ar'?'دورك للاطّلاع فقط':'Your role is view-only'); }
+  });
+  var closeBtn = document.getElementById('openCloseBtn');
+  if (closeBtn) { closeBtn.disabled = !canClose(); closeBtn.style.opacity = canClose() ? '' : '.4'; }
+}
 var bankTransactions = [];
 try { bankTransactions = JSON.parse(localStorage.getItem('h_bank') || '[]'); } catch(e) { bankTransactions = []; }
 var reconcileResults = { matched: [], unmatchedInvoices: [], unmatchedBank: [] };
@@ -1770,7 +2108,13 @@ function runExtractionAgent(file) {
       var contentItem = isPdf
         ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } }
         : { type: 'image', source: { type: 'base64', media_type: mime, data: b64 } };
-      var prompt = 'انت DocumentExtractionAgent داخل نظام محاسبي متعدد الوكلاء. استخرج من هذه الفاتورة البيانات وارجعها كـ JSON فقط بدون اي نص اخر. الحقول المطلوبة: vendor_name, vendor_tax_number, invoice_number, invoice_date, subtotal (رقم), vat_amount (رقم), vat_rate (رقم مثل 15), total_amount (رقم), currency, description, payment_method, account_type, debit_account, credit_account, vat_account, notes, analysis, confidence (0-100 ثقتك الكلية), field_confidence (object فيه ثقة 0-100 لكل من: vendor_tax_number, vat_amount, total_amount), explainability (object فيه جملة قصيرة توضح من اين استخرجت كل من: vendor_name, vat_amount, total_amount — مثلا "مطبوع أعلى يمين الفاتورة بجانب شعار المورد").';
+      // تُحقن قائمة الحسابات المعتمدة حرفياً حتى لا يصوغ الوكيل تسمية حرة تسقط على الحساب الافتراضي
+      var allowedAccounts = Object.keys(EXPENSE_ACCOUNTS).filter(function(k, i, a) {
+        return a.indexOf(k) === i;
+      }).map(function(k) { return k + ' (' + EXPENSE_ACCOUNTS[k] + ')'; }).join('، ');
+      var prompt = 'انت DocumentExtractionAgent داخل نظام محاسبي متعدد الوكلاء. استخرج من هذه الفاتورة البيانات وارجعها كـ JSON فقط بدون اي نص اخر. الحقول المطلوبة: vendor_name, vendor_tax_number, invoice_number, invoice_date, subtotal (رقم), vat_amount (رقم), vat_rate (رقم مثل 15), total_amount (رقم), currency, description, payment_method, account_type, debit_account, credit_account, vat_account, notes, analysis, confidence (0-100 ثقتك الكلية), field_confidence (object فيه ثقة 0-100 لكل من: vendor_tax_number, vat_amount, total_amount), explainability (object فيه جملة قصيرة توضح من اين استخرجت كل من: vendor_name, vat_amount, total_amount — مثلا "مطبوع أعلى يمين الفاتورة بجانب شعار المورد").'
+        + '\n\nمهم جداً — الحقل account_type: يجب أن تختار قيمته حرفياً من هذه القائمة فقط، وتكتبها كما هي بالضبط بدون أي إضافة أو إعادة صياغة: ' + allowedAccounts + '. لا تخترع تسمية جديدة ولا تدمج تسميتين ولا تكتب الكود. اختر الأقرب لطبيعة البنود؛ فمثلاً فاتورة قطع غيار سيارات → "م قطع غيار"، وفاتورة بنزين → "م وقود ومحروقات". إن لم ينطبق أي حساب فاترك account_type فارغاً بدل التخمين.'
+        + '\n\nمهم — الحقل payment_method: حدّد طريقة السداد بدقة من الفاتورة بإحدى الصيغ: "نقدي" أو "شبكة/مدى" أو "تحويل بنكي" أو "آجل". هذا الحقل يحدد الطرف الدائن في القيد (صندوق / بنك / دائنون)، فلا تخمّن — إن لم تُذكر صراحةً اكتب "غير محدد".';
       // المفتاح لم يعد في المتصفح — الطلب يمر عبر وسيط الخادم /api/claude
       // الذي يضيف الترويسة السرية من متغيّر بيئة على Vercel.
       fetch(CLAUDE_ENDPOINT, {
@@ -1820,23 +2164,41 @@ function runComplianceAgent(r) {
 function runJournalAgent(r) {
   var sub = Number(r.subtotal || 0), vat = Number(r.vat_amount || 0);
   var total = Number(r.total_amount || (sub + vat));
-  var mappedCode = CHART_OF_ACCOUNTS[r.account_type];
-  var escalated = !mappedCode;
-  var debitCode = mappedCode || CHART_OF_ACCOUNTS['مصروفات تشغيل'];
+  var acct   = normalizeAccountType(r.account_type);
+  var credit = resolveCreditAccount(r);
+  var escalated = !acct.code;                       // لا يُصعَّد إلا إذا تعذّرت المطابقة تماماً
+  var debitCode  = acct.code || EXPENSE_ACCOUNTS['مصروفات تشغيل'];
+  var debitLabel = acct.key  || r.debit_account || r.account_type || 'مصروفات تشغيل';
+  var creditLabel = credit.key === 'payable'
+    ? credit.label + ' — ' + (r.vendor_name || '')
+    : credit.label;
   var lines = [
-    { label: r.debit_account || r.account_type || 'مصروفات تشغيل', code: debitCode, debit: sub, credit: 0 },
-    { label: r.vat_account || (lang==='ar'?'ضريبة القيمة المضافة':'VAT'), code: CHART_OF_ACCOUNTS.VAT_ACCOUNT, debit: vat, credit: 0 },
-    { label: r.credit_account || ((lang==='ar'?'الدائنون — ':'Accounts Payable — ') + (r.vendor_name || '')), code: CHART_OF_ACCOUNTS.PAYABLES_ACCOUNT, debit: 0, credit: total }
+    { label: debitLabel, code: debitCode, debit: sub, credit: 0 },
+    { label: (lang==='ar'?'ضريبة القيمة المضافة — المدخلات':'VAT — Input'), code: SPECIAL_ACCOUNTS.VAT_INPUT, debit: vat, credit: 0 },
+    { label: creditLabel, code: credit.code, debit: 0, credit: total }
   ];
   var balanced = Math.abs((lines[0].debit + lines[1].debit) - lines[2].credit) < 0.01;
+
+  var ar = lang === 'ar';
+  var acctNote = acct.matched === 'exact'
+    ? (ar ? ('طابق الحساب مباشرة: ' + acct.key + ' (' + debitCode + ')') : ('Account matched directly: ' + acct.key + ' (' + debitCode + ')'))
+    : acct.matched === 'alias'
+      ? (ar ? ('صُنِّف "' + r.account_type + '" ضمن ' + acct.key + ' (' + debitCode + ') عبر المرادفات') : ('"' + r.account_type + '" mapped to ' + acct.key + ' (' + debitCode + ') via aliases'))
+      : (ar ? ('تعذّرت مطابقة "' + (r.account_type || '—') + '" مع دليل الحسابات — استُخدم 5100 مؤقتاً ويحتاج تصنيفاً يدوياً') : ('Could not match "' + (r.account_type || '—') + '" to the chart of accounts — 5100 used provisionally, needs manual classification'));
+  var creditNote = credit.key === 'cash'
+    ? (ar ? ('سداد نقدي ← الطرف الدائن الصندوق (' + credit.code + ')') : ('Cash payment → credit side is Cash (' + credit.code + ')'))
+    : credit.key === 'bank'
+      ? (ar ? ('سداد بنكي/شبكة ← الطرف الدائن البنك (' + credit.code + ')') : ('Bank/card payment → credit side is Bank (' + credit.code + ')'))
+      : (ar ? ('شراء آجل ← الطرف الدائن الدائنون (' + credit.code + ')') : ('Credit purchase → credit side is Accounts Payable (' + credit.code + ')'));
+
   return {
     agent: 'JournalEntryAgent',
     lines: lines,
     balanced: balanced,
     escalated: escalated,
-    note: escalated
-      ? (lang==='ar' ? ('نوع الحساب "' + (r.account_type || '—') + '" غير موجود في دليل حسابات Odoo — استُخدم حساب افتراضي (5100) ويحتاج مراجعة يدوية') : ('Account type "' + (r.account_type || '—') + '" not found in the Odoo chart of accounts — default account used (5100), needs manual review'))
-      : (lang==='ar' ? ('تمت مطابقة الحساب مع دليل حسابات Odoo مباشرة (كود ' + debitCode + ')') : ('Account matched directly with the Odoo chart of accounts (code ' + debitCode + ')'))
+    accountMatch: acct.matched,
+    creditKind: credit.key,
+    note: acctNote + ' · ' + creditNote
   };
 }
 
@@ -2042,19 +2404,29 @@ function saveInvoice(r) {
   r.saved_at = new Date().toISOString();
   r.approved = false;
   invoices.unshift(r);
-  if (invoices.length > 100) invoices.pop();
-  localStorage.setItem('h_inv', JSON.stringify(invoices));
+  if (DB_ON) {
+    // الحفظ على الخادم؛ يعود الصف بمعرّفه فنربطه بالكائن ليعمل التعديل لاحقاً
+    dbInsertInvoice(r).then(function(row) {
+      if (row) { r.id = row.id; r.saved_at = row.created_at; }
+      renderHistory(); updateStats();
+    });
+  } else {
+    if (invoices.length > 100) invoices.pop();
+    localStorage.setItem('h_inv', JSON.stringify(invoices));
+  }
   renderHistory();
   updateStats();
   autoBudgetCheck();
 }
 function updateInvoice(r) {
   for (var i = 0; i < invoices.length; i++) {
-    if (invoices[i].saved_at === r.saved_at || invoices[i].invoice_number === r.invoice_number) {
+    if ((r.id && invoices[i].id === r.id) || invoices[i].saved_at === r.saved_at ||
+        (r.invoice_number && invoices[i].invoice_number === r.invoice_number)) {
       invoices[i] = r; break;
     }
   }
-  localStorage.setItem('h_inv', JSON.stringify(invoices));
+  if (DB_ON) dbUpdateInvoice(r);
+  else localStorage.setItem('h_inv', JSON.stringify(invoices));
 }
 function renderHistory() {
   var el = document.getElementById('histList');
@@ -4052,9 +4424,15 @@ function buildOdooEntry(r) {
   var date  = r.invoice_date || new Date().toISOString().split('T')[0];
   var ref   = r.invoice_number || ('HASIB-' + Date.now());
   var jid   = parseInt(odooCfg.journal || '1');
-  var debitCode  = CHART_OF_ACCOUNTS[r.account_type] || '5100';
-  var vatCode    = CHART_OF_ACCOUNTS.VAT_ACCOUNT;
-  var creditCode = CHART_OF_ACCOUNTS.PAYABLES_ACCOUNT;
+  // نفس منطق JournalEntryAgent حتى لا يختلف المُرسَل لـ Odoo عمّا يراه المحاسب على الشاشة
+  var acct   = normalizeAccountType(r.account_type);
+  var credit = resolveCreditAccount(r);
+  var debitCode  = acct.code || EXPENSE_ACCOUNTS['مصروفات تشغيل'];
+  var vatCode    = SPECIAL_ACCOUNTS.VAT_INPUT;
+  var creditCode = credit.code;
+  var creditName = credit.key === 'payable'
+    ? 'الدائنون — ' + (r.vendor_name || '')
+    : credit.label;
   return {
     name:      'حاسِب | ' + (r.vendor_name || '') + ' | ' + ref,
     ref:       ref,
@@ -4075,7 +4453,7 @@ function buildOdooEntry(r) {
         credit:      0
       }],
       [0, 0, {
-        name:        'الدائنون — ' + (r.vendor_name || ''),
+        name:        creditName,
         account_id:  { code: creditCode },
         debit:       0,
         credit:      total
@@ -4517,11 +4895,37 @@ function closeMonthNow() {
   var sel = document.getElementById('closeMonthSelect');
   var ym = sel && sel.value;
   if (!ym || closedMonths.indexOf(ym) > -1) return;
+  if (DB_ON && !canClose()) { toast(lang==='ar'?'! إغلاق الشهر صلاحية المالك وحده':'! Closing a month is owner-only', 'warn'); return; }
   closedMonths.push(ym);
-  localStorage.setItem('h_closed', JSON.stringify(closedMonths));
+  if (DB_ON) {
+    sb.from('closed_months').insert({ org_id: currentOrg.id, ym: ym, closed_by: currentUser.id })
+      .then(function(res) {
+        if (res.error) {
+          closedMonths = closedMonths.filter(function(x) { return x !== ym; });   // تراجع إن رفض الخادم
+          toast('! ' + res.error.message, 'error');
+          evaluateCloseChecklist();
+        }
+      });
+  } else {
+    localStorage.setItem('h_closed', JSON.stringify(closedMonths));
+  }
   toast(lang==='ar' ? ('تم إغلاق شهر ' + formatMonthLabel(ym) + ' محاسبياً — لن يمكن اعتماد أو تعديل فواتيره') : ('' + formatMonthLabel(ym) + ' has been closed — its invoices can no longer be approved or edited'));
   evaluateCloseChecklist();
 }
+
+// ============================================================
+// إقلاع التطبيق: إن ضُبطت إعدادات Supabase → مصادقة وبيانات على الخادم،
+// وإلا يبقى السلوك المحلي كما هو تماماً.
+// ============================================================
+(function bootAuth() {
+  if (!initSupabase()) return;              // غير مضبوط → وضع localStorage
+  invoices = []; closedMonths = []; bankTransactions = [];   // لا نخلط بيانات محلية بأخرى سحابية
+  renderHistory(); updateStats();
+  refreshSession();
+  sb.auth.onAuthStateChange(function(evt) {
+    if (evt === 'SIGNED_OUT') showAuthGate();
+  });
+})();
 </script>
 </body>
 </html>
