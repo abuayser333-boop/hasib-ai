@@ -53,6 +53,9 @@
     <button class="nav-btn" onclick="openAccountingIntegration()" style="background:#714b67;" id="accountingNavBtn">🔗 ربط نظام</button>
     <span class="nav-sep"></span>
     <button class="nav-btn" onclick="openQuickEntry()" style="background:#1a6b3a;">⚡ إدخال سريع</button>
+    <span class="nav-sep"></span>
+    <button class="nav-btn" onclick="openReconcile()" style="background:#2e6b6b;">🏦 مطابقة بنكية</button>
+    <button class="nav-btn" onclick="openMonthClose()" style="background:#3a3a5a;">✅ إغلاق الشهر</button>
     <div id="budgetAlertDot" style="display:none;width:8px;height:8px;background:#c04858;border-radius:50%;position:absolute;top:10px;animation:pulseDot 1.5s ease-in-out infinite;"></div>
   </div>
 </nav>
@@ -685,6 +688,63 @@
 <!-- BUDGET ALERT BANNER (fixed bottom-left) -->
 <div id="budgetAlerts" style="position:fixed;bottom:24px;left:24px;z-index:1000;display:flex;flex-direction:column;gap:8px;max-width:320px;"></div>
 
+<!-- RECONCILIATION MODAL (مطابقة بنكية آلية — ReconciliationAgent) -->
+<div id="reconcileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:800;overflow-y:auto;padding:16px;">
+  <div style="max-width:900px;margin:0 auto;background:#f5f4f0;border-radius:18px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,0.18);">
+    <div style="background:linear-gradient(135deg,#2e6b6b,#1a4040);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:24px;">🏦</span>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#fff;">المطابقة البنكية (Reconciliation)</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.65);">مطابقة كشف الحساب البنكي مع الفواتير المعتمدة تلقائياً</div>
+        </div>
+      </div>
+      <button onclick="closeReconcile()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:16px;">✕</button>
+    </div>
+    <div style="padding:20px 24px;">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <label style="background:#fff;border:1px solid #e4ddd4;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:700;color:#2e6b6b;cursor:pointer;">
+          📂 ارفع كشف الحساب البنكي (Excel/CSV)
+          <input type="file" id="bankStatementInput" accept=".xlsx,.csv" onchange="loadBankStatement(event)" style="display:none;">
+        </label>
+        <span id="bankFileName" style="font-size:12px;color:#8a8070;"></span>
+        <button onclick="runReconciliation()" style="background:#2e6b6b;color:#fff;border:none;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">🔄 نفّذ المطابقة</button>
+      </div>
+      <div style="font-size:11px;color:#8a8070;margin-top:8px;">الأعمدة المتوقعة بأي ترتيب: التاريخ (Date)، الوصف/المستفيد (Description)، المبلغ (Amount). المطابقة تتم حسب المبلغ (±1 ر.س) والتاريخ (±3 أيام) وتشابه اسم المورد.</div>
+      <div id="reconcileSummary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px;"></div>
+      <div id="reconcileResultsBox" style="margin-top:16px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MONTH-END CLOSE MODAL (سير عمل إغلاق الشهر) -->
+<div id="closeModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:800;overflow-y:auto;padding:16px;">
+  <div style="max-width:640px;margin:0 auto;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,0.18);">
+    <div style="background:linear-gradient(135deg,#3a3a5a,#20203a);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:24px;">✅</span>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#fff;">إغلاق الشهر (Month-End Close)</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.65);">تحقق من اكتمال كل بنود الإغلاق قبل قفل الشهر محاسبياً</div>
+        </div>
+      </div>
+      <button onclick="closeMonthCloseModal()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:16px;">✕</button>
+    </div>
+    <div style="padding:20px 24px;">
+      <div class="field" style="margin-bottom:14px;">
+        <label>اختر الشهر</label>
+        <select id="closeMonthSelect" onchange="evaluateCloseChecklist()" style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:8px 10px;font-family:Tajawal,sans-serif;font-size:13px;"></select>
+      </div>
+      <div id="closeChecklist" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <div id="closeVarianceBox" style="margin-top:14px;"></div>
+    </div>
+    <div style="padding:14px 24px;background:#f9f7f4;border-top:1px solid #e4ddd4;display:flex;gap:8px;">
+      <button id="closeMonthBtn" onclick="closeMonthNow()" style="background:#3a3a5a;color:#fff;border:none;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">🔒 إغلاق الشهر نهائياً</button>
+      <button onclick="closeMonthCloseModal()" style="background:transparent;border:1px solid #e4ddd4;color:#8a8070;padding:11px 18px;border-radius:10px;font-size:13px;cursor:pointer;font-family:Tajawal,sans-serif;">إلغاء</button>
+    </div>
+  </div>
+</div>
+
 <!-- CAMERA MODAL -->
 <div class="cam-modal" id="camModal">
   <div style="font-size:15px;color:#fff;font-weight:700;" id="camTitle">📷 وجّه الكاميرا نحو الفاتورة</div>
@@ -855,6 +915,12 @@
       </div>
     </div>
 
+    <!-- Variance Analysis (مقارنة مع الشهر السابق حسب نوع الحساب) -->
+    <div style="padding:20px 24px;border-bottom:1px solid #e4ddd4;">
+      <div style="font-size:12px;font-weight:700;color:#8a8070;margin-bottom:12px;letter-spacing:1px;">📈 تحليل الانحرافات (Variance Analysis) — مقارنة بالشهر السابق</div>
+      <div id="varianceBox"></div>
+    </div>
+
     <!-- Table -->
     <div style="padding:20px 24px;">
       <div style="font-size:12px;font-weight:700;color:#8a8070;margin-bottom:12px;letter-spacing:1px;" id="reportTableTitle">تفصيل الفواتير</div>
@@ -902,6 +968,33 @@ var wbFile = null;
 var wbFileName = '';
 var zatcaVal = false;
 try { invoices = JSON.parse(localStorage.getItem('h_inv') || '[]'); } catch(e) { invoices = []; }
+// ==== Multi-agent / Basis-style additions: chart of accounts, reconciliation, month-close state ====
+var CHART_OF_ACCOUNTS = {
+  'م تشغلية':            '5100',
+  'م صيانة':             '5110',
+  'م ضيافة':             '5120',
+  'م دعاية واعلان':      '5130',
+  'م قطع غيار':          '5140',
+  'م وقود ومحروقات':     '5150',
+  'م ايجار':             '5160',
+  'م اجور ورواتب':       '6100',
+  'م حكومية':            '5180',
+  'م اتصالات':           '5170',
+  'مصروفات تشغيل':       '5100',
+  'مصروفات إدارية':      '6000',
+  'مصروفات تسويقية':     '5200',
+  'VAT_ACCOUNT':          '2130',
+  'PAYABLES_ACCOUNT':     '2100'
+};
+var bankTransactions = [];
+try { bankTransactions = JSON.parse(localStorage.getItem('h_bank') || '[]'); } catch(e) { bankTransactions = []; }
+var reconcileResults = { matched: [], unmatchedInvoices: [], unmatchedBank: [] };
+var closedMonths = [];
+try { closedMonths = JSON.parse(localStorage.getItem('h_closed') || '[]'); } catch(e) { closedMonths = []; }
+var VARIANCE_THRESHOLD = 20; // % change flagged as significant
+// إصلاح: odooCfg لم يكن مُعرّفاً قبل أول استخدام له (كان يسبب ReferenceError عند كل تحميل صفحة)
+var odooCfg = {};
+try { odooCfg = JSON.parse(localStorage.getItem('h_odoo') || '{}'); } catch(e) { odooCfg = {}; }
 var T = {
   ar: {
     dropText:'ارفع الفاتورة هنا', camTxt:'التقط بالكاميرا', procTxt:'معالجة الفاتورة',
@@ -1064,36 +1157,9 @@ function process() {
   var timer = setInterval(function() {
     if (si < steps.length) { stepEl.textContent = steps[si++]; }
   }, 1200);
-  toBase64(curFile, function(b64) {
-    var mime = curFile.type || 'image/jpeg';
-    var isPdf = curFile.name.toLowerCase().indexOf('.pdf') > -1 || mime === 'application/pdf';
-    var contentItem;
-    if (isPdf) {
-      contentItem = { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } };
-    } else {
-      contentItem = { type: 'image', source: { type: 'base64', media_type: mime, data: b64 } };
-    }
-    var prompt = 'انت حاسب محاسب ذكي. استخرج من هذه الفاتورة البيانات وارجعها كـ JSON فقط بدون اي نص اخر. الحقول المطلوبة: vendor_name, vendor_tax_number, invoice_number, invoice_date, subtotal (رقم), vat_amount (رقم), vat_rate (رقم مثل 15), total_amount (رقم), currency, description, payment_method, zatca_compliant (true/false), confidence (0-100), account_type, debit_account, credit_account, vat_account, notes, analysis';
-    fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1500,
-        messages: [{ role: 'user', content: [contentItem, { type: 'text', text: prompt }] }]
-      })
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
+  orchestrate(curFile)
+    .then(function(result) {
       clearInterval(timer);
-      var text = data.content[0].text;
-      text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-      var result = JSON.parse(text);
       curResult = result;
       renderResult(result);
       saveInvoice(result);
@@ -1107,9 +1173,163 @@ function process() {
     .finally(function() {
       document.getElementById('procBtn').disabled = false;
     });
+}
+
+// ============================================================
+// MULTI-AGENT PIPELINE (Supervisor → sub-agents)
+// يشبه بنية Basis: وكيل مشرف (Supervisor) يوجّه المهمة لوكلاء
+// متخصصة، كل وكيل مسؤول عن جزء واحد فقط، وكل قرار يُسجَّل في
+// audit trail موثّق بسلسلة hash (SHA-256) لمنع التلاعب بالسجل.
+// ============================================================
+
+function sha256Hex(str) {
+  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)).then(function(buf) {
+    var bytes = new Uint8Array(buf);
+    var hex = '';
+    for (var i = 0; i < bytes.length; i++) { hex += bytes[i].toString(16).padStart(2, '0'); }
+    return hex;
   });
 }
+var GENESIS_HASH = '0'.repeat(64);
+function appendAudit(trailArr, agent, action, detail) {
+  var prevHash = trailArr.length ? trailArr[trailArr.length - 1].hash : GENESIS_HASH;
+  var entry = { time: new Date().toISOString(), agent: agent, action: action, detail: detail, prev_hash: prevHash };
+  return sha256Hex(prevHash + '|' + agent + '|' + action + '|' + detail + '|' + entry.time).then(function(h) {
+    entry.hash = h;
+    trailArr.push(entry);
+    return entry;
+  });
+}
+function verifyAuditChain(trailArr) {
+  if (!trailArr || !trailArr.length) return Promise.resolve(true);
+  var chain = Promise.resolve(true);
+  var prevHash = GENESIS_HASH;
+  trailArr.forEach(function(entry) {
+    chain = chain.then(function(ok) {
+      if (!ok) return false;
+      if (entry.prev_hash !== prevHash) return false;
+      return sha256Hex(entry.prev_hash + '|' + entry.agent + '|' + entry.action + '|' + entry.detail + '|' + entry.time).then(function(h) {
+        prevHash = entry.hash;
+        return h === entry.hash;
+      });
+    });
+  });
+  return chain;
+}
+
+// --- Agent 1: DocumentExtractionAgent (Claude Vision — يقرأ الفاتورة) ---
+function runExtractionAgent(file) {
+  return new Promise(function(resolve, reject) {
+    toBase64(file, function(b64) {
+      var mime = file.type || 'image/jpeg';
+      var isPdf = file.name.toLowerCase().indexOf('.pdf') > -1 || mime === 'application/pdf';
+      var contentItem = isPdf
+        ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } }
+        : { type: 'image', source: { type: 'base64', media_type: mime, data: b64 } };
+      var prompt = 'انت DocumentExtractionAgent داخل نظام محاسبي متعدد الوكلاء. استخرج من هذه الفاتورة البيانات وارجعها كـ JSON فقط بدون اي نص اخر. الحقول المطلوبة: vendor_name, vendor_tax_number, invoice_number, invoice_date, subtotal (رقم), vat_amount (رقم), vat_rate (رقم مثل 15), total_amount (رقم), currency, description, payment_method, account_type, debit_account, credit_account, vat_account, notes, analysis, confidence (0-100 ثقتك الكلية), field_confidence (object فيه ثقة 0-100 لكل من: vendor_tax_number, vat_amount, total_amount), explainability (object فيه جملة قصيرة توضح من اين استخرجت كل من: vendor_name, vat_amount, total_amount — مثلا "مطبوع أعلى يمين الفاتورة بجانب شعار المورد").';
+      fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1600,
+          messages: [{ role: 'user', content: [contentItem, { type: 'text', text: prompt }] }]
+        })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) { reject(new Error(data.error.message || 'خطأ من Claude API')); return; }
+        try {
+          var text = data.content[0].text;
+          text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+          resolve(JSON.parse(text));
+        } catch (e) { reject(new Error('تعذّر تحليل استجابة DocumentExtractionAgent')); }
+      })
+      .catch(reject);
+    });
+  });
+}
+
+// --- Agent 2: ComplianceAgent (قواعد حتمية — ZATCA / VAT / اكتمال الحقول) ---
+function runComplianceAgent(r) {
+  var checks = [];
+  var taxNum = String(r.vendor_tax_number || '').replace(/\D/g, '');
+  var taxNumOk = taxNum.length === 15 && taxNum.charAt(0) === '3' && taxNum.charAt(14) === '3';
+  checks.push({ name: 'الرقم الضريبي (ZATCA)', pass: taxNumOk, detail: taxNumOk ? '15 رقماً يبدأ وينتهي بـ 3 — مطابق' : 'الرقم "' + (r.vendor_tax_number || '—') + '" لا يطابق صيغة ZATCA (15 رقم، يبدأ وينتهي بـ3)' });
+  var vatCalc = Number(r.subtotal || 0) * (Number(r.vat_rate || 15) / 100);
+  var vatDiff = Math.abs(vatCalc - Number(r.vat_amount || 0));
+  var vatOk = vatDiff < 1;
+  checks.push({ name: 'احتساب ضريبة القيمة المضافة', pass: vatOk, detail: vatOk ? 'المبلغ مطابق لنسبة ' + (r.vat_rate || 15) + '%' : 'فرق ' + vatDiff.toFixed(2) + ' ر.س عن المتوقع (' + vatCalc.toFixed(2) + ')' });
+  var totalDiff = Math.abs((Number(r.subtotal || 0) + Number(r.vat_amount || 0)) - Number(r.total_amount || 0));
+  var totalOk = totalDiff < 1;
+  checks.push({ name: 'اتزان الإجمالي', pass: totalOk, detail: totalOk ? 'قبل الضريبة + الضريبة = الإجمالي' : 'فرق ' + totalDiff.toFixed(2) + ' ر.س في مطابقة الإجمالي' });
+  var mandatory = ['vendor_name', 'invoice_number', 'invoice_date', 'total_amount'];
+  var missing = mandatory.filter(function(f) { return !r[f]; });
+  checks.push({ name: 'اكتمال الحقول الإلزامية', pass: missing.length === 0, detail: missing.length ? 'حقول ناقصة: ' + missing.join('، ') : 'جميع الحقول الإلزامية متوفرة' });
+  var passed = checks.every(function(c) { return c.pass; });
+  return { agent: 'ComplianceAgent', passed: passed, checks: checks, zatca_compliant: taxNumOk && vatOk && totalOk };
+}
+
+// --- Agent 3: JournalEntryAgent (يبني القيد من دليل حسابات Odoo نفسه المستخدم في التكامل) ---
+function runJournalAgent(r) {
+  var sub = Number(r.subtotal || 0), vat = Number(r.vat_amount || 0);
+  var total = Number(r.total_amount || (sub + vat));
+  var mappedCode = CHART_OF_ACCOUNTS[r.account_type];
+  var escalated = !mappedCode;
+  var debitCode = mappedCode || CHART_OF_ACCOUNTS['مصروفات تشغيل'];
+  var lines = [
+    { label: r.debit_account || r.account_type || 'مصروفات تشغيل', code: debitCode, debit: sub, credit: 0 },
+    { label: r.vat_account || 'ضريبة القيمة المضافة', code: CHART_OF_ACCOUNTS.VAT_ACCOUNT, debit: vat, credit: 0 },
+    { label: r.credit_account || ('الدائنون — ' + (r.vendor_name || '')), code: CHART_OF_ACCOUNTS.PAYABLES_ACCOUNT, debit: 0, credit: total }
+  ];
+  var balanced = Math.abs((lines[0].debit + lines[1].debit) - lines[2].credit) < 0.01;
+  return {
+    agent: 'JournalEntryAgent',
+    lines: lines,
+    balanced: balanced,
+    escalated: escalated,
+    note: escalated
+      ? 'نوع الحساب "' + (r.account_type || '—') + '" غير موجود في دليل حسابات Odoo — استُخدم حساب افتراضي (5100) ويحتاج مراجعة يدوية'
+      : 'تمت مطابقة الحساب مع دليل حسابات Odoo مباشرة (كود ' + debitCode + ')'
+  };
+}
+
+// --- SupervisorAgent: ينسّق تسلسل الوكلاء ويبني audit trail موقّع بسلسلة hash ---
+async function orchestrate(file) {
+  var trail = [];
+  await appendAudit(trail, 'SupervisorAgent', 'استلام', 'استلام الملف: ' + file.name + ' (' + Math.round(file.size / 1024) + ' KB)');
+  await appendAudit(trail, 'SupervisorAgent', 'توجيه', 'توجيه المستند إلى DocumentExtractionAgent (Claude Vision)');
+  var r = await runExtractionAgent(file);
+  await appendAudit(trail, 'DocumentExtractionAgent', 'استخراج', 'استُخرجت البيانات بثقة إجمالية ' + (r.confidence != null ? r.confidence : '—') + '% — المورد: ' + (r.vendor_name || '—'));
+
+  await appendAudit(trail, 'SupervisorAgent', 'توجيه', 'توجيه النتيجة إلى ComplianceAgent (تحقق ZATCA + VAT)');
+  var comp = runComplianceAgent(r);
+  for (var i = 0; i < comp.checks.length; i++) {
+    await appendAudit(trail, 'ComplianceAgent', comp.checks[i].pass ? 'اجتياز' : 'تنبيه', comp.checks[i].name + ' — ' + comp.checks[i].detail);
+  }
+  r.zatca_compliant = comp.zatca_compliant;
+  r.compliance = comp;
+
+  await appendAudit(trail, 'SupervisorAgent', 'توجيه', 'توجيه النتيجة إلى JournalEntryAgent (بناء القيد المحاسبي)');
+  var je = runJournalAgent(r);
+  await appendAudit(trail, 'JournalEntryAgent', je.escalated ? 'تصعيد' : 'إنشاء قيد', je.note);
+  r.journal = je;
+
+  var needsReview = Number(r.confidence || 0) < 85 || !comp.passed || je.escalated;
+  await appendAudit(trail, 'SupervisorAgent', needsReview ? 'تصعيد للمراجعة البشرية' : 'اعتماد تلقائي مؤهل', needsReview ? 'مستوى الثقة أو نتائج التحقق تتطلب مراجعة محاسب قبل الاعتماد' : 'مستوى الثقة والتحقق الآلي كافيان — جاهز للاعتماد');
+  r.needs_review = needsReview;
+  r.audit_trail = trail;
+  return r;
+}
 function renderResult(r) {
+  // توافق مع فواتير قديمة محفوظة قبل تفعيل بنية الوكلاء المتعددة
+  if (!r.compliance) r.compliance = runComplianceAgent(r);
+  if (!r.journal) r.journal = runJournalAgent(r);
   var fmt = function(n) { return Number(n||0).toLocaleString('ar-SA', {minimumFractionDigits:2, maximumFractionDigits:2}); };
   var cur = r.currency || 'SAR';
   var lbl = t('invoiceLabel');
@@ -1135,52 +1355,111 @@ function renderResult(r) {
   document.getElementById('confBar').style.background = confColor;
   var confWord = conf >= 85 ? t('highConf') : conf >= 60 ? t('midConf') : t('lowConf');
   document.getElementById('confText').textContent = conf + '% — ' + confWord;
-  var zatcaOk = r.zatca_compliant;
-  var vatOk = Math.abs((Number(r.subtotal) * Number(r.vat_rate || 15) / 100) - Number(r.vat_amount)) < 1;
+
+  // بطاقة التحقق: نتائج ComplianceAgent البندية بدل فحص واحد عام
+  var comp = r.compliance;
   var v = '';
-  v += '<div class="alert-box ' + (zatcaOk ? 'good' : 'warn') + '"><span class="alert-box-icon">' + (zatcaOk ? '✅' : '⚠️') + '</span><span class="alert-box-text">' + (zatcaOk ? t('zatcaOk') : t('zatcaFail')) + '</span></div>';
-  v += '<div class="alert-box ' + (vatOk ? 'good' : 'warn') + '"><span class="alert-box-icon">' + (vatOk ? '✅' : '⚠️') + '</span><span class="alert-box-text">' + (vatOk ? t('vatOk') : t('vatFail')) + '</span></div>';
+  comp.checks.forEach(function(c) {
+    v += '<div class="alert-box ' + (c.pass ? 'good' : 'warn') + '"><span class="alert-box-icon">' + (c.pass ? '✅' : '⚠️') + '</span><span class="alert-box-text"><b>' + c.name + '</b> — ' + c.detail + '</span></div>';
+  });
   v += '<div class="alert-box good"><span class="alert-box-icon">📊</span><span class="alert-box-text">' + (r.account_type || 'مصروفات') + '</span></div>';
   if (r.notes) {
     v += '<div class="alert-box warn"><span class="alert-box-icon">💡</span><span class="alert-box-text">' + r.notes + '</span></div>';
   }
+  if (r.needs_review) {
+    v += '<div class="alert-box warn"><span class="alert-box-icon">🧑‍💼</span><span class="alert-box-text"><b>يتطلب مراجعة بشرية</b> قبل الاعتماد — SupervisorAgent صعّد هذه الفاتورة (ثقة منخفضة أو تحقق غير مكتمل)</span></div>';
+  }
   document.getElementById('verifyData').innerHTML = v;
-  var sub = Number(r.subtotal || 0);
-  var vat = Number(r.vat_amount || 0);
-  var tot = Number(r.total_amount || sub + vat);
-  var f2 = function(n) { return n.toLocaleString('ar-SA', {minimumFractionDigits:2, maximumFractionDigits:2}); };
+
+  // بطاقة القيد: من JournalEntryAgent مباشرة (نفس دليل حسابات Odoo)
+  var f2 = function(n) { return Number(n||0).toLocaleString('ar-SA', {minimumFractionDigits:2, maximumFractionDigits:2}); };
+  var je = r.journal;
+  var totCredit = je.lines.reduce(function(s,l){ return s + l.credit; }, 0);
   var j = '';
-  j += '<div class="je-head">JOURNAL ENTRY — ' + (r.invoice_date || '') + '</div>';
-  j += '<div class="je-row"><span class="je-acc">' + t('jeFrom') + (r.debit_account || r.account_type || 'مصروفات') + '</span><span class="je-dr">' + f2(sub) + '</span><span class="je-cr"></span></div>';
-  j += '<div class="je-row"><span class="je-acc">' + t('jeFrom') + (r.vat_account || 'ضريبة القيمة المضافة') + '</span><span class="je-dr">' + f2(vat) + '</span><span class="je-cr"></span></div>';
-  j += '<div class="je-row"><span class="je-acc cr">' + t('jeTo') + (r.credit_account || 'الدائنون — ' + (r.vendor_name || '')) + '</span><span class="je-dr"></span><span class="je-cr">' + f2(tot) + '</span></div>';
-  j += '<div class="je-total"><span class="je-total-lbl">' + t('jeTotalLbl') + '</span><span class="je-total-amt">' + f2(tot) + '</span><span class="je-total-amt">' + f2(tot) + '</span></div>';
-  j += '<div class="je-ok">' + t('jeBalanced') + '</div>';
+  j += '<div class="je-head">JOURNAL ENTRY — ' + (r.invoice_date || '') + (je.escalated ? ' · ⚠️ تصعيد' : '') + '</div>';
+  je.lines.forEach(function(line) {
+    var isCredit = line.credit > 0;
+    j += '<div class="je-row"><span class="je-acc' + (isCredit ? ' cr' : '') + '">' + (isCredit ? t('jeTo') : t('jeFrom')) + line.label + ' (' + line.code + ')</span><span class="je-dr">' + (line.debit ? f2(line.debit) : '') + '</span><span class="je-cr">' + (line.credit ? f2(line.credit) : '') + '</span></div>';
+  });
+  j += '<div class="je-total"><span class="je-total-lbl">' + t('jeTotalLbl') + '</span><span class="je-total-amt">' + f2(totCredit) + '</span><span class="je-total-amt">' + f2(totCredit) + '</span></div>';
+  j += '<div class="je-ok">' + (je.balanced ? t('jeBalanced') : '⚠️ القيد غير متزن — يحتاج مراجعة') + '</div>';
+  if (je.escalated) j += '<div class="je-ok" style="color:#d97757;">' + je.note + '</div>';
   document.getElementById('journalData').innerHTML = j;
-  document.getElementById('analysisData').textContent = r.analysis || '';
-  var now = new Date();
-  var tStr = now.toLocaleTimeString('ar-SA', {hour:'2-digit', minute:'2-digit'});
-  var a = '';
-  a += auditRow('#4a78a8', tStr, t('auditReceived'));
-  a += auditRow('#d97757', tStr, t('auditRead'));
-  a += auditRow(zatcaOk ? '#4a7a38' : '#d97757', tStr, t('auditZatca') + (zatcaOk ? '✅' : '⚠️'));
-  a += auditRow(vatOk ? '#4a7a38' : '#d97757', tStr, t('auditVat') + (vatOk ? '✅' : '⚠️'));
-  a += auditRow('#4a7a38', tStr, t('auditConf') + conf + '%' + (conf >= 85 ? t('auditAuto') : t('auditManual')));
-  document.getElementById('auditData').innerHTML = a;
+
+  // بطاقة التحليل + طبقة الشفافية (Explainability)
+  var an = r.analysis || '';
+  if (r.explainability || r.field_confidence) {
+    an += '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #e4ddd4;font-size:11px;font-weight:700;color:#8a8070;letter-spacing:1px;">🔎 لماذا استخرج حاسِب هذه القيم؟ (Explainability)</div>';
+    var expl = r.explainability || {};
+    var fc = r.field_confidence || {};
+    var fieldNames = { vendor_name: 'اسم المورد', vat_amount: 'مبلغ الضريبة', total_amount: 'الإجمالي', vendor_tax_number: 'الرقم الضريبي' };
+    Object.keys(fieldNames).forEach(function(key) {
+      if (!expl[key] && fc[key] == null) return;
+      an += '<div style="margin-top:6px;font-size:12px;"><b>' + fieldNames[key] + '</b>' + (fc[key] != null ? ' <span style="color:#8a8070;">(ثقة ' + fc[key] + '%)</span>' : '') + (expl[key] ? '<br><span style="color:#5a5040;">' + expl[key] + '</span>' : '') + '</div>';
+    });
+  }
+  document.getElementById('analysisData').innerHTML = an.replace(/\n/g, '<br>');
+
+  // بطاقة Audit Trail: السجل الكامل الموقّع بسلسلة hash من SupervisorAgent
+  renderAuditTrail(r);
   updateBanners();
 }
 function auditRow(color, time, text) {
   return '<div class="audit-item"><div class="audit-dot" style="background:' + color + ';"></div><div class="audit-time">' + time + '</div><div class="audit-text">' + text + '</div></div>';
 }
+var AGENT_COLORS = {
+  SupervisorAgent: '#9a5ab8',
+  DocumentExtractionAgent: '#4a78a8',
+  ComplianceAgent: '#4a7a38',
+  JournalEntryAgent: '#d97757',
+  ReconciliationAgent: '#1a6b3a',
+  المستخدم: '#c04858'
+};
+function renderAuditTrail(r) {
+  var el = document.getElementById('auditData');
+  var trail = r.audit_trail;
+  if (!trail || !trail.length) {
+    // فاتورة قديمة بدون سجل موثّق — نعرض ملخص مبسّط بدل السجل الكامل
+    var now = new Date();
+    var tStr = now.toLocaleTimeString('ar-SA', {hour:'2-digit', minute:'2-digit'});
+    el.innerHTML = auditRow('#8a8070', tStr, 'لا يوجد سجل موثّق لهذه الفاتورة (تمت معالجتها قبل تفعيل Audit Trail)');
+    return;
+  }
+  var html = '';
+  trail.forEach(function(entry) {
+    var d = new Date(entry.time);
+    var tStr = isNaN(d) ? '' : d.toLocaleTimeString('ar-SA', {hour:'2-digit', minute:'2-digit'});
+    var color = AGENT_COLORS[entry.agent] || '#8a8070';
+    html += auditRow(color, tStr, '<b>' + entry.agent + '</b> · ' + entry.action + ' — ' + entry.detail);
+  });
+  html += '<div style="margin-top:8px;display:flex;align-items:center;gap:8px;">';
+  html += '<button onclick="verifyCurrentAuditChain()" style="background:transparent;border:1px solid #e4ddd4;color:#5a5040;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">🔒 تحقق من سلامة السجل (hash chain)</button>';
+  html += '<span id="chainVerifyResult" style="font-size:11px;"></span>';
+  html += '</div>';
+  el.innerHTML = html;
+}
+function verifyCurrentAuditChain() {
+  if (!curResult || !curResult.audit_trail) return;
+  var out = document.getElementById('chainVerifyResult');
+  out.textContent = '... جاري التحقق';
+  verifyAuditChain(curResult.audit_trail).then(function(ok) {
+    out.textContent = ok ? '✅ السجل سليم ولم يتم التلاعب به' : '⚠️ تحذير: السجل غير مطابق — قد يكون تم تعديله يدوياً خارج التطبيق';
+    out.style.color = ok ? '#4a7a38' : '#c04858';
+  });
+}
 function approveAndSend() {
   if (!curResult) return;
   if (!wb) { toast(t('toastNoExcel'), 'warn'); return; }
+  if (isMonthClosed(curResult.invoice_date)) { toast('🔒 شهر ' + extractMonth(curResult.invoice_date) + ' مقفل محاسبياً (تم إغلاقه في Month-End Close) — لا يمكن إضافة قيود جديدة عليه', 'warn'); return; }
   curResult.approved = true;
-  updateInvoice(curResult);
-  var ok = writeToExcel(curResult);
-  if (ok) toast(t('toastApproved'));
-  else toast(t('excelFail'), 'error');
-  renderHistory();
+  if (!curResult.audit_trail) curResult.audit_trail = [];
+  appendAudit(curResult.audit_trail, 'المستخدم', 'اعتماد', 'اعتمد المحاسب الفاتورة وأرسلها إلى ملف Excel').then(function() {
+    updateInvoice(curResult);
+    var ok = writeToExcel(curResult);
+    if (ok) toast(t('toastApproved'));
+    else toast(t('excelFail'), 'error');
+    renderHistory();
+  });
 }
 function doExportCSV() {
   if (!invoices.length) return;
@@ -1544,14 +1823,24 @@ function getEdits() {
   });
 }
 function saveEdit() {
-  var e = getEdits(); curResult = e;
-  updateInvoice(e); renderResult(e); renderHistory();
-  writeToExcel(e); closeEdit(); toast(t('toastEdited'));
+  var e = getEdits();
+  if (isMonthClosed(e.invoice_date)) { toast('🔒 شهر ' + extractMonth(e.invoice_date) + ' مقفل محاسبياً — لا يمكن تعديل فواتيره', 'warn'); return; }
+  curResult = e;
+  if (!e.audit_trail) e.audit_trail = [];
+  appendAudit(e.audit_trail, 'المستخدم', 'تعديل يدوي', 'قام المحاسب بتعديل بيانات الفاتورة يدوياً وتجاوز نتيجة DocumentExtractionAgent').then(function() {
+    updateInvoice(e); renderResult(e); renderHistory();
+    writeToExcel(e); closeEdit(); toast(t('toastEdited'));
+  });
 }
 function saveEditApprove() {
-  var e = getEdits(); e.approved = true; curResult = e;
-  updateInvoice(e); renderResult(e); renderHistory(); updateStats();
-  writeToExcel(e); closeEdit(); toast(t('toastEditApproved'));
+  var e = getEdits();
+  if (isMonthClosed(e.invoice_date)) { toast('🔒 شهر ' + extractMonth(e.invoice_date) + ' مقفل محاسبياً — لا يمكن اعتماد فواتيره', 'warn'); return; }
+  e.approved = true; curResult = e;
+  if (!e.audit_trail) e.audit_trail = [];
+  appendAudit(e.audit_trail, 'المستخدم', 'تعديل واعتماد', 'قام المحاسب بتعديل بيانات الفاتورة يدوياً ثم اعتمدها').then(function() {
+    updateInvoice(e); renderResult(e); renderHistory(); updateStats();
+    writeToExcel(e); closeEdit(); toast(t('toastEditApproved'));
+  });
 }
 function setState(s) {
   document.getElementById('stateWelcome').style.display = s === 'welcome' ? 'flex' : 'none';
@@ -1788,7 +2077,57 @@ function buildReport() {
   renderKPIs(data);
   renderTable(data);
   renderCharts(data);
+  renderVariance(ym);
   renderAISummary(data, label);
+}
+function computeVarianceByType(curData, prevData) {
+  var group = function(data) {
+    var g = {};
+    data.forEach(function(inv) {
+      var k = inv.account_type || (lang==='ar'?'أخرى':'Other');
+      g[k] = (g[k] || 0) + Number(inv.total_amount || 0);
+    });
+    return g;
+  };
+  var cur = group(curData), prev = group(prevData);
+  var keys = {}; Object.keys(cur).forEach(function(k){keys[k]=1;}); Object.keys(prev).forEach(function(k){keys[k]=1;});
+  var rows = Object.keys(keys).map(function(k) {
+    var c = cur[k] || 0, p = prev[k] || 0;
+    var pct = p > 0 ? ((c - p) / p * 100) : (c > 0 ? 100 : 0);
+    return { type: k, current: c, previous: p, pct: pct, flagged: Math.abs(pct) >= VARIANCE_THRESHOLD };
+  });
+  rows.sort(function(a,b) { return Math.abs(b.pct) - Math.abs(a.pct); });
+  return rows;
+}
+function prevMonthOf(ym) {
+  var parts = ym.split('-'); var y = parseInt(parts[0]), m = parseInt(parts[1]);
+  m -= 1; if (m < 1) { m = 12; y -= 1; }
+  return y + '-' + String(m).padStart(2,'0');
+}
+function renderVariance(ym) {
+  var box = document.getElementById('varianceBox');
+  if (!box) return;
+  var curData = getMonthInvoices(ym);
+  var prevYm = prevMonthOf(ym);
+  var prevData = getMonthInvoices(prevYm);
+  if (!prevData.length) {
+    box.innerHTML = '<div style="font-size:12px;color:#8a8070;">لا توجد بيانات لشهر ' + formatMonthLabel(prevYm) + ' للمقارنة</div>';
+    return;
+  }
+  var rows = computeVarianceByType(curData, prevData);
+  var html = '<table style="width:100%;border-collapse:collapse;font-size:12px;font-family:Tajawal,sans-serif;"><thead><tr style="background:#f9f7f4;border-bottom:2px solid #e4ddd4;">' +
+    '<th style="text-align:right;padding:8px;">نوع الحساب</th><th style="text-align:right;padding:8px;">' + formatMonthLabel(prevYm) + '</th><th style="text-align:right;padding:8px;">' + formatMonthLabel(ym) + '</th><th style="text-align:right;padding:8px;">التغيّر</th></tr></thead><tbody>';
+  rows.forEach(function(r) {
+    var color = r.flagged ? (r.pct > 0 ? '#c04858' : '#4a7a38') : '#5a5040';
+    var arrow = r.pct > 0 ? '▲' : (r.pct < 0 ? '▼' : '—');
+    html += '<tr style="border-bottom:1px solid #f0ece4;' + (r.flagged ? 'background:rgba(192,72,88,.04);' : '') + '">' +
+      '<td style="padding:7px 8px;">' + r.type + (r.flagged ? ' <span style="font-size:9px;background:rgba(192,72,88,.12);color:#c04858;padding:1px 6px;border-radius:8px;">انحراف كبير</span>' : '') + '</td>' +
+      '<td style="padding:7px 8px;">' + r.previous.toLocaleString('ar-SA',{maximumFractionDigits:0}) + '</td>' +
+      '<td style="padding:7px 8px;">' + r.current.toLocaleString('ar-SA',{maximumFractionDigits:0}) + '</td>' +
+      '<td style="padding:7px 8px;color:' + color + ';font-weight:700;">' + arrow + ' ' + Math.abs(r.pct).toFixed(1) + '%</td></tr>';
+  });
+  html += '</tbody></table>';
+  box.innerHTML = html;
 }
 function renderKPIs(data) {
   var totalSub = 0, totalVat = 0, totalAmt = 0, approved = 0, zatca = 0;
@@ -3131,24 +3470,9 @@ function buildOdooEntry(r) {
   var date  = r.invoice_date || new Date().toISOString().split('T')[0];
   var ref   = r.invoice_number || ('HASIB-' + Date.now());
   var jid   = parseInt(odooCfg.journal || '1');
-  var ACCOUNT_MAP = {
-    'م تشغلية':            '5100',
-    'م صيانة':             '5110',
-    'م ضيافة':             '5120',
-    'م دعاية واعلان':      '5130',
-    'م قطع غيار':          '5140',
-    'م وقود ومحروقات':     '5150',
-    'م ايجار':             '5160',
-    'م اجور ورواتب':       '6100',
-    'م حكومية':            '5180',
-    'م اتصالات':           '5170',
-    'مصروفات تشغيل':       '5100',
-    'مصروفات إدارية':      '6000',
-    'مصروفات تسويقية':     '5200',
-  };
-  var debitCode  = ACCOUNT_MAP[r.account_type] || '5100';
-  var vatCode    = '2130';
-  var creditCode = '2100';
+  var debitCode  = CHART_OF_ACCOUNTS[r.account_type] || '5100';
+  var vatCode    = CHART_OF_ACCOUNTS.VAT_ACCOUNT;
+  var creditCode = CHART_OF_ACCOUNTS.PAYABLES_ACCOUNT;
   return {
     name:      'حاسِب | ' + (r.vendor_name || '') + ' | ' + ref,
     ref:       ref,
@@ -3394,6 +3718,220 @@ function exportReportExcel() {
   XLSX.utils.book_append_sheet(newWb, ws, 'تقرير شهري');
   XLSX.writeFile(newWb, 'تقرير-حاسب-' + (ym||'شهري') + '.xlsx');
   toast('📥 ' + (lang==='ar'?'تم تصدير التقرير':'Report exported'));
-}</script>
+}
+
+// ============================================================
+// RECONCILIATION AGENT — مطابقة بنكية آلية
+// ============================================================
+function loadBankStatement(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  document.getElementById('bankFileName').textContent = file.name;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var wbBank = XLSX.read(new Uint8Array(ev.target.result), {type:'array', cellDates:true});
+      var ws = wbBank.Sheets[wbBank.SheetNames[0]];
+      var rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false});
+      bankTransactions = parseBankRows(rows);
+      localStorage.setItem('h_bank', JSON.stringify(bankTransactions));
+      toast('✅ تم تحميل ' + bankTransactions.length + ' حركة بنكية من ' + file.name);
+    } catch (err) { toast('❌ ' + err.message, 'error'); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+function parseBankRows(rows) {
+  if (!rows || !rows.length) return [];
+  var header = (rows[0] || []).map(function(c) { return String(c || '').trim().toLowerCase(); });
+  function findCol(keywords) {
+    for (var i = 0; i < header.length; i++) {
+      for (var k = 0; k < keywords.length; k++) { if (header[i].indexOf(keywords[k]) > -1) return i; }
+    }
+    return -1;
+  }
+  var dateCol = findCol(['تاريخ', 'date']);
+  var descCol = findCol(['بيان', 'وصف', 'مستفيد', 'description', 'narrative', 'details', 'ملاحظ']);
+  var amtCol  = findCol(['مبلغ', 'amount', 'debit', 'مدين', 'قيمة']);
+  if (dateCol === -1) dateCol = 0;
+  if (descCol === -1) descCol = 1;
+  if (amtCol  === -1) amtCol  = 2;
+  var out = [];
+  for (var i = 1; i < rows.length; i++) {
+    var row = rows[i];
+    if (!row || !row.length) continue;
+    var amtRaw = String(row[amtCol] || '').replace(/[,ر٫س\s]/g, '');
+    var amt = parseFloat(amtRaw);
+    if (!amt || isNaN(amt)) continue;
+    var rawDate = row[dateCol];
+    var dateStr = rawDate instanceof Date ? rawDate.toISOString().split('T')[0] : String(rawDate || '').trim();
+    out.push({ date: dateStr, description: String(row[descCol] || '').trim(), amount: Math.abs(amt), matched: false });
+  }
+  return out;
+}
+function daysBetween(d1, d2) {
+  var t1 = new Date(d1).getTime(), t2 = new Date(d2).getTime();
+  if (isNaN(t1) || isNaN(t2)) return 999;
+  return Math.abs(t1 - t2) / 86400000;
+}
+function textSimilarity(a, b) {
+  a = String(a || '').toLowerCase().trim(); b = String(b || '').toLowerCase().trim();
+  if (!a || !b) return 0;
+  if (b.indexOf(a) > -1 || a.indexOf(b) > -1) return 1;
+  var wordsA = a.split(/\s+/), wordsB = b.split(/\s+/);
+  var common = wordsA.filter(function(w) { return w.length > 1 && wordsB.indexOf(w) > -1; });
+  return common.length / Math.max(wordsA.length, wordsB.length, 1);
+}
+function runReconciliation() {
+  var candidateInvoices = invoices.filter(function(inv) { return inv.approved; });
+  var bankPool = bankTransactions.map(function(b, idx) { return Object.assign({ _idx: idx }, b); });
+  var matched = [], usedBank = {};
+  candidateInvoices.forEach(function(inv) {
+    var total = Number(inv.total_amount || 0);
+    var best = null, bestScore = -1;
+    bankPool.forEach(function(b) {
+      if (usedBank[b._idx]) return;
+      if (Math.abs(b.amount - total) > 1) return;
+      var days = daysBetween(inv.invoice_date, b.date);
+      if (days > 10) return;
+      var sim = textSimilarity(inv.vendor_name, b.description);
+      var score = (10 - Math.min(days, 10)) + sim * 5 - Math.abs(b.amount - total);
+      if (score > bestScore) { bestScore = score; best = b; }
+    });
+    if (best) {
+      usedBank[best._idx] = true;
+      matched.push({ invoice: inv, bank: best, dayDiff: daysBetween(inv.invoice_date, best.date).toFixed(0) });
+    }
+  });
+  var unmatchedInvoices = candidateInvoices.filter(function(inv) { return !matched.some(function(m) { return m.invoice === inv; }); });
+  var unmatchedBank = bankPool.filter(function(b) { return !usedBank[b._idx]; });
+  reconcileResults = { matched: matched, unmatchedInvoices: unmatchedInvoices, unmatchedBank: unmatchedBank };
+  invoices.forEach(function(inv) { inv.reconciled = matched.some(function(m) { return m.invoice === inv; }); });
+  localStorage.setItem('h_inv', JSON.stringify(invoices));
+  renderReconcile();
+}
+function renderReconcile() {
+  var sum = document.getElementById('reconcileSummary');
+  if (!sum) return;
+  sum.innerHTML =
+    '<div class="stat"><div class="stat-n grn">' + reconcileResults.matched.length + '</div><div class="stat-l">مطابقة تلقائياً</div></div>' +
+    '<div class="stat"><div class="stat-n org">' + reconcileResults.unmatchedInvoices.length + '</div><div class="stat-l">فواتير بدون سداد بنكي</div></div>' +
+    '<div class="stat"><div class="stat-n" style="color:#c04858;">' + reconcileResults.unmatchedBank.length + '</div><div class="stat-l">حركات بنكية بدون فاتورة</div></div>';
+  var html = '';
+  if (reconcileResults.matched.length) {
+    html += '<div style="font-size:12px;font-weight:700;color:#4a7a38;margin-bottom:8px;">✅ مطابقات تلقائية (ReconciliationAgent)</div>';
+    reconcileResults.matched.forEach(function(m) {
+      html += '<div class="alert-box good"><span class="alert-box-icon">🔗</span><span class="alert-box-text">' + (m.invoice.vendor_name || '—') + ' — ' + Number(m.invoice.total_amount || 0).toFixed(2) + ' ر.س — فاتورة ' + (m.invoice.invoice_date || '') + ' ↔ حركة بنكية ' + m.bank.date + ' (فرق ' + m.dayDiff + ' يوم) — "' + m.bank.description + '"</span></div>';
+    });
+  }
+  if (reconcileResults.unmatchedInvoices.length) {
+    html += '<div style="font-size:12px;font-weight:700;color:#d97757;margin:14px 0 8px;">⚠️ فواتير معتمدة بدون سداد بنكي مطابق</div>';
+    reconcileResults.unmatchedInvoices.forEach(function(inv) {
+      html += '<div class="alert-box warn"><span class="alert-box-icon">📄</span><span class="alert-box-text">' + (inv.vendor_name || '—') + ' — ' + Number(inv.total_amount || 0).toFixed(2) + ' ر.س — ' + (inv.invoice_date || '') + '</span></div>';
+    });
+  }
+  if (reconcileResults.unmatchedBank.length) {
+    html += '<div style="font-size:12px;font-weight:700;color:#c04858;margin:14px 0 8px;">❗ حركات بنكية بدون فاتورة مقابلة</div>';
+    reconcileResults.unmatchedBank.forEach(function(b) {
+      html += '<div class="alert-box warn"><span class="alert-box-icon">🏦</span><span class="alert-box-text">' + b.date + ' — ' + Number(b.amount).toFixed(2) + ' ر.س — "' + b.description + '"</span></div>';
+    });
+  }
+  document.getElementById('reconcileResultsBox').innerHTML = html || '<div style="font-size:12px;color:#8a8070;">ارفع كشف الحساب البنكي ثم اضغط "نفّذ المطابقة"</div>';
+}
+function openReconcile() {
+  document.getElementById('reconcileModal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  renderReconcile();
+}
+function closeReconcile() {
+  document.getElementById('reconcileModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// ============================================================
+// MONTH-END CLOSE WORKFLOW — سير عمل إغلاق الشهر
+// ============================================================
+function isMonthClosed(dateStr) {
+  var ym = extractMonth(dateStr);
+  return !!(ym && closedMonths.indexOf(ym) > -1);
+}
+function openMonthClose() {
+  var sel = document.getElementById('closeMonthSelect');
+  sel.innerHTML = '';
+  var months = {};
+  invoices.forEach(function(inv) { var m = extractMonth(inv.invoice_date || inv.saved_at || ''); if (m) months[m] = true; });
+  var sorted = Object.keys(months).sort().reverse();
+  if (!sorted.length) { var now = new Date(); sorted = [now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0')]; }
+  sorted.forEach(function(ym) {
+    var opt = document.createElement('option');
+    opt.value = ym;
+    opt.textContent = formatMonthLabel(ym) + (closedMonths.indexOf(ym) > -1 ? ' 🔒 (مقفل)' : '');
+    sel.appendChild(opt);
+  });
+  document.getElementById('closeModal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  evaluateCloseChecklist();
+}
+function closeMonthCloseModal() {
+  document.getElementById('closeModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+function checkBudgetForClose(ym) {
+  var totalBudget = Number((budget && budget.total) || 0);
+  if (!totalBudget) return { ok: true, detail: 'لم تُحدَّد ميزانية إجمالية شهرية (اختياري)' };
+  var data = getMonthInvoices(ym);
+  var total = data.reduce(function(s, inv) { return s + Number(inv.total_amount || 0); }, 0);
+  var pct = Math.round(total / totalBudget * 100);
+  return { ok: total <= totalBudget, detail: total.toFixed(0) + ' ر.س من أصل ' + totalBudget.toFixed(0) + ' ر.س (' + pct + '%)' };
+}
+function evaluateCloseChecklist() {
+  var sel = document.getElementById('closeMonthSelect');
+  var ym = sel && sel.value;
+  if (!ym) return;
+  var data = getMonthInvoices(ym);
+  var unapproved = data.filter(function(inv) { return !inv.approved; });
+  var needsReview = data.filter(function(inv) { return inv.needs_review; });
+  runReconciliation();
+  var unmatchedThisMonth = reconcileResults.unmatchedInvoices.filter(function(inv) { return extractMonth(inv.invoice_date || inv.saved_at || '') === ym; });
+  var budgetCheck = checkBudgetForClose(ym);
+  var varianceRows = computeVarianceByType(data, getMonthInvoices(prevMonthOf(ym)));
+  var flaggedVariance = varianceRows.filter(function(r) { return r.flagged; });
+  var alreadyClosed = closedMonths.indexOf(ym) > -1;
+
+  var items = [
+    { label: 'جميع الفواتير معتمدة', ok: unapproved.length === 0, detail: unapproved.length ? (unapproved.length + ' فاتورة بانتظار الاعتماد') : ('كل الفواتير (' + data.length + ') معتمدة') },
+    { label: 'لا توجد فواتير معلّقة للمراجعة البشرية', ok: needsReview.length === 0, detail: needsReview.length ? (needsReview.length + ' فاتورة صعّدها SupervisorAgent وتحتاج مراجعة محاسب') : 'لا يوجد تصعيدات معلّقة' },
+    { label: 'المطابقة البنكية مكتملة', ok: unmatchedThisMonth.length === 0, detail: unmatchedThisMonth.length ? (unmatchedThisMonth.length + ' فاتورة بدون سداد بنكي مطابق') : 'كل الفواتير المعتمدة لها سداد بنكي مطابق (أو لم يُرفع كشف حساب لهذا الشهر)' },
+    { label: 'الميزانية ضمن الحدود', ok: budgetCheck.ok, detail: budgetCheck.detail },
+    { label: 'لا توجد انحرافات كبيرة غير مبرّرة', ok: flaggedVariance.length === 0, detail: flaggedVariance.length ? (flaggedVariance.length + ' بند تجاوز نسبة انحراف ' + VARIANCE_THRESHOLD + '%') : 'كل البنود ضمن نسبة الانحراف المسموحة' }
+  ];
+  var allOk = items.every(function(i) { return i.ok; });
+  document.getElementById('closeChecklist').innerHTML = items.map(function(i) {
+    return '<div class="alert-box ' + (i.ok ? 'good' : 'warn') + '"><span class="alert-box-icon">' + (i.ok ? '✅' : '⚠️') + '</span><span class="alert-box-text"><b>' + i.label + '</b><br>' + i.detail + '</span></div>';
+  }).join('');
+  var varBox = document.getElementById('closeVarianceBox');
+  if (flaggedVariance.length) {
+    varBox.innerHTML = '<div style="font-size:11px;font-weight:700;color:#c04858;margin-bottom:6px;">بنود بحاجة تبرير قبل الإغلاق:</div>' + flaggedVariance.map(function(r) {
+      return '<div style="font-size:12px;color:#5a5040;padding:4px 0;">• ' + r.type + ': ' + (r.pct > 0 ? '+' : '') + r.pct.toFixed(1) + '%</div>';
+    }).join('');
+  } else { varBox.innerHTML = ''; }
+  var btn = document.getElementById('closeMonthBtn');
+  if (alreadyClosed) {
+    btn.textContent = '🔒 هذا الشهر مقفل بالفعل';
+    btn.disabled = true; btn.style.opacity = '0.5';
+  } else {
+    btn.textContent = allOk ? '🔒 إغلاق الشهر نهائياً' : '⚠️ إغلاق مع وجود ملاحظات';
+    btn.disabled = false; btn.style.opacity = '1';
+  }
+}
+function closeMonthNow() {
+  var sel = document.getElementById('closeMonthSelect');
+  var ym = sel && sel.value;
+  if (!ym || closedMonths.indexOf(ym) > -1) return;
+  closedMonths.push(ym);
+  localStorage.setItem('h_closed', JSON.stringify(closedMonths));
+  toast('🔒 تم إغلاق شهر ' + formatMonthLabel(ym) + ' محاسبياً — لن يمكن اعتماد أو تعديل فواتيره');
+  evaluateCloseChecklist();
+}
+</script>
 </body>
 </html>
