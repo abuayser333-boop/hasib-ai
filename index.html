@@ -16,7 +16,7 @@
 <title>حاسِب AI</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@1,700;1,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-<style>* {margin:0; padding:0; box-sizing:border-box} body {font-family:'Tajawal',sans-serif; background:#f5f4f0; color:#1a1410; min-height:100vh} .nav {position:fixed; top:0; left:0; right:0; z-index:100; height:56px; display:flex; align-items:center; gap:12px; padding:0 24px; background:#fff; border-bottom:1px solid #e4ddd4; box-shadow:0 1px 8px rgba(0,0,0,0.06)} .nav-logo {display:flex; align-items:center; gap:8px; text-decoration:none} .nav-brand {font-family:'Playfair Display',serif; font-style:italic; font-size:20px; color:#1a1410} .nav-brand span {color:#d97757} .nav-pill {font-size:9px; font-weight:700; letter-spacing:1px; background:rgba(217,119,87,.12); color:#d97757; border:1px solid rgba(217,119,87,.3); padding:2px 7px; border-radius:20px} .nav-right {margin-right:auto; display:flex; align-items:center; gap:8px} .nav-input {background:#f5f4f0; border:1px solid #e4ddd4; border-radius:8px; padding:6px 12px; color:#1a1410; font-family:'Tajawal',sans-serif; font-size:12px; width:240px; outline:none; direction:ltr} .nav-input:focus {border-color:#d97757} .nav-btn {background:#d97757; color:#fff; border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:700; cursor:pointer; font-family:'Tajawal',sans-serif; white-space:nowrap} .nav-btn:hover {background:#c8663e} .nav-btn.green {background:#4a7a38} .nav-btn.green:hover {background:#3a6028} .nav-btn.outline {background:transparent; color:#5a5040; border:1px solid #e4ddd4} .nav-btn.outline:hover {border-color:#d97757; color:#d97757} .nav-sep {width:1px; height:22px; background:#e4ddd4} .app {display:grid; grid-template-columns:300px 1fr; min-height:100vh; padding-top:56px} @media(max-width:800px) {.app {grid-template-columns:1fr} } .sidebar {background:#fff; border-left:1px solid #e4ddd4; display:flex; flex-direction:column; height:calc(100vh - 56px); position:sticky; top:56px; overflow:hidden} .sb-top {padding:16px; border-bottom:1px solid #e4ddd4} .sb-label {font-size:10px; font-weight:700; letter-spacing:2px; color:#8a8070; margin-bottom:12px} .drop-zone {border:2px dashed #e4ddd4; border-radius:12px; padding:24px 12px; text-align:center; cursor:pointer; background:#f9f7f4; position:relative; transition:all .2s} .drop-zone:hover, .drop-zone.drag {border-color:#d97757; background:rgba(217,119,87,.04)} .drop-zone input {position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%} .drop-icon {font-size:28px; margin-bottom:8px} .drop-text {font-size:13px; font-weight:700; color:#1a1410; margin-bottom:3px} .drop-sub {font-size:11px; color:#8a8070} .file-info {display:none; margin-top:10px; padding:10px; background:#f5f4f0; border:1px solid #e4ddd4; border-radius:8px} .file-name {font-size:12px; color:#d97757; font-weight:700} .file-size {font-size:11px; color:#8a8070; margin-top:2px} .excel-status {margin-top:10px; padding:8px 10px; border-radius:8px; font-size:12px} .excel-status.off {background:#fdf8f5; border:1px solid #f0e0d4; color:#a08070} .excel-status.on {background:#f2f8f0; border:1px solid #c4ddb8; color:#4a7a38} .proc-btn {width:100%; margin-top:12px; padding:11px; background:#d97757; color:#fff; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:'Tajawal',sans-serif; display:flex; align-items:center; justify-content:center; gap:8px; transition:all .2s} .proc-btn:hover:not(:disabled) {background:#c8663e} .proc-btn:disabled {opacity:.45; cursor:not-allowed} .cam-btn {width:100%; margin-top:8px; padding:8px; background:transparent; color:#8a8070; border:1px solid #e4ddd4; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:'Tajawal',sans-serif; display:flex; align-items:center; justify-content:center; gap:6px; transition:all .2s} .cam-btn:hover {border-color:#d97757; color:#d97757} .save-excel-btn {width:100%; margin-top:8px; padding:9px; display:none; background:#4a7a38; color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:'Tajawal',sans-serif} .stats {display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:12px 16px; border-bottom:1px solid #e4ddd4} .stat {background:#f9f7f4; border:1px solid #e4ddd4; border-radius:8px; padding:10px; text-align:center} .stat-n {font-family:'Playfair Display',serif; font-size:22px; color:#1a1410; line-height:1} .stat-n.org {color:#d97757} .stat-n.grn {color:#4a7a38} .stat-l {font-size:10px; color:#8a8070; margin-top:2px} .hist-hdr {padding:10px 16px 6px; font-size:10px; font-weight:700; letter-spacing:2px; color:#8a8070} .hist-list {flex:1; overflow-y:auto; padding:0 10px 10px} .hist-list::-webkit-scrollbar {width:3px} .hist-list::-webkit-scrollbar-thumb {background:#e4ddd4; border-radius:3px} .hist-item {background:#f9f7f4; border:1px solid #e4ddd4; border-radius:8px; padding:10px; margin-bottom:6px; cursor:pointer; transition:all .15s} .hist-item:hover, .hist-item.active {border-color:#d97757} .hist-vendor {font-size:13px; font-weight:700; color:#1a1410} .hist-amount {font-size:12px; color:#d97757; font-weight:600} .hist-date {font-size:10px; color:#8a8070} .hist-badge {display:inline-block; font-size:9px; font-weight:700; padding:2px 6px; border-radius:10px; margin-top:3px} .hist-badge.done {background:rgba(74,122,56,.12); color:#4a7a38; border:1px solid rgba(74,122,56,.2)} .hist-badge.pend {background:rgba(217,119,87,.1); color:#d97757; border:1px solid rgba(217,119,87,.2)} .hist-empty {text-align:center; padding:20px 12px; font-size:12px; color:#8a8070; line-height:1.7} .main {padding:28px; overflow-y:auto} .welcome {display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:calc(100vh - 120px); text-align:center} .welcome-icon {font-size:56px; margin-bottom:16px} .welcome h2 {font-family:'Playfair Display',serif; font-style:italic; font-size:32px; color:#1a1410; margin-bottom:10px} .welcome p {font-size:14px; color:#8a8070; line-height:1.7; max-width:340px} .loading {display:none; flex-direction:column; align-items:center; justify-content:center; min-height:calc(100vh - 120px); gap:16px; text-align:center} @keyframes hasibSpin {to {transform:rotate(360deg)} } @keyframes pulseDot {0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.7} } @keyframes slideIn {from{transform:translateX(120%);opacity:0} to{transform:translateX(0);opacity:1} } @keyframes slideOut {from{transform:translateX(0);opacity:1} to{transform:translateX(120%);opacity:0} } @keyframes blink {0%,100%{opacity:.4} 50%{opacity:1} } .loading-text {font-size:15px; font-weight:700; color:#d97757} .loading-step {font-size:13px; color:#8a8070; animation:blink 1.5s ease-in-out infinite} .result {display:none; flex-direction:column; gap:16px} .result-row {display:grid; grid-template-columns:1fr 1fr; gap:16px} @media(max-width:700px) {.result-row {grid-template-columns:1fr} } .card {background:#fff; border:1px solid #e4ddd4; border-radius:14px; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,0.04)} .card-hdr {padding:12px 16px; background:#f9f7f4; border-bottom:1px solid #e4ddd4; display:flex; align-items:center; gap:8px} .card-icon {font-size:16px} .card-title {font-size:13px; font-weight:700; color:#1a1410} .card-body {padding:16px} .data-row {display:flex; align-items:flex-start; gap:10px; margin-bottom:8px} .data-lbl {font-size:11px; color:#8a8070; min-width:100px; flex-shrink:0; padding-top:1px} .data-val {font-size:13px; color:#1a1410; font-weight:500} .data-val.org {color:#d97757; font-size:16px; font-weight:700} .data-val.grn {color:#4a7a38; font-size:16px; font-weight:700} .data-val.blu {color:#4a78a8} .conf-bar {height:5px; background:#e4ddd4; border-radius:3px; margin-top:10px; overflow:hidden} .conf-fill {height:100%; border-radius:3px; transition:width .5s} .alert-box {display:flex; gap:8px; align-items:flex-start; padding:10px 12px; border-radius:8px; margin-bottom:8px} .alert-box.good {background:rgba(74,122,56,.06); border:1px solid rgba(74,122,56,.18)} .alert-box.warn {background:rgba(217,119,87,.06); border:1px solid rgba(217,119,87,.18)} .alert-box-icon {font-size:16px; flex-shrink:0} .alert-box-text {font-size:12px; color:#5a5040; line-height:1.5} .journal {font-family:'Courier New',monospace; direction:ltr; text-align:left} .je-head {font-size:10px; font-weight:600; letter-spacing:2px; color:#8a8070; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid #e4ddd4} .je-row {display:grid; grid-template-columns:1fr auto auto; gap:8px; padding:6px 0; border-bottom:1px solid #f0ece4; align-items:center} .je-acc {font-size:12px; color:#1a1410} .je-acc.cr {color:#8a8070; font-size:11px; padding-right:16px} .je-dr {font-size:12px; font-weight:700; color:#d97757; min-width:80px} .je-cr {font-size:12px; font-weight:700; color:#4a78a8; min-width:80px} .je-total {display:grid; grid-template-columns:1fr auto auto; gap:8px; padding:10px 0 0} .je-total-lbl {font-size:12px; color:#8a8070; font-weight:700} .je-total-amt {font-size:12px; color:#4a7a38; font-weight:700; min-width:80px} .je-ok {font-size:11px; color:#4a7a38; margin-top:8px; text-align:center} .audit-item {display:flex; gap:8px; align-items:flex-start; padding:8px; background:#f9f7f4; border-radius:7px; margin-bottom:6px} .audit-dot {width:7px; height:7px; border-radius:50%; flex-shrink:0; margin-top:3px} .audit-time {font-size:10px; color:#8a8070; min-width:50px; flex-shrink:0; font-family:'Courier New',monospace} .audit-text {font-size:12px; color:#5a5040; line-height:1.4} .actions {display:flex; gap:10px; flex-wrap:wrap} .btn {display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; padding:10px 18px; border-radius:9px; border:none; cursor:pointer; font-family:'Tajawal',sans-serif; transition:all .15s} .btn-primary {background:#d97757; color:#fff} .btn-primary:hover {background:#c8663e} .btn-secondary {background:#4a7a38; color:#fff} .btn-secondary:hover {background:#3a6028} .btn-outline {background:transparent; color:#5a5040; border:1px solid #e4ddd4} .btn-outline:hover {border-color:#d97757; color:#d97757} .btn-edit {background:transparent; color:#d97757; border:1px solid #d97757} .btn-edit:hover {background:rgba(217,119,87,.08)} .banner {display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:10px; font-size:12px} .banner.green {background:#f2f8f0; border:1px solid #c4ddb8; color:#4a7a38} .banner.orange {background:#fdf8f5; border:1px solid #f0d4c4; color:#d97757} .modal-bg {display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:500; overflow-y:auto; padding:30px 16px} .modal {max-width:640px; margin:0 auto; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.15)} .modal-hdr {padding:16px 20px; background:#f9f7f4; border-bottom:1px solid #e4ddd4; display:flex; align-items:center; justify-content:space-between} .modal-title {font-size:15px; font-weight:700; color:#1a1410} .modal-close {background:transparent; border:1px solid #e4ddd4; color:#8a8070; width:28px; height:28px; border-radius:7px; cursor:pointer; font-size:14px} .modal-body {padding:20px; display:flex; flex-direction:column; gap:12px} .modal-grid {display:grid; grid-template-columns:1fr 1fr; gap:12px} .field {display:flex; flex-direction:column; gap:4px} .field label {font-size:11px; font-weight:600; color:#8a8070} .field input, .field select, .field textarea {background:#f9f7f4; border:1px solid #e4ddd4; border-radius:8px; padding:8px 10px; color:#1a1410; font-family:'Tajawal',sans-serif; font-size:13px; outline:none; width:100%} .field input:focus, .field select:focus, .field textarea:focus {border-color:#d97757} .field textarea {resize:vertical} .modal-ftr {padding:14px 20px; background:#f9f7f4; border-top:1px solid #e4ddd4; display:flex; gap:8px} .cam-modal {display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:600; flex-direction:column; align-items:center; justify-content:center; gap:14px} .cam-modal video {width:min(460px,90vw); border:2px solid #d97757; border-radius:10px; display:block} @media (max-width:600px) {.nav {padding:0 12px; gap:6px; height:52px} .nav-brand {font-size:16px} .nav-pill {display:none} .nav-input {display:none} .nav-sep {display:none} .nav-btn {font-size:10px; padding:5px 8px} .app {grid-template-columns:1fr} .sidebar {position:fixed; bottom:0; left:0; right:0; height:auto; z-index:50; border-top:1px solid #e4ddd4; border-left:none; flex-direction:row; overflow-x:auto} .sb-top {padding:8px; min-width:200px} .main {padding:16px; padding-bottom:140px} .result-row {grid-template-columns:1fr} .actions {flex-direction:column} .btn {width:100%; justify-content:center} .drop-zone {padding:16px 8px} .modal {max-width:100%; margin:0; border-radius:16px 16px 0 0} .modal-bg {padding:0; align-items:flex-end} } #installBanner {display:none; position:fixed; bottom:0; left:0; right:0; z-index:200; background:linear-gradient(135deg, #1a1410, #2e1a0e); border-top:1px solid #d97757; padding:12px 16px; flex-direction:row; align-items:center; gap:12px} #installBanner.show {display:flex} #mobileNav {display:none; position:fixed; bottom:0; left:0; right:0; z-index:90; background:#fff; border-top:1px solid #e4ddd4; flex-direction:row; height:56px} @media (max-width:600px) {#mobileNav {display:flex} } .mob-btn {flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; border:none; background:transparent; cursor:pointer; font-family:Tajawal, sans-serif; padding:4px; color:#8a8070; transition:color .15s} .mob-btn.active {color:#d97757} .mob-btn-icon {font-size:20px} .mob-btn-label {font-size:9px; font-weight:600} .swipe-hint {display:none} @media(max-width:600px) {.swipe-hint {display:block; font-size:10px; color:#8a8070; text-align:center; padding:4px} } .toast {position:fixed; bottom:24px; right:24px; background:#fff; border:1px solid #4a7a38; border-radius:10px; padding:12px 16px; font-size:13px; color:#1a1410; box-shadow:0 6px 24px rgba(0,0,0,.12); transform:translateY(60px); opacity:0; transition:all .25s; z-index:999; max-width:320px} .toast.show {transform:translateY(0); opacity:1}</style>
+<style>* {margin:0; padding:0; box-sizing:border-box} body {font-family:'Tajawal',sans-serif; background:#f5f4f0; color:#1a1410; min-height:100vh} .nav {position:fixed; top:0; left:0; right:0; z-index:100; height:56px; display:flex; align-items:center; gap:12px; padding:0 24px; background:#fff; border-bottom:1px solid #e4ddd4; box-shadow:0 1px 8px rgba(0,0,0,0.06)} .nav-logo {display:flex; align-items:center; gap:8px; text-decoration:none} .nav-brand {font-family:'Playfair Display',serif; font-style:italic; font-size:20px; color:#1a1410} .nav-brand span {color:#d97757} .nav-pill {font-size:9px; font-weight:700; letter-spacing:1px; background:rgba(217,119,87,.12); color:#d97757; border:1px solid rgba(217,119,87,.3); padding:2px 7px; border-radius:20px} .nav-right {margin-right:auto; display:flex; align-items:center; gap:8px; overflow-x:auto; max-width:100%; scrollbar-width:thin; padding-bottom:2px} .nav-right::-webkit-scrollbar {height:4px} .nav-right::-webkit-scrollbar-thumb {background:#e4ddd4; border-radius:3px} .nav-right .nav-btn {flex-shrink:0} .nav-input {background:#f5f4f0; border:1px solid #e4ddd4; border-radius:8px; padding:6px 12px; color:#1a1410; font-family:'Tajawal',sans-serif; font-size:12px; width:240px; outline:none; direction:ltr} .nav-input:focus {border-color:#d97757} .nav-btn {background:#d97757; color:#fff; border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:700; cursor:pointer; font-family:'Tajawal',sans-serif; white-space:nowrap} .nav-btn:hover {background:#c8663e} .nav-btn.green {background:#4a7a38} .nav-btn.green:hover {background:#3a6028} .nav-btn.outline {background:transparent; color:#5a5040; border:1px solid #e4ddd4} .nav-btn.outline:hover {border-color:#d97757; color:#d97757} .nav-sep {width:1px; height:22px; background:#e4ddd4; flex-shrink:0} .app {display:grid; grid-template-columns:300px 1fr; min-height:100vh; padding-top:56px} @media(max-width:800px) {.app {grid-template-columns:1fr} } .sidebar {background:#fff; border-left:1px solid #e4ddd4; display:flex; flex-direction:column; height:calc(100vh - 56px); position:sticky; top:56px; overflow:hidden} .sb-top {padding:16px; border-bottom:1px solid #e4ddd4} .sb-label {font-size:10px; font-weight:700; letter-spacing:2px; color:#8a8070; margin-bottom:12px} .drop-zone {border:2px dashed #e4ddd4; border-radius:12px; padding:24px 12px; text-align:center; cursor:pointer; background:#f9f7f4; position:relative; transition:all .2s} .drop-zone:hover, .drop-zone.drag {border-color:#d97757; background:rgba(217,119,87,.04)} .drop-zone input {position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%} .drop-icon {font-size:28px; margin-bottom:8px} .drop-text {font-size:13px; font-weight:700; color:#1a1410; margin-bottom:3px} .drop-sub {font-size:11px; color:#8a8070} .file-info {display:none; margin-top:10px; padding:10px; background:#f5f4f0; border:1px solid #e4ddd4; border-radius:8px} .file-name {font-size:12px; color:#d97757; font-weight:700} .file-size {font-size:11px; color:#8a8070; margin-top:2px} .excel-status {margin-top:10px; padding:8px 10px; border-radius:8px; font-size:12px} .excel-status.off {background:#fdf8f5; border:1px solid #f0e0d4; color:#a08070} .excel-status.on {background:#f2f8f0; border:1px solid #c4ddb8; color:#4a7a38} .proc-btn {width:100%; margin-top:12px; padding:11px; background:#d97757; color:#fff; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:'Tajawal',sans-serif; display:flex; align-items:center; justify-content:center; gap:8px; transition:all .2s} .proc-btn:hover:not(:disabled) {background:#c8663e} .proc-btn:disabled {opacity:.45; cursor:not-allowed} .cam-btn {width:100%; margin-top:8px; padding:8px; background:transparent; color:#8a8070; border:1px solid #e4ddd4; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:'Tajawal',sans-serif; display:flex; align-items:center; justify-content:center; gap:6px; transition:all .2s} .cam-btn:hover {border-color:#d97757; color:#d97757} .save-excel-btn {width:100%; margin-top:8px; padding:9px; display:none; background:#4a7a38; color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:'Tajawal',sans-serif} .stats {display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:12px 16px; border-bottom:1px solid #e4ddd4} .stat {background:#f9f7f4; border:1px solid #e4ddd4; border-radius:8px; padding:10px; text-align:center} .stat-n {font-family:'Playfair Display',serif; font-size:22px; color:#1a1410; line-height:1} .stat-n.org {color:#d97757} .stat-n.grn {color:#4a7a38} .stat-l {font-size:10px; color:#8a8070; margin-top:2px} .hist-hdr {padding:10px 16px 6px; font-size:10px; font-weight:700; letter-spacing:2px; color:#8a8070} .hist-list {flex:1; overflow-y:auto; padding:0 10px 10px} .hist-list::-webkit-scrollbar {width:3px} .hist-list::-webkit-scrollbar-thumb {background:#e4ddd4; border-radius:3px} .hist-item {background:#f9f7f4; border:1px solid #e4ddd4; border-radius:8px; padding:10px; margin-bottom:6px; cursor:pointer; transition:all .15s} .hist-item:hover, .hist-item.active {border-color:#d97757} .hist-vendor {font-size:13px; font-weight:700; color:#1a1410} .hist-amount {font-size:12px; color:#d97757; font-weight:600} .hist-date {font-size:10px; color:#8a8070} .hist-badge {display:inline-block; font-size:9px; font-weight:700; padding:2px 6px; border-radius:10px; margin-top:3px} .hist-badge.done {background:rgba(74,122,56,.12); color:#4a7a38; border:1px solid rgba(74,122,56,.2)} .hist-badge.pend {background:rgba(217,119,87,.1); color:#d97757; border:1px solid rgba(217,119,87,.2)} .hist-empty {text-align:center; padding:20px 12px; font-size:12px; color:#8a8070; line-height:1.7} .main {padding:28px; overflow-y:auto} .welcome {display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:calc(100vh - 120px); text-align:center} .welcome-icon {font-size:56px; margin-bottom:16px} .welcome h2 {font-family:'Playfair Display',serif; font-style:italic; font-size:32px; color:#1a1410; margin-bottom:10px} .welcome p {font-size:14px; color:#8a8070; line-height:1.7; max-width:340px} .loading {display:none; flex-direction:column; align-items:center; justify-content:center; min-height:calc(100vh - 120px); gap:16px; text-align:center} @keyframes hasibSpin {to {transform:rotate(360deg)} } @keyframes pulseDot {0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.7} } @keyframes slideIn {from{transform:translateX(120%);opacity:0} to{transform:translateX(0);opacity:1} } @keyframes slideOut {from{transform:translateX(0);opacity:1} to{transform:translateX(120%);opacity:0} } @keyframes blink {0%,100%{opacity:.4} 50%{opacity:1} } .loading-text {font-size:15px; font-weight:700; color:#d97757} .loading-step {font-size:13px; color:#8a8070; animation:blink 1.5s ease-in-out infinite} .result {display:none; flex-direction:column; gap:16px} .result-row {display:grid; grid-template-columns:1fr 1fr; gap:16px} @media(max-width:700px) {.result-row {grid-template-columns:1fr} } .card {background:#fff; border:1px solid #e4ddd4; border-radius:14px; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,0.04)} .card-hdr {padding:12px 16px; background:#f9f7f4; border-bottom:1px solid #e4ddd4; display:flex; align-items:center; gap:8px} .card-icon {font-size:16px} .card-title {font-size:13px; font-weight:700; color:#1a1410} .card-body {padding:16px} .data-row {display:flex; align-items:flex-start; gap:10px; margin-bottom:8px} .data-lbl {font-size:11px; color:#8a8070; min-width:100px; flex-shrink:0; padding-top:1px} .data-val {font-size:13px; color:#1a1410; font-weight:500} .data-val.org {color:#d97757; font-size:16px; font-weight:700} .data-val.grn {color:#4a7a38; font-size:16px; font-weight:700} .data-val.blu {color:#4a78a8} .conf-bar {height:5px; background:#e4ddd4; border-radius:3px; margin-top:10px; overflow:hidden} .conf-fill {height:100%; border-radius:3px; transition:width .5s} .alert-box {display:flex; gap:8px; align-items:flex-start; padding:10px 12px; border-radius:8px; margin-bottom:8px} .alert-box.good {background:rgba(74,122,56,.06); border:1px solid rgba(74,122,56,.18)} .alert-box.warn {background:rgba(217,119,87,.06); border:1px solid rgba(217,119,87,.18)} .alert-box-icon {font-size:16px; flex-shrink:0} .alert-box-text {font-size:12px; color:#5a5040; line-height:1.5} .journal {font-family:'Courier New',monospace; direction:ltr; text-align:left} .je-head {font-size:10px; font-weight:600; letter-spacing:2px; color:#8a8070; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid #e4ddd4} .je-row {display:grid; grid-template-columns:1fr auto auto; gap:8px; padding:6px 0; border-bottom:1px solid #f0ece4; align-items:center} .je-acc {font-size:12px; color:#1a1410} .je-acc.cr {color:#8a8070; font-size:11px; padding-right:16px} .je-dr {font-size:12px; font-weight:700; color:#d97757; min-width:80px} .je-cr {font-size:12px; font-weight:700; color:#4a78a8; min-width:80px} .je-total {display:grid; grid-template-columns:1fr auto auto; gap:8px; padding:10px 0 0} .je-total-lbl {font-size:12px; color:#8a8070; font-weight:700} .je-total-amt {font-size:12px; color:#4a7a38; font-weight:700; min-width:80px} .je-ok {font-size:11px; color:#4a7a38; margin-top:8px; text-align:center} .audit-item {display:flex; gap:8px; align-items:flex-start; padding:8px; background:#f9f7f4; border-radius:7px; margin-bottom:6px} .audit-dot {width:7px; height:7px; border-radius:50%; flex-shrink:0; margin-top:3px} .audit-time {font-size:10px; color:#8a8070; min-width:50px; flex-shrink:0; font-family:'Courier New',monospace} .audit-text {font-size:12px; color:#5a5040; line-height:1.4} .actions {display:flex; gap:10px; flex-wrap:wrap} .btn {display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; padding:10px 18px; border-radius:9px; border:none; cursor:pointer; font-family:'Tajawal',sans-serif; transition:all .15s} .btn-primary {background:#d97757; color:#fff} .btn-primary:hover {background:#c8663e} .btn-secondary {background:#4a7a38; color:#fff} .btn-secondary:hover {background:#3a6028} .btn-outline {background:transparent; color:#5a5040; border:1px solid #e4ddd4} .btn-outline:hover {border-color:#d97757; color:#d97757} .btn-edit {background:transparent; color:#d97757; border:1px solid #d97757} .btn-edit:hover {background:rgba(217,119,87,.08)} .banner {display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:10px; font-size:12px} .banner.green {background:#f2f8f0; border:1px solid #c4ddb8; color:#4a7a38} .banner.orange {background:#fdf8f5; border:1px solid #f0d4c4; color:#d97757} .modal-bg {display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:500; overflow-y:auto; padding:30px 16px} .modal {max-width:640px; margin:0 auto; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.15)} .modal-hdr {padding:16px 20px; background:#f9f7f4; border-bottom:1px solid #e4ddd4; display:flex; align-items:center; justify-content:space-between} .modal-title {font-size:15px; font-weight:700; color:#1a1410} .modal-close {background:transparent; border:1px solid #e4ddd4; color:#8a8070; width:28px; height:28px; border-radius:7px; cursor:pointer; font-size:14px} .modal-body {padding:20px; display:flex; flex-direction:column; gap:12px} .modal-grid {display:grid; grid-template-columns:1fr 1fr; gap:12px} .field {display:flex; flex-direction:column; gap:4px} .field label {font-size:11px; font-weight:600; color:#8a8070} .field input, .field select, .field textarea {background:#f9f7f4; border:1px solid #e4ddd4; border-radius:8px; padding:8px 10px; color:#1a1410; font-family:'Tajawal',sans-serif; font-size:13px; outline:none; width:100%} .field input:focus, .field select:focus, .field textarea:focus {border-color:#d97757} .field textarea {resize:vertical} .modal-ftr {padding:14px 20px; background:#f9f7f4; border-top:1px solid #e4ddd4; display:flex; gap:8px} .cam-modal {display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:600; flex-direction:column; align-items:center; justify-content:center; gap:14px} .cam-modal video {width:min(460px,90vw); border:2px solid #d97757; border-radius:10px; display:block} @media (max-width:600px) {.nav {padding:0 12px; gap:6px; height:52px} .nav-brand {font-size:16px} .nav-pill {display:none} .nav-input {display:none} .nav-sep {display:none} .nav-btn {font-size:10px; padding:5px 8px} .app {grid-template-columns:1fr} .sidebar {position:fixed; bottom:0; left:0; right:0; height:auto; z-index:50; border-top:1px solid #e4ddd4; border-left:none; flex-direction:row; overflow-x:auto} .sb-top {padding:8px; min-width:200px} .main {padding:16px; padding-bottom:140px} .result-row {grid-template-columns:1fr} .actions {flex-direction:column} .btn {width:100%; justify-content:center} .drop-zone {padding:16px 8px} .modal {max-width:100%; margin:0; border-radius:16px 16px 0 0} .modal-bg {padding:0; align-items:flex-end} } #installBanner {display:none; position:fixed; bottom:0; left:0; right:0; z-index:200; background:linear-gradient(135deg, #1a1410, #2e1a0e); border-top:1px solid #d97757; padding:12px 16px; flex-direction:row; align-items:center; gap:12px} #installBanner.show {display:flex} #mobileNav {display:none; position:fixed; bottom:0; left:0; right:0; z-index:90; background:#fff; border-top:1px solid #e4ddd4; flex-direction:row; height:56px} @media (max-width:600px) {#mobileNav {display:flex} } .mob-btn {flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; border:none; background:transparent; cursor:pointer; font-family:Tajawal, sans-serif; padding:4px; color:#8a8070; transition:color .15s} .mob-btn.active {color:#d97757} .mob-btn-icon {font-size:20px} .mob-btn-label {font-size:9px; font-weight:600} .swipe-hint {display:none} @media(max-width:600px) {.swipe-hint {display:block; font-size:10px; color:#8a8070; text-align:center; padding:4px} } .toast {position:fixed; bottom:24px; right:24px; background:#fff; border:1px solid #4a7a38; border-radius:10px; padding:12px 16px; font-size:13px; color:#1a1410; box-shadow:0 6px 24px rgba(0,0,0,.12); transform:translateY(60px); opacity:0; transition:all .25s; z-index:999; max-width:320px} .toast.show {transform:translateY(0); opacity:1}</style>
 </head>
 <body>
 
@@ -40,22 +40,22 @@
     <button class="nav-btn outline" id="langBtn" onclick="toggleLang()">EN</button>
     <span class="nav-sep"></span>
     <input class="nav-input" id="apiKey" type="password" placeholder="sk-ant-... أدخل API Key هنا" dir="ltr">
-    <button class="nav-btn" onclick="saveKey()">حفظ</button>
+    <button class="nav-btn" onclick="saveKey()" id="saveKeyBtn">حفظ</button>
     <span class="nav-sep"></span>
-    <button class="nav-btn green" onclick="openExcel()">📂 افتح Excel</button>
+    <button class="nav-btn green" onclick="openExcel()" id="openExcelBtn">📂 افتح Excel</button>
     <input type="file" id="excelInput" accept=".xlsx" onchange="loadExcel(event)" style="display:none">
     <span id="excelName" style="font-size:11px;color:#4a7a38;font-weight:600;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
     <span class="nav-sep"></span>
-    <button class="nav-btn" onclick="openReport()" style="background:#4a78a8;">📊 تقرير شهري</button>
-    <button class="nav-btn" onclick="openDash()" style="background:#9a5ab8;">📈 لوحة التحكم</button>
+    <button class="nav-btn" onclick="openReport()" style="background:#4a78a8;" id="openReportBtn">📊 تقرير شهري</button>
+    <button class="nav-btn" onclick="openDash()" style="background:#9a5ab8;" id="openDashBtn">📈 لوحة التحكم</button>
     <button class="nav-btn" onclick="openBudget()" style="background:#c04858;" id="budgetNavBtn">🎯 الميزانية</button>
     <span class="nav-sep"></span>
     <button class="nav-btn" onclick="openAccountingIntegration()" style="background:#714b67;" id="accountingNavBtn">🔗 ربط نظام</button>
     <span class="nav-sep"></span>
-    <button class="nav-btn" onclick="openQuickEntry()" style="background:#1a6b3a;">⚡ إدخال سريع</button>
+    <button class="nav-btn" onclick="openQuickEntry()" style="background:#1a6b3a;" id="openQuickBtn">⚡ إدخال سريع</button>
     <span class="nav-sep"></span>
-    <button class="nav-btn" onclick="openReconcile()" style="background:#2e6b6b;">🏦 مطابقة بنكية</button>
-    <button class="nav-btn" onclick="openMonthClose()" style="background:#3a3a5a;">✅ إغلاق الشهر</button>
+    <button class="nav-btn" onclick="openReconcile()" style="background:#2e6b6b;" id="openReconcileBtn">🏦 مطابقة بنكية</button>
+    <button class="nav-btn" onclick="openMonthClose()" style="background:#3a3a5a;" id="openCloseBtn">✅ إغلاق الشهر</button>
     <div id="budgetAlertDot" style="display:none;width:8px;height:8px;background:#c04858;border-radius:50%;position:absolute;top:10px;animation:pulseDot 1.5s ease-in-out infinite;"></div>
   </div>
 </nav>
@@ -227,12 +227,12 @@
       <div style="display:flex;align-items:center;gap:10px;">
         <span style="font-size:22px;">⚡</span>
         <div>
-          <div style="font-size:16px;font-weight:700;color:#fff;">إدخال سريع للفواتير</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.6);">أدخل بيانات الفاتورة مباشرة — بدون رفع ملف</div>
+          <div style="font-size:16px;font-weight:700;color:#fff;" id="quickModalTitle">إدخال سريع للفواتير</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.6);" id="quickModalSub">أدخل بيانات الفاتورة مباشرة — بدون رفع ملف</div>
         </div>
       </div>
       <div style="display:flex;gap:8px;">
-        <button onclick="clearQuickForm()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:Tajawal,sans-serif;font-size:12px;">🗑️ مسح</button>
+        <button onclick="clearQuickForm()" id="clearQuickBtn" style="background:rgba(255,255,255,0.15);border:none;color:#fff;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:Tajawal,sans-serif;font-size:12px;">🗑️ مسح</button>
         <button onclick="closeQuickEntry()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:16px;">✕</button>
       </div>
     </div>
@@ -258,7 +258,7 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
 
         <div style="display:flex;flex-direction:column;gap:4px;">
-          <label style="font-size:11px;font-weight:600;color:#8a8070;">اسم المورّد *</label>
+          <label style="font-size:11px;font-weight:600;color:#8a8070;" id="qVendorLbl">اسم المورّد *</label>
           <input id="qVendor" type="text" placeholder="مثال: شركة المواد التجارية"
             style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:9px 12px;font-family:Tajawal,sans-serif;font-size:13px;outline:none;color:#1a1410;"
             oninput="qAutoFill()">
@@ -266,19 +266,19 @@
         </div>
 
         <div style="display:flex;flex-direction:column;gap:4px;">
-          <label style="font-size:11px;font-weight:600;color:#8a8070;">رقم الفاتورة *</label>
+          <label style="font-size:11px;font-weight:600;color:#8a8070;" id="qInvNumLbl">رقم الفاتورة *</label>
           <input id="qInvNum" type="text" placeholder="INV-2026-001" dir="ltr"
             style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:9px 12px;font-family:monospace;font-size:13px;outline:none;color:#1a1410;">
         </div>
 
         <div style="display:flex;flex-direction:column;gap:4px;">
-          <label style="font-size:11px;font-weight:600;color:#8a8070;">التاريخ *</label>
+          <label style="font-size:11px;font-weight:600;color:#8a8070;" id="qDateLbl">التاريخ *</label>
           <input id="qDate" type="date"
             style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:9px 12px;font-family:Tajawal,sans-serif;font-size:13px;outline:none;color:#1a1410;direction:ltr;">
         </div>
 
         <div style="display:flex;flex-direction:column;gap:4px;">
-          <label style="font-size:11px;font-weight:600;color:#8a8070;">طريقة الدفع</label>
+          <label style="font-size:11px;font-weight:600;color:#8a8070;" id="qPayMethodLbl">طريقة الدفع</label>
           <select id="qPayMethod"
             style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:9px 12px;font-family:Tajawal,sans-serif;font-size:13px;outline:none;color:#1a1410;">
             <option>بنك الاهلي مؤسسة</option>
@@ -292,7 +292,7 @@
         </div>
 
         <div style="display:flex;flex-direction:column;gap:4px;">
-          <label style="font-size:11px;font-weight:600;color:#8a8070;">المبلغ الإجمالي (شامل VAT) *</label>
+          <label style="font-size:11px;font-weight:600;color:#8a8070;" id="qTotalLbl">المبلغ الإجمالي (شامل VAT) *</label>
           <input id="qTotal" type="number" step="0.01" placeholder="0.00" dir="ltr"
             style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:9px 12px;font-family:monospace;font-size:14px;font-weight:700;outline:none;color:#d97757;"
             oninput="qCalcVAT()">
@@ -300,12 +300,12 @@
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
           <div style="display:flex;flex-direction:column;gap:4px;">
-            <label style="font-size:11px;font-weight:600;color:#8a8070;">قبل VAT</label>
+            <label style="font-size:11px;font-weight:600;color:#8a8070;" id="qSubLbl">قبل VAT</label>
             <input id="qSub" type="number" step="0.01" placeholder="0.00" dir="ltr" readonly
               style="background:#f0f8f0;border:1px solid #c4ddb8;border-radius:8px;padding:9px 12px;font-family:monospace;font-size:12px;outline:none;color:#4a7a38;">
           </div>
           <div style="display:flex;flex-direction:column;gap:4px;">
-            <label style="font-size:11px;font-weight:600;color:#8a8070;">VAT 15%</label>
+            <label style="font-size:11px;font-weight:600;color:#8a8070;" id="qVatLbl">VAT 15%</label>
             <input id="qVat" type="number" step="0.01" placeholder="0.00" dir="ltr" readonly
               style="background:#f0f0f8;border:1px solid #c4c8db;border-radius:8px;padding:9px 12px;font-family:monospace;font-size:12px;outline:none;color:#4a78a8;">
           </div>
@@ -315,7 +315,7 @@
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
         <div style="display:flex;flex-direction:column;gap:4px;">
-          <label style="font-size:11px;font-weight:600;color:#8a8070;">نوع الحساب</label>
+          <label style="font-size:11px;font-weight:600;color:#8a8070;" id="qAccTypeLbl">نوع الحساب</label>
           <select id="qAccType"
             style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:9px 12px;font-family:Tajawal,sans-serif;font-size:13px;outline:none;color:#1a1410;">
             <option>م تشغلية</option>
@@ -334,7 +334,7 @@
         </div>
 
         <div style="display:flex;flex-direction:column;gap:4px;">
-          <label style="font-size:11px;font-weight:600;color:#8a8070;">نوع المستند</label>
+          <label style="font-size:11px;font-weight:600;color:#8a8070;" id="qDocTypeLbl">نوع المستند</label>
           <select id="qDocType"
             style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:9px 12px;font-family:Tajawal,sans-serif;font-size:13px;outline:none;color:#1a1410;">
             <option>فاتورة ضريبة</option>
@@ -346,14 +346,14 @@
       </div>
 
       <div style="margin-top:12px;display:flex;flex-direction:column;gap:4px;">
-        <label style="font-size:11px;font-weight:600;color:#8a8070;">البيان / الوصف</label>
+        <label style="font-size:11px;font-weight:600;color:#8a8070;" id="qDescLbl">البيان / الوصف</label>
         <input id="qDesc" type="text" placeholder="مثال: خدمات صيانة شهر أغسطس"
           style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:9px 12px;font-family:Tajawal,sans-serif;font-size:13px;outline:none;color:#1a1410;">
       </div>
 
       <!-- Preview -->
       <div id="qPreview" style="display:none;margin-top:14px;background:#f2f8f0;border:1px solid #c4ddb8;border-radius:10px;padding:12px 16px;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:#4a7a38;margin-bottom:8px;">معاينة القيد</div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:#4a7a38;margin-bottom:8px;" id="qPreviewLbl">معاينة القيد</div>
         <div id="qPreviewContent" style="font-family:monospace;font-size:12px;color:#1a1410;line-height:2;direction:ltr;text-align:left;"></div>
       </div>
 
@@ -363,8 +363,8 @@
     <div id="tabContentScan" style="display:none;padding:20px 24px;">
       <div style="text-align:center;padding:20px 0;">
         <div style="font-size:48px;margin-bottom:12px;">📷</div>
-        <div style="font-size:15px;font-weight:700;color:#1a1410;margin-bottom:8px;">مسح الفاتورة بالكاميرا</div>
-        <div style="font-size:12px;color:#8a8070;margin-bottom:20px;">وجّه الكاميرا على الفاتورة — حاسِب يستخرج البيانات تلقائياً</div>
+        <div style="font-size:15px;font-weight:700;color:#1a1410;margin-bottom:8px;" id="scanTitleLbl">مسح الفاتورة بالكاميرا</div>
+        <div style="font-size:12px;color:#8a8070;margin-bottom:20px;" id="scanSubLbl">وجّه الكاميرا على الفاتورة — حاسِب يستخرج البيانات تلقائياً</div>
         <div style="position:relative;display:inline-block;border:2px solid #1a6b3a;border-radius:12px;overflow:hidden;">
           <video id="quickCamVideo" autoplay playsinline style="width:min(440px,80vw);height:auto;display:block;"></video>
           <div style="position:absolute;inset:0;border:3px dashed rgba(26,107,58,0.4);margin:16px;border-radius:8px;pointer-events:none;"></div>
@@ -377,9 +377,9 @@
           </button>
           <button onclick="captureQuickCam()" id="captureCamBtn" disabled
             style="background:#d97757;color:#fff;border:none;padding:10px 22px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;opacity:0.5;">
-            📸 التقط ومعالج
+            📸 <span id="captureCamTxt">التقط ومعالج</span>
           </button>
-          <button onclick="stopQuickCam()"
+          <button onclick="stopQuickCam()" id="stopCamBtn"
             style="background:transparent;border:1px solid #e4ddd4;color:#8a8070;padding:10px 16px;border-radius:9px;font-size:13px;cursor:pointer;font-family:Tajawal,sans-serif;">
             إيقاف
           </button>
@@ -390,8 +390,8 @@
     <!-- TAB: BULK -->
     <div id="tabContentBulk" style="display:none;padding:20px 24px;">
       <div style="margin-bottom:12px;">
-        <div style="font-size:12px;font-weight:700;color:#8a8070;margin-bottom:8px;">أدخل فواتير متعددة — كل سطر فاتورة واحدة</div>
-        <div style="font-size:11px;color:#a0a090;margin-bottom:10px;direction:ltr;text-align:left;font-family:monospace;">
+        <div style="font-size:12px;font-weight:700;color:#8a8070;margin-bottom:8px;" id="bulkIntroLbl">أدخل فواتير متعددة — كل سطر فاتورة واحدة</div>
+        <div style="font-size:11px;color:#a0a090;margin-bottom:10px;direction:ltr;text-align:left;font-family:monospace;" id="bulkFormatLbl">
           التنسيق: المورد | رقم الفاتورة | التاريخ | الإجمالي | نوع الحساب
         </div>
         <div style="background:#f5f4f0;border:1px solid #e4ddd4;border-radius:8px;padding:10px;font-family:monospace;font-size:11px;color:#8a8070;margin-bottom:10px;direction:ltr;">
@@ -407,7 +407,7 @@
         <div style="font-size:11px;font-weight:700;color:#4a7a38;margin-bottom:8px;" id="bulkCount"></div>
         <div id="bulkTable" style="overflow-x:auto;font-size:11px;"></div>
       </div>
-      <button onclick="parseBulk()"
+      <button onclick="parseBulk()" id="bulkPreviewBtn"
         style="background:#1a6b3a;color:#fff;border:none;padding:9px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;margin-top:8px;">
         🔍 معاينة
       </button>
@@ -419,14 +419,14 @@
         style="background:#1a6b3a;color:#fff;border:none;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">
         ✅ حفظ وإرسال للشيت
       </button>
-      <button onclick="saveQuickAndNew()"
+      <button onclick="saveQuickAndNew()" id="saveQuickNewBtn"
         style="background:#d97757;color:#fff;border:none;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">
         ✅ حفظ والتالي
       </button>
       <button onclick="saveBulkEntries()" id="saveBulkBtn" style="display:none;background:#4a78a8;color:#fff;border:none;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">
         📥 حفظ الكل
       </button>
-      <button onclick="closeQuickEntry()"
+      <button onclick="closeQuickEntry()" id="closeQuickBtn"
         style="background:transparent;border:1px solid #e4ddd4;color:#8a8070;padding:11px 18px;border-radius:10px;font-size:13px;cursor:pointer;font-family:Tajawal,sans-serif;">
         إلغاء
       </button>
@@ -444,8 +444,8 @@
       <div style="display:flex;align-items:center;gap:12px;">
         <span style="font-size:26px;">🔗</span>
         <div>
-          <div style="font-size:16px;font-weight:700;color:#fff;">ربط نظام محاسبي</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.5);">اختر النظام المحاسبي لإرسال القيود تلقائياً</div>
+          <div style="font-size:16px;font-weight:700;color:#fff;" id="acctModalTitle">ربط نظام محاسبي</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);" id="acctModalSub">اختر النظام المحاسبي لإرسال القيود تلقائياً</div>
         </div>
       </div>
       <button onclick="closeAccountingModal()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:16px;">✕</button>
@@ -459,7 +459,7 @@
 
     <!-- Provider Grid -->
     <div style="padding:20px 24px;">
-      <div style="font-size:11px;font-weight:700;color:#8a8070;letter-spacing:2px;margin-bottom:14px;">اختر النظام المحاسبي</div>
+      <div style="font-size:11px;font-weight:700;color:#8a8070;letter-spacing:2px;margin-bottom:14px;" id="acctChooseLbl">اختر النظام المحاسبي</div>
       <div id="providerGrid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;"></div>
 
       <!-- Settings area — shown after provider selected -->
@@ -483,11 +483,11 @@
 
         <!-- OAuth2 info (for oauth providers) -->
         <div id="acctOAuthInfo" style="display:none;background:#f0f8ff;border:1px solid #c4d8f0;border-radius:10px;padding:14px;">
-          <div style="font-size:13px;color:#3a6ab8;font-weight:700;margin-bottom:6px;">🔐 تسجيل دخول آمن</div>
+          <div style="font-size:13px;color:#3a6ab8;font-weight:700;margin-bottom:6px;" id="acctOAuthTitle">🔐 تسجيل دخول آمن</div>
           <div style="font-size:12px;color:#5a5040;line-height:1.7;" id="acctOAuthDesc">
             سيتم توجيهك لصفحة تسجيل الدخول الرسمية للنظام للمصادقة الآمنة.
           </div>
-          <div style="margin-top:10px;font-size:11px;color:#8a8070;">
+          <div style="margin-top:10px;font-size:11px;color:#8a8070;" id="acctOAuthNote">
             ⚠️ هذه الميزة تحتاج Backend — متاحة في النسخة المؤسسية
           </div>
         </div>
@@ -505,7 +505,7 @@
           <button id="acctDisconnectBtn" onclick="disconnectAccounting()" style="display:none;background:transparent;border:1px solid #e4ddd4;color:#c04858;padding:10px 16px;border-radius:9px;font-size:13px;cursor:pointer;font-family:Tajawal,sans-serif;">
             ⏏ قطع الاتصال
           </button>
-          <button onclick="closeAccountingModal()"
+          <button onclick="closeAccountingModal()" id="acctCancelBtn"
             style="background:transparent;border:1px solid #e4ddd4;color:#8a8070;padding:10px 16px;border-radius:9px;font-size:13px;cursor:pointer;font-family:Tajawal,sans-serif;">
             إلغاء
           </button>
@@ -515,7 +515,7 @@
 
     <!-- Send log -->
     <div id="acctLog" style="display:none;padding:0 24px 16px;border-top:1px solid #e4ddd4;max-height:140px;overflow-y:auto;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:#8a8070;margin:10px 0 6px;">سجل الإرسال</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:#8a8070;margin:10px 0 6px;" id="acctLogLbl">سجل الإرسال</div>
       <div id="acctLogItems" style="font-family:monospace;font-size:11px;color:#5a5040;line-height:1.8;"></div>
     </div>
   </div>
@@ -530,8 +530,8 @@
       <div style="display:flex;align-items:center;gap:12px;">
         <span style="font-size:28px;">🟣</span>
         <div>
-          <div style="font-size:16px;font-weight:700;color:#fff;">ربط Odoo بحاسِب</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.6);">إرسال القيود المحاسبية مباشرة لـ Odoo</div>
+          <div style="font-size:16px;font-weight:700;color:#fff;" id="odooModalTitle">ربط Odoo بحاسِب</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.6);" id="odooModalSub">إرسال القيود المحاسبية مباشرة لـ Odoo</div>
         </div>
       </div>
       <button onclick="closeOdoo()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:16px;">✕</button>
@@ -546,33 +546,33 @@
     <!-- Connection Fields -->
     <div style="padding:20px 24px;display:flex;flex-direction:column;gap:12px;">
 
-      <div style="background:#fdf8ff;border:1px solid #e8d8f0;border-radius:10px;padding:12px 14px;font-size:12px;color:#714b67;line-height:1.7;">
-        💡 <strong>كيف تحصل على البيانات:</strong><br>
-        في Odoo: الإعدادات ← المستخدمون ← مفتاح API ← إنشاء مفتاح جديد
+      <div style="background:#fdf8ff;border:1px solid #e8d8f0;border-radius:10px;padding:12px 14px;font-size:12px;color:#714b67;line-height:1.7;" id="odooHowToBox">
+        💡 <strong id="odooHowToTitle">كيف تحصل على البيانات:</strong><br>
+        <span id="odooHowToBody">في Odoo: الإعدادات ← المستخدمون ← مفتاح API ← إنشاء مفتاح جديد</span>
       </div>
 
       <div style="display:grid;grid-template-columns:1fr;gap:10px;">
         <div style="display:flex;flex-direction:column;gap:4px;">
-          <label style="font-size:11px;font-weight:600;color:#8a8070;">رابط Odoo (URL)</label>
+          <label style="font-size:11px;font-weight:600;color:#8a8070;" id="odooUrlLbl">رابط Odoo (URL)</label>
           <input id="odooUrl" type="text" placeholder="https://mycompany.odoo.com"
             dir="ltr"
             style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:9px 12px;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;color:#1a1410;">
         </div>
         <div style="display:flex;flex-direction:column;gap:4px;">
-          <label style="font-size:11px;font-weight:600;color:#8a8070;">قاعدة البيانات (Database)</label>
+          <label style="font-size:11px;font-weight:600;color:#8a8070;" id="odooDbLbl">قاعدة البيانات (Database)</label>
           <input id="odooDb" type="text" placeholder="mycompany"
             dir="ltr"
             style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:9px 12px;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;color:#1a1410;">
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
           <div style="display:flex;flex-direction:column;gap:4px;">
-            <label style="font-size:11px;font-weight:600;color:#8a8070;">اسم المستخدم (Email)</label>
+            <label style="font-size:11px;font-weight:600;color:#8a8070;" id="odooUserLbl">اسم المستخدم (Email)</label>
             <input id="odooUser" type="text" placeholder="admin@company.com"
               dir="ltr"
               style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:9px 12px;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;color:#1a1410;">
           </div>
           <div style="display:flex;flex-direction:column;gap:4px;">
-            <label style="font-size:11px;font-weight:600;color:#8a8070;">مفتاح API</label>
+            <label style="font-size:11px;font-weight:600;color:#8a8070;" id="odooKeyLbl">مفتاح API</label>
             <input id="odooApiKey" type="password" placeholder="your-api-key"
               dir="ltr"
               style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:9px 12px;font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;color:#1a1410;">
@@ -582,21 +582,21 @@
 
       <!-- Journal selector -->
       <div style="display:flex;flex-direction:column;gap:4px;">
-        <label style="font-size:11px;font-weight:600;color:#8a8070;">دفتر اليومية في Odoo</label>
+        <label style="font-size:11px;font-weight:600;color:#8a8070;" id="odooJournalLbl">دفتر اليومية في Odoo</label>
         <select id="odooJournal"
           style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:9px 12px;font-family:Tajawal,sans-serif;font-size:13px;outline:none;color:#1a1410;">
-          <option value="1">يومية المشتريات (Purchase Journal)</option>
-          <option value="2">يومية المبيعات (Sales Journal)</option>
-          <option value="7">يومية متنوعة (Miscellaneous)</option>
-          <option value="custom">مخصص — أدخل رقم اليومية</option>
+          <option value="1" id="odooJournalOpt1">يومية المشتريات (Purchase Journal)</option>
+          <option value="2" id="odooJournalOpt2">يومية المبيعات (Sales Journal)</option>
+          <option value="7" id="odooJournalOpt7">يومية متنوعة (Miscellaneous)</option>
+          <option value="custom" id="odooJournalOptCustom">مخصص — أدخل رقم اليومية</option>
         </select>
       </div>
 
       <!-- Auto-post toggle -->
       <div style="display:flex;align-items:center;justify-content:space-between;background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:10px 14px;">
         <div>
-          <div style="font-size:13px;color:#1a1410;font-weight:600;">ترحيل تلقائي</div>
-          <div style="font-size:11px;color:#8a8070;">إذا مفعّل — القيد يُرحَّل مباشرة. إذا مطفأ — يبقى مسودة للمراجعة</div>
+          <div style="font-size:13px;color:#1a1410;font-weight:600;" id="odooAutoLbl">ترحيل تلقائي</div>
+          <div style="font-size:11px;color:#8a8070;" id="odooAutoHint">إذا مفعّل — القيد يُرحَّل مباشرة. إذا مطفأ — يبقى مسودة للمراجعة</div>
         </div>
         <div id="odooAutoToggle" onclick="toggleOdooAuto()"
           style="width:44px;height:24px;background:#e4ddd4;border-radius:12px;cursor:pointer;position:relative;transition:.2s;flex-shrink:0;">
@@ -608,17 +608,17 @@
 
     <!-- Footer -->
     <div style="padding:14px 24px;background:#f9f7f4;border-top:1px solid #e4ddd4;display:flex;gap:8px;flex-wrap:wrap;">
-      <button onclick="testOdooConnection()" style="background:#714b67;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">🔌 اختبر الاتصال</button>
-      <button onclick="saveOdooSettings()" style="background:#4a7a38;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">💾 حفظ</button>
+      <button onclick="testOdooConnection()" id="odooTestBtn" style="background:#714b67;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">🔌 اختبر الاتصال</button>
+      <button onclick="saveOdooSettings()" id="odooSaveBtn" style="background:#4a7a38;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">💾 حفظ</button>
       <button onclick="sendCurrentToOdoo()" id="sendOdooBtn" disabled
         style="background:#1a1410;color:#8a8070;border:1px solid #e4ddd4;padding:10px 20px;border-radius:9px;font-size:13px;font-weight:700;cursor:not-allowed;font-family:Tajawal,sans-serif;">📤 أرسل القيد الحالي</button>
-      <button onclick="readFromOdoo()" style="background:#3a6ab8;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">📥 اقرأ من Odoo</button>
-      <button onclick="closeOdoo()" style="background:transparent;border:1px solid #e4ddd4;color:#8a8070;padding:10px 16px;border-radius:9px;font-size:13px;cursor:pointer;font-family:Tajawal,sans-serif;">إلغاء</button>
+      <button onclick="readFromOdoo()" id="odooReadBtn" style="background:#3a6ab8;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">📥 اقرأ من Odoo</button>
+      <button onclick="closeOdoo()" id="odooCancelBtn" style="background:transparent;border:1px solid #e4ddd4;color:#8a8070;padding:10px 16px;border-radius:9px;font-size:13px;cursor:pointer;font-family:Tajawal,sans-serif;">إلغاء</button>
     </div>
 
     <!-- Send Log -->
     <div id="odooLog" style="display:none;padding:12px 24px 16px;border-top:1px solid #e4ddd4;max-height:160px;overflow-y:auto;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:#8a8070;margin-bottom:8px;">سجل الإرسال</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:#8a8070;margin-bottom:8px;" id="odooLogLbl">سجل الإرسال</div>
       <div id="odooLogItems" style="font-family:monospace;font-size:11px;color:#5a5040;line-height:1.8;"></div>
     </div>
 
@@ -670,7 +670,7 @@
           <div style="display:flex;align-items:center;gap:6px;">
             <input id="alertThreshInput" type="number" min="50" max="100" value="80"
               style="width:60px;background:#fff;border:1px solid #f0e0c8;border-radius:8px;padding:6px 8px;font-family:Tajawal,sans-serif;font-size:14px;font-weight:700;color:#c04858;outline:none;text-align:center;">
-            <span style="font-size:13px;color:#a06030;">% من الميزانية</span>
+            <span style="font-size:13px;color:#a06030;" id="alertThreshSuffix">% من الميزانية</span>
           </div>
         </div>
       </div>
@@ -695,8 +695,8 @@
       <div style="display:flex;align-items:center;gap:10px;">
         <span style="font-size:24px;">🏦</span>
         <div>
-          <div style="font-size:16px;font-weight:700;color:#fff;">المطابقة البنكية (Reconciliation)</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.65);">مطابقة كشف الحساب البنكي مع الفواتير المعتمدة تلقائياً</div>
+          <div style="font-size:16px;font-weight:700;color:#fff;" id="reconcileModalTitle">المطابقة البنكية (Reconciliation)</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.65);" id="reconcileModalSub">مطابقة كشف الحساب البنكي مع الفواتير المعتمدة تلقائياً</div>
         </div>
       </div>
       <button onclick="closeReconcile()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:16px;">✕</button>
@@ -704,13 +704,13 @@
     <div style="padding:20px 24px;">
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <label style="background:#fff;border:1px solid #e4ddd4;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:700;color:#2e6b6b;cursor:pointer;">
-          📂 ارفع كشف الحساب البنكي (Excel/CSV)
+          <span id="uploadBankLabel">📂 ارفع كشف الحساب البنكي (Excel/CSV)</span>
           <input type="file" id="bankStatementInput" accept=".xlsx,.csv" onchange="loadBankStatement(event)" style="display:none;">
         </label>
         <span id="bankFileName" style="font-size:12px;color:#8a8070;"></span>
-        <button onclick="runReconciliation()" style="background:#2e6b6b;color:#fff;border:none;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">🔄 نفّذ المطابقة</button>
+        <button onclick="runReconciliation()" id="runReconcileBtn" style="background:#2e6b6b;color:#fff;border:none;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">🔄 نفّذ المطابقة</button>
       </div>
-      <div style="font-size:11px;color:#8a8070;margin-top:8px;">الأعمدة المتوقعة بأي ترتيب: التاريخ (Date)، الوصف/المستفيد (Description)، المبلغ (Amount). المطابقة تتم حسب المبلغ (±1 ر.س) والتاريخ (±3 أيام) وتشابه اسم المورد.</div>
+      <div style="font-size:11px;color:#8a8070;margin-top:8px;" id="reconcileColsHint">الأعمدة المتوقعة بأي ترتيب: التاريخ (Date)، الوصف/المستفيد (Description)، المبلغ (Amount). المطابقة تتم حسب المبلغ (±1 ر.س) والتاريخ (±3 أيام) وتشابه اسم المورد.</div>
       <div id="reconcileSummary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px;"></div>
       <div id="reconcileResultsBox" style="margin-top:16px;"></div>
     </div>
@@ -724,15 +724,15 @@
       <div style="display:flex;align-items:center;gap:10px;">
         <span style="font-size:24px;">✅</span>
         <div>
-          <div style="font-size:16px;font-weight:700;color:#fff;">إغلاق الشهر (Month-End Close)</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.65);">تحقق من اكتمال كل بنود الإغلاق قبل قفل الشهر محاسبياً</div>
+          <div style="font-size:16px;font-weight:700;color:#fff;" id="closeModalTitle">إغلاق الشهر (Month-End Close)</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.65);" id="closeModalSub">تحقق من اكتمال كل بنود الإغلاق قبل قفل الشهر محاسبياً</div>
         </div>
       </div>
       <button onclick="closeMonthCloseModal()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:16px;">✕</button>
     </div>
     <div style="padding:20px 24px;">
       <div class="field" style="margin-bottom:14px;">
-        <label>اختر الشهر</label>
+        <label id="closeMonthSelectLbl">اختر الشهر</label>
         <select id="closeMonthSelect" onchange="evaluateCloseChecklist()" style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:8px 10px;font-family:Tajawal,sans-serif;font-size:13px;"></select>
       </div>
       <div id="closeChecklist" style="display:flex;flex-direction:column;gap:8px;"></div>
@@ -740,7 +740,7 @@
     </div>
     <div style="padding:14px 24px;background:#f9f7f4;border-top:1px solid #e4ddd4;display:flex;gap:8px;">
       <button id="closeMonthBtn" onclick="closeMonthNow()" style="background:#3a3a5a;color:#fff;border:none;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">🔒 إغلاق الشهر نهائياً</button>
-      <button onclick="closeMonthCloseModal()" style="background:transparent;border:1px solid #e4ddd4;color:#8a8070;padding:11px 18px;border-radius:10px;font-size:13px;cursor:pointer;font-family:Tajawal,sans-serif;">إلغاء</button>
+      <button onclick="closeMonthCloseModal()" id="cancelCloseBtn" style="background:transparent;border:1px solid #e4ddd4;color:#8a8070;padding:11px 18px;border-radius:10px;font-size:13px;cursor:pointer;font-family:Tajawal,sans-serif;">إلغاء</button>
     </div>
   </div>
 </div>
@@ -819,7 +819,7 @@
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
-        <button onclick="exportDashExcel()" class="nav-btn" style="background:#4a7a38;font-size:12px;">📥 تصدير</button>
+        <button onclick="exportDashExcel()" class="nav-btn" style="background:#4a7a38;font-size:12px;" id="exportDashBtn">📥 تصدير</button>
         <button onclick="closeDash()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;">✕</button>
       </div>
     </div>
@@ -894,8 +894,8 @@
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
         <select id="reportMonth" onchange="buildReport()" style="background:#f5f4f0;border:1px solid #e4ddd4;border-radius:8px;padding:6px 10px;font-family:Tajawal,sans-serif;font-size:13px;color:#1a1410;outline:none;"></select>
-        <button onclick="printReport()" class="nav-btn" style="background:#4a78a8;">🖨️ طباعة</button>
-        <button onclick="exportReportExcel()" class="nav-btn green">📥 Excel</button>
+        <button onclick="printReport()" class="nav-btn" style="background:#4a78a8;" id="printReportBtn">🖨️ طباعة</button>
+        <button onclick="exportReportExcel()" class="nav-btn green" id="exportReportBtn">📥 Excel</button>
         <button onclick="closeReport()" style="background:transparent;border:1px solid #e4ddd4;color:#8a8070;width:30px;height:30px;border-radius:7px;cursor:pointer;font-size:14px;">✕</button>
       </div>
     </div>
@@ -906,18 +906,18 @@
     <!-- Charts Row -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:20px 24px;border-bottom:1px solid #e4ddd4;">
       <div>
-        <div style="font-size:12px;font-weight:700;color:#8a8070;margin-bottom:10px;letter-spacing:1px;">توزيع المصروفات بالنوع</div>
+        <div style="font-size:12px;font-weight:700;color:#8a8070;margin-bottom:10px;letter-spacing:1px;" id="chartTypeLbl">توزيع المصروفات بالنوع</div>
         <canvas id="chartType" width="340" height="220"></canvas>
       </div>
       <div>
-        <div style="font-size:12px;font-weight:700;color:#8a8070;margin-bottom:10px;letter-spacing:1px;">المصروفات اليومية</div>
+        <div style="font-size:12px;font-weight:700;color:#8a8070;margin-bottom:10px;letter-spacing:1px;" id="chartDailyLbl">المصروفات اليومية</div>
         <canvas id="chartDaily" width="340" height="220"></canvas>
       </div>
     </div>
 
     <!-- Variance Analysis (مقارنة مع الشهر السابق حسب نوع الحساب) -->
     <div style="padding:20px 24px;border-bottom:1px solid #e4ddd4;">
-      <div style="font-size:12px;font-weight:700;color:#8a8070;margin-bottom:12px;letter-spacing:1px;">📈 تحليل الانحرافات (Variance Analysis) — مقارنة بالشهر السابق</div>
+      <div style="font-size:12px;font-weight:700;color:#8a8070;margin-bottom:12px;letter-spacing:1px;" id="varianceSectionLbl">📈 تحليل الانحرافات (Variance Analysis) — مقارنة بالشهر السابق</div>
       <div id="varianceBox"></div>
     </div>
 
@@ -995,6 +995,9 @@ var VARIANCE_THRESHOLD = 20; // % change flagged as significant
 // إصلاح: odooCfg لم يكن مُعرّفاً قبل أول استخدام له (كان يسبب ReferenceError عند كل تحميل صفحة)
 var odooCfg = {};
 try { odooCfg = JSON.parse(localStorage.getItem('h_odoo') || '{}'); } catch(e) { odooCfg = {}; }
+// إصلاح مشابه: odooConnected و odooAutoPost لم يكونا مُعرّفين قبل أول استخدام (نفس مشكلة odooCfg أعلاه)
+var odooConnected = false;
+var odooAutoPost = localStorage.getItem('h_odoo_auto') === 'true';
 var T = {
   ar: {
     dropText:'ارفع الفاتورة هنا', camTxt:'التقط بالكاميرا', procTxt:'معالجة الفاتورة',
@@ -1044,7 +1047,73 @@ var T = {
     excelFail:'❌ لم يُفتح ملف Excel أو الشيت غير موجود',
     invoiceLabel:['المورّد','الرقم الضريبي','رقم الفاتورة','التاريخ','الوصف','قبل VAT','VAT ','الإجمالي'],
     jeFrom:'من حـ / ', jeTo:'إلى حـ / ', jeTotalLbl:'الإجمالي',
-    alertLowConf:'⚠️ مستوى الثقة منخفض — راجع البيانات قبل الاعتماد'
+    alertLowConf:'⚠️ مستوى الثقة منخفض — راجع البيانات قبل الاعتماد',
+    saveKeyBtn:'حفظ', openExcelBtn:'📂 افتح Excel',
+    openReportBtn:'📊 تقرير شهري', openDashBtn:'📈 لوحة التحكم',
+    openQuickBtn:'⚡ إدخال سريع', openReconcileBtn:'🏦 مطابقة بنكية', openCloseBtn:'✅ إغلاق الشهر',
+    reportSubtitle:'ملخص تلقائي من الفواتير المعالجة',
+    chartTypeLbl:'توزيع المصروفات بالنوع', chartDailyLbl:'المصروفات اليومية',
+    varianceSectionLbl:'📈 تحليل الانحرافات (Variance Analysis) — مقارنة بالشهر السابق',
+    thDate:'التاريخ', thVendor:'المورّد', thType:'النوع', thSub:'قبل VAT', thVat:'VAT', thTotal:'الإجمالي', thStatus:'الحالة',
+    aiSummaryTitle:'تحليل حاسِب الذكي',
+    dashTitle:'لوحة تحكم حاسِب', dashSubtitle:'نظرة شاملة على جميع الأشهر',
+    dashTrendLabel:'المصروفات الشهرية — اتجاه العام',
+    dashTypeLabel:'توزيع المصروفات بالنوع', dashVendorLabel:'أكثر الموردين تعاملاً',
+    dashTableLabel:'ملخص الأشهر', dashAILabel:'تحليل حاسِب الشامل',
+    dthMonth:'الشهر', dthCount:'عدد الفواتير', dthSub:'قبل VAT', dthVat:'VAT', dthTotal:'الإجمالي', dthZatca:'ZATCA', dthApproved:'معتمد',
+    budgetModalTitle:'إعدادات الميزانية', budgetModalSub:'حدد الميزانية الشهرية لكل نوع مصروف',
+    budgetInputTitle:'ميزانية الأنواع الشهرية (ريال)',
+    totalBudgetLabel:'الميزانية الإجمالية الشهرية', totalBudgetHint:'اتركه صفراً لاستخدام مجموع أنواع الميزانية فقط',
+    alertThreshLabel:'تنبيه عند الوصول لـ',
+    saveBudgetBtn:'💾 حفظ الميزانية', checkNowBtn:'🔍 تحقق الآن', cancelBudgetBtn:'إلغاء',
+    reconcileModalTitle:'المطابقة البنكية (Reconciliation)',
+    reconcileModalSub:'مطابقة كشف الحساب البنكي مع الفواتير المعتمدة تلقائياً',
+    uploadBankLabel:'📂 ارفع كشف الحساب البنكي (Excel/CSV)',
+    runReconcileBtn:'🔄 نفّذ المطابقة',
+    reconcileColsHint:'الأعمدة المتوقعة بأي ترتيب: التاريخ (Date)، الوصف/المستفيد (Description)، المبلغ (Amount). المطابقة تتم حسب المبلغ (±1 ر.س) والتاريخ (±3 أيام) وتشابه اسم المورد.',
+    closeModalTitle:'إغلاق الشهر (Month-End Close)',
+    closeModalSub:'تحقق من اكتمال كل بنود الإغلاق قبل قفل الشهر محاسبياً',
+    closeMonthSelectLbl:'اختر الشهر', cancelCloseBtn:'إلغاء',
+    quickModalTitle:'إدخال سريع للفواتير', quickModalSub:'أدخل بيانات الفاتورة مباشرة — بدون رفع ملف',
+    clearQuickBtn:'🗑️ مسح',
+    tabManual:'✏️ إدخال يدوي', tabScan:'📷 مسح الكاميرا', tabBulk:'📋 إدخال جماعي',
+    qVendorLbl:'اسم المورّد *', qInvNumLbl:'رقم الفاتورة *', qDateLbl:'التاريخ *',
+    qPayMethodLbl:'طريقة الدفع', qTotalLbl:'المبلغ الإجمالي (شامل VAT) *',
+    qSubLbl:'قبل VAT', qVatLbl:'VAT 15%', qAccTypeLbl:'نوع الحساب', qDocTypeLbl:'نوع المستند',
+    qDescLbl:'البيان / الوصف', qPreviewLbl:'معاينة القيد',
+    scanTitleLbl:'مسح الفاتورة بالكاميرا', scanSubLbl:'وجّه الكاميرا على الفاتورة — حاسِب يستخرج البيانات تلقائياً',
+    captureCamTxt:'التقط ومعالج', stopCamBtn:'إيقاف',
+    bulkIntroLbl:'أدخل فواتير متعددة — كل سطر فاتورة واحدة',
+    bulkFormatLbl:'التنسيق: المورد | رقم الفاتورة | التاريخ | الإجمالي | نوع الحساب',
+    bulkPreviewBtn:'🔍 معاينة',
+    saveQuickBtn:'✅ حفظ وإرسال للشيت', saveQuickNewBtn:'✅ حفظ والتالي',
+    saveBulkBtn:'📥 حفظ الكل', closeQuickBtn:'إلغاء',
+    odooModalTitle:'ربط Odoo بحاسِب', odooModalSub:'إرسال القيود المحاسبية مباشرة لـ Odoo',
+    odooHowToTitle:'كيف تحصل على البيانات:',
+    odooHowToBody:'في Odoo: الإعدادات ← المستخدمون ← مفتاح API ← إنشاء مفتاح جديد',
+    odooUrlLbl:'رابط Odoo (URL)', odooDbLbl:'قاعدة البيانات (Database)',
+    odooUserLbl:'اسم المستخدم (Email)', odooKeyLbl:'مفتاح API',
+    odooJournalLbl:'دفتر اليومية في Odoo',
+    odooAutoLbl:'ترحيل تلقائي', odooAutoHint:'إذا مفعّل — القيد يُرحَّل مباشرة. إذا مطفأ — يبقى مسودة للمراجعة',
+    odooTestBtn:'🔌 اختبر الاتصال', odooSaveBtn:'💾 حفظ',
+    sendOdooBtn:'📤 أرسل القيد الحالي', odooReadBtn:'📥 اقرأ من Odoo', odooCancelBtn:'إلغاء',
+    odooLogLbl:'سجل الإرسال',
+    acctModalTitle:'ربط نظام محاسبي', acctModalSub:'اختر النظام المحاسبي لإرسال القيود تلقائياً',
+    acctChooseLbl:'اختر النظام المحاسبي',
+    acctUrlLabel:'رابط النظام (URL)', acctKeyLabel:'مفتاح API',
+    acctOAuthTitle:'🔐 تسجيل دخول آمن', acctOAuthNote:'⚠️ هذه الميزة تحتاج Backend — متاحة في النسخة المؤسسية',
+    acctConnectBtn:'🔌 اتصل الآن', acctSaveBtn:'💾 حفظ',
+    acctDisconnectBtn:'⏏ قطع الاتصال', acctCancelBtn:'إلغاء',
+    acctLogLbl:'سجل الإرسال',
+    alertThreshSuffix:'% من الميزانية', exportDashBtn:'📥 تصدير',
+    printReportBtn:'🖨️ طباعة', exportReportBtn:'📥 Excel',
+    reportTableTitle:'تفصيل الفواتير',
+    odooJournalOpt1:'يومية المشتريات (Purchase Journal)',
+    odooJournalOpt2:'يومية المبيعات (Sales Journal)',
+    odooJournalOpt7:'يومية متنوعة (Miscellaneous)',
+    odooJournalOptCustom:'مخصص — أدخل رقم اليومية',
+    odooDirectBtn:'🟣 أرسل لـ Odoo',
+    startCamBtn:'📷 تشغيل الكاميرا'
   },
   en: {
     dropText:'Drop invoice here', camTxt:'Use Camera', procTxt:'Process Invoice',
@@ -1094,7 +1163,73 @@ var T = {
     excelFail:'❌ Excel file not open or sheet not found',
     invoiceLabel:['Vendor','Tax Number','Invoice No.','Date','Description','Before VAT','VAT ','Total'],
     jeFrom:'Dr. / ', jeTo:'Cr. / ', jeTotalLbl:'Total',
-    alertLowConf:'⚠️ Low confidence — please review before approving'
+    alertLowConf:'⚠️ Low confidence — please review before approving',
+    saveKeyBtn:'Save', openExcelBtn:'📂 Open Excel',
+    openReportBtn:'📊 Monthly Report', openDashBtn:'📈 Dashboard',
+    openQuickBtn:'⚡ Quick Entry', openReconcileBtn:'🏦 Bank Reconciliation', openCloseBtn:'✅ Month-End Close',
+    reportSubtitle:'Automatic summary from processed invoices',
+    chartTypeLbl:'Expenses by Type', chartDailyLbl:'Daily Expenses',
+    varianceSectionLbl:'📈 Variance Analysis — vs. previous month',
+    thDate:'Date', thVendor:'Vendor', thType:'Type', thSub:'Before VAT', thVat:'VAT', thTotal:'Total', thStatus:'Status',
+    aiSummaryTitle:'Hasib Smart Analysis',
+    dashTitle:'Hasib Dashboard', dashSubtitle:'Overview of all months',
+    dashTrendLabel:'Monthly Expenses — Overall Trend',
+    dashTypeLabel:'Expenses by Type', dashVendorLabel:'Top Vendors',
+    dashTableLabel:'Monthly Summary', dashAILabel:'Hasib Comprehensive Analysis',
+    dthMonth:'Month', dthCount:'Invoices', dthSub:'Before VAT', dthVat:'VAT', dthTotal:'Total', dthZatca:'ZATCA', dthApproved:'Approved',
+    budgetModalTitle:'Budget Settings', budgetModalSub:'Set the monthly budget for each expense type',
+    budgetInputTitle:'Monthly Type Budgets (SAR)',
+    totalBudgetLabel:'Total Monthly Budget', totalBudgetHint:'Leave at zero to use the sum of type budgets only',
+    alertThreshLabel:'Alert when reaching',
+    saveBudgetBtn:'💾 Save Budget', checkNowBtn:'🔍 Check Now', cancelBudgetBtn:'Cancel',
+    reconcileModalTitle:'Bank Reconciliation',
+    reconcileModalSub:'Automatically match the bank statement with approved invoices',
+    uploadBankLabel:'📂 Upload Bank Statement (Excel/CSV)',
+    runReconcileBtn:'🔄 Run Matching',
+    reconcileColsHint:'Expected columns in any order: Date, Description/Payee, Amount. Matching is based on amount (±SAR 1), date (±3 days), and vendor name similarity.',
+    closeModalTitle:'Month-End Close',
+    closeModalSub:'Verify all closing items are complete before locking the month',
+    closeMonthSelectLbl:'Select Month', cancelCloseBtn:'Cancel',
+    quickModalTitle:'Quick Invoice Entry', quickModalSub:'Enter invoice data directly — no file upload needed',
+    clearQuickBtn:'🗑️ Clear',
+    tabManual:'✏️ Manual Entry', tabScan:'📷 Camera Scan', tabBulk:'📋 Bulk Entry',
+    qVendorLbl:'Vendor Name *', qInvNumLbl:'Invoice Number *', qDateLbl:'Date *',
+    qPayMethodLbl:'Payment Method', qTotalLbl:'Total Amount (incl. VAT) *',
+    qSubLbl:'Before VAT', qVatLbl:'VAT 15%', qAccTypeLbl:'Account Type', qDocTypeLbl:'Document Type',
+    qDescLbl:'Description', qPreviewLbl:'Entry Preview',
+    scanTitleLbl:'Scan Invoice with Camera', scanSubLbl:'Point the camera at the invoice — Hasib extracts the data automatically',
+    captureCamTxt:'Capture & Process', stopCamBtn:'Stop',
+    bulkIntroLbl:'Enter multiple invoices — one per line',
+    bulkFormatLbl:'Format: Vendor | Invoice No. | Date | Total | Account Type',
+    bulkPreviewBtn:'🔍 Preview',
+    saveQuickBtn:'✅ Save & Send to Sheet', saveQuickNewBtn:'✅ Save & Next',
+    saveBulkBtn:'📥 Save All', closeQuickBtn:'Cancel',
+    odooModalTitle:'Connect Odoo to Hasib', odooModalSub:'Send accounting entries directly to Odoo',
+    odooHowToTitle:'How to get your credentials:',
+    odooHowToBody:'In Odoo: Settings ← Users ← API Key ← Create new key',
+    odooUrlLbl:'Odoo URL', odooDbLbl:'Database',
+    odooUserLbl:'Username (Email)', odooKeyLbl:'API Key',
+    odooJournalLbl:'Odoo Journal',
+    odooAutoLbl:'Auto-post', odooAutoHint:'If enabled — the entry posts immediately. If disabled — it stays a draft for review',
+    odooTestBtn:'🔌 Test Connection', odooSaveBtn:'💾 Save',
+    sendOdooBtn:'📤 Send Current Entry', odooReadBtn:'📥 Read from Odoo', odooCancelBtn:'Cancel',
+    odooLogLbl:'Send Log',
+    acctModalTitle:'Connect Accounting System', acctModalSub:'Choose an accounting system to send entries to automatically',
+    acctChooseLbl:'Choose Accounting System',
+    acctUrlLabel:'System URL', acctKeyLabel:'API Key',
+    acctOAuthTitle:'🔐 Secure Sign-in', acctOAuthNote:'⚠️ This feature requires a backend — available in Hasib Enterprise',
+    acctConnectBtn:'🔌 Connect Now', acctSaveBtn:'💾 Save',
+    acctDisconnectBtn:'⏏ Disconnect', acctCancelBtn:'Cancel',
+    acctLogLbl:'Send Log',
+    alertThreshSuffix:'% of budget', exportDashBtn:'📥 Export',
+    printReportBtn:'🖨️ Print', exportReportBtn:'📥 Excel',
+    reportTableTitle:'Invoice Details',
+    odooJournalOpt1:'Purchase Journal (يومية المشتريات)',
+    odooJournalOpt2:'Sales Journal (يومية المبيعات)',
+    odooJournalOpt7:'Miscellaneous (يومية متنوعة)',
+    odooJournalOptCustom:'Custom — enter journal ID',
+    odooDirectBtn:'🟣 Send to Odoo',
+    startCamBtn:'📷 Start Camera'
   }
 };
 function t(k) { return (T[lang] || T.ar)[k] || k; }
@@ -1115,14 +1250,67 @@ function applyLang() {
     'csvBtn','resetBtn','bannerTxt','bannerNoTxt','editTitle','lVendor','lTax',
     'lInvNum','lDate','lSub','lRate','lVat','lTotal','lDesc','lDebit','lCredit',
     'lAccType','lNotes','lZatca','saveEditBtn','saveApproveBtn','cancelBtn',
-    'camTitle','captureBtn','cancelCamBtn'];
+    'camTitle','captureBtn','cancelCamBtn','odooDirectBtn',
+    // Nav bar
+    'saveKeyBtn','openExcelBtn','openReportBtn','openDashBtn','openQuickBtn',
+    'openReconcileBtn','openCloseBtn',
+    // Report modal
+    'reportSubtitle','chartTypeLbl','chartDailyLbl','varianceSectionLbl',
+    'thDate','thVendor','thType','thSub','thVat','thTotal','thStatus','aiSummaryTitle',
+    'printReportBtn','exportReportBtn','reportTableTitle',
+    // Dashboard modal
+    'dashTitle','dashSubtitle','dashTrendLabel','dashTypeLabel','dashVendorLabel',
+    'dashTableLabel','dashAILabel','dthMonth','dthCount','dthSub','dthVat','dthTotal',
+    'dthZatca','dthApproved','exportDashBtn',
+    // Budget modal
+    'budgetModalTitle','budgetModalSub','budgetInputTitle','totalBudgetLabel',
+    'totalBudgetHint','alertThreshLabel','alertThreshSuffix','saveBudgetBtn','checkNowBtn','cancelBudgetBtn',
+    // Reconciliation modal
+    'reconcileModalTitle','reconcileModalSub','uploadBankLabel','runReconcileBtn','reconcileColsHint',
+    // Month-end close modal
+    'closeModalTitle','closeModalSub','closeMonthSelectLbl','cancelCloseBtn',
+    // Quick entry modal
+    'quickModalTitle','quickModalSub','clearQuickBtn','tabManual','tabScan','tabBulk',
+    'qVendorLbl','qInvNumLbl','qDateLbl','qPayMethodLbl','qTotalLbl','qSubLbl','qVatLbl',
+    'qAccTypeLbl','qDocTypeLbl','qDescLbl','qPreviewLbl','scanTitleLbl','scanSubLbl',
+    'captureCamTxt','stopCamBtn','startCamBtn','bulkIntroLbl','bulkFormatLbl','bulkPreviewBtn',
+    'saveQuickBtn','saveQuickNewBtn','saveBulkBtn','closeQuickBtn',
+    // Odoo modal
+    'odooModalTitle','odooModalSub','odooHowToTitle','odooHowToBody','odooUrlLbl',
+    'odooDbLbl','odooUserLbl','odooKeyLbl','odooJournalLbl','odooAutoLbl','odooAutoHint',
+    'odooTestBtn','odooSaveBtn','sendOdooBtn','odooReadBtn','odooCancelBtn','odooLogLbl',
+    'odooJournalOpt1','odooJournalOpt2','odooJournalOpt7','odooJournalOptCustom',
+    // Accounting integration modal
+    'acctModalTitle','acctModalSub','acctChooseLbl','acctUrlLabel','acctKeyLabel',
+    'acctOAuthTitle','acctOAuthNote','acctConnectBtn','acctSaveBtn','acctDisconnectBtn',
+    'acctCancelBtn','acctLogLbl'];
   ids.forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.textContent = t(id);
   });
-  document.getElementById('histEmpty').innerHTML = t('histEmpty');
+  var histEmptyEl = document.getElementById('histEmpty');
+  if (histEmptyEl) histEmptyEl.innerHTML = t('histEmpty');
   document.getElementById('excelStatusTxt').textContent = t('excelStatusOff');
   renderHistory();
+  // نصوص أزرار شريط التنقل الديناميكية (الميزانية / ربط النظام) لا تمر عبر ids[] لأنها تعتمد على حالة التطبيق
+  // (الحارس typeof ضروري لأن applyLang() تُستدعى عند تحميل الصفحة قبل تعريف budget/accountingCfg لاحقاً في الملف)
+  if (typeof budget !== 'undefined' && typeof checkBudgetNow === 'function') checkBudgetNow();
+  if (typeof accountingCfg !== 'undefined' && typeof updateNavAccountingBtn === 'function') updateNavAccountingBtn();
+
+  // --- Live re-render of any currently-open modal / view with dynamically-built content ---
+  function isVisible(id) {
+    var el = document.getElementById(id);
+    return el && el.style.display !== 'none';
+  }
+  if (isVisible('stateResult') && curResult) renderResult(curResult);
+  if (isVisible('reportModal')) buildReport();
+  if (isVisible('dashModal')) buildDash();
+  if (isVisible('budgetModal')) { renderBudgetStatus(); renderBudgetInputs(); }
+  if (isVisible('reconcileModal')) renderReconcile();
+  if (isVisible('closeModal')) evaluateCloseChecklist();
+  if (isVisible('quickModal')) updateQPreview();
+  if (isVisible('odooModal')) updateOdooConnStatus(odooConnected ? 'connected' : 'idle');
+  if (isVisible('accountingModal')) updateAcctStatus();
 }
 document.getElementById('apiKey').value = apiKey;
 applyLang();
@@ -1260,17 +1448,17 @@ function runComplianceAgent(r) {
   var checks = [];
   var taxNum = String(r.vendor_tax_number || '').replace(/\D/g, '');
   var taxNumOk = taxNum.length === 15 && taxNum.charAt(0) === '3' && taxNum.charAt(14) === '3';
-  checks.push({ name: 'الرقم الضريبي (ZATCA)', pass: taxNumOk, detail: taxNumOk ? '15 رقماً يبدأ وينتهي بـ 3 — مطابق' : 'الرقم "' + (r.vendor_tax_number || '—') + '" لا يطابق صيغة ZATCA (15 رقم، يبدأ وينتهي بـ3)' });
+  checks.push({ name: lang==='ar'?'الرقم الضريبي (ZATCA)':'Tax Number (ZATCA)', pass: taxNumOk, detail: taxNumOk ? (lang==='ar'?'15 رقماً يبدأ وينتهي بـ 3 — مطابق':'Valid — 15 digits, starts and ends with 3') : (lang==='ar' ? ('الرقم "' + (r.vendor_tax_number || '—') + '" لا يطابق صيغة ZATCA (15 رقم، يبدأ وينتهي بـ3)') : ('Number "' + (r.vendor_tax_number || '—') + '" does not match ZATCA format (15 digits, starts and ends with 3)')) });
   var vatCalc = Number(r.subtotal || 0) * (Number(r.vat_rate || 15) / 100);
   var vatDiff = Math.abs(vatCalc - Number(r.vat_amount || 0));
   var vatOk = vatDiff < 1;
-  checks.push({ name: 'احتساب ضريبة القيمة المضافة', pass: vatOk, detail: vatOk ? 'المبلغ مطابق لنسبة ' + (r.vat_rate || 15) + '%' : 'فرق ' + vatDiff.toFixed(2) + ' ر.س عن المتوقع (' + vatCalc.toFixed(2) + ')' });
+  checks.push({ name: lang==='ar'?'احتساب ضريبة القيمة المضافة':'VAT Calculation', pass: vatOk, detail: vatOk ? (lang==='ar'?('المبلغ مطابق لنسبة ' + (r.vat_rate || 15) + '%'):('Amount matches ' + (r.vat_rate || 15) + '% rate')) : (lang==='ar' ? ('فرق ' + vatDiff.toFixed(2) + ' ر.س عن المتوقع (' + vatCalc.toFixed(2) + ')') : ('SAR ' + vatDiff.toFixed(2) + ' difference from expected (' + vatCalc.toFixed(2) + ')')) });
   var totalDiff = Math.abs((Number(r.subtotal || 0) + Number(r.vat_amount || 0)) - Number(r.total_amount || 0));
   var totalOk = totalDiff < 1;
-  checks.push({ name: 'اتزان الإجمالي', pass: totalOk, detail: totalOk ? 'قبل الضريبة + الضريبة = الإجمالي' : 'فرق ' + totalDiff.toFixed(2) + ' ر.س في مطابقة الإجمالي' });
+  checks.push({ name: lang==='ar'?'اتزان الإجمالي':'Total Balance', pass: totalOk, detail: totalOk ? (lang==='ar'?'قبل الضريبة + الضريبة = الإجمالي':'Subtotal + VAT = Total') : (lang==='ar' ? ('فرق ' + totalDiff.toFixed(2) + ' ر.س في مطابقة الإجمالي') : ('SAR ' + totalDiff.toFixed(2) + ' mismatch in total')) });
   var mandatory = ['vendor_name', 'invoice_number', 'invoice_date', 'total_amount'];
   var missing = mandatory.filter(function(f) { return !r[f]; });
-  checks.push({ name: 'اكتمال الحقول الإلزامية', pass: missing.length === 0, detail: missing.length ? 'حقول ناقصة: ' + missing.join('، ') : 'جميع الحقول الإلزامية متوفرة' });
+  checks.push({ name: lang==='ar'?'اكتمال الحقول الإلزامية':'Mandatory Fields Complete', pass: missing.length === 0, detail: missing.length ? (lang==='ar'?('حقول ناقصة: ' + missing.join('، ')):('Missing fields: ' + missing.join(', '))) : (lang==='ar'?'جميع الحقول الإلزامية متوفرة':'All mandatory fields present') });
   var passed = checks.every(function(c) { return c.pass; });
   return { agent: 'ComplianceAgent', passed: passed, checks: checks, zatca_compliant: taxNumOk && vatOk && totalOk };
 }
@@ -1284,8 +1472,8 @@ function runJournalAgent(r) {
   var debitCode = mappedCode || CHART_OF_ACCOUNTS['مصروفات تشغيل'];
   var lines = [
     { label: r.debit_account || r.account_type || 'مصروفات تشغيل', code: debitCode, debit: sub, credit: 0 },
-    { label: r.vat_account || 'ضريبة القيمة المضافة', code: CHART_OF_ACCOUNTS.VAT_ACCOUNT, debit: vat, credit: 0 },
-    { label: r.credit_account || ('الدائنون — ' + (r.vendor_name || '')), code: CHART_OF_ACCOUNTS.PAYABLES_ACCOUNT, debit: 0, credit: total }
+    { label: r.vat_account || (lang==='ar'?'ضريبة القيمة المضافة':'VAT'), code: CHART_OF_ACCOUNTS.VAT_ACCOUNT, debit: vat, credit: 0 },
+    { label: r.credit_account || ((lang==='ar'?'الدائنون — ':'Accounts Payable — ') + (r.vendor_name || '')), code: CHART_OF_ACCOUNTS.PAYABLES_ACCOUNT, debit: 0, credit: total }
   ];
   var balanced = Math.abs((lines[0].debit + lines[1].debit) - lines[2].credit) < 0.01;
   return {
@@ -1294,43 +1482,44 @@ function runJournalAgent(r) {
     balanced: balanced,
     escalated: escalated,
     note: escalated
-      ? 'نوع الحساب "' + (r.account_type || '—') + '" غير موجود في دليل حسابات Odoo — استُخدم حساب افتراضي (5100) ويحتاج مراجعة يدوية'
-      : 'تمت مطابقة الحساب مع دليل حسابات Odoo مباشرة (كود ' + debitCode + ')'
+      ? (lang==='ar' ? ('نوع الحساب "' + (r.account_type || '—') + '" غير موجود في دليل حسابات Odoo — استُخدم حساب افتراضي (5100) ويحتاج مراجعة يدوية') : ('Account type "' + (r.account_type || '—') + '" not found in the Odoo chart of accounts — default account used (5100), needs manual review'))
+      : (lang==='ar' ? ('تمت مطابقة الحساب مع دليل حسابات Odoo مباشرة (كود ' + debitCode + ')') : ('Account matched directly with the Odoo chart of accounts (code ' + debitCode + ')'))
   };
 }
 
 // --- SupervisorAgent: ينسّق تسلسل الوكلاء ويبني audit trail موقّع بسلسلة hash ---
 async function orchestrate(file) {
   var trail = [];
-  await appendAudit(trail, 'SupervisorAgent', 'استلام', 'استلام الملف: ' + file.name + ' (' + Math.round(file.size / 1024) + ' KB)');
-  await appendAudit(trail, 'SupervisorAgent', 'توجيه', 'توجيه المستند إلى DocumentExtractionAgent (Claude Vision)');
+  await appendAudit(trail, 'SupervisorAgent', lang==='ar'?'استلام':'Received', (lang==='ar'?'استلام الملف: ':'Received file: ') + file.name + ' (' + Math.round(file.size / 1024) + ' KB)');
+  await appendAudit(trail, 'SupervisorAgent', lang==='ar'?'توجيه':'Routing', lang==='ar'?'توجيه المستند إلى DocumentExtractionAgent (Claude Vision)':'Routing document to DocumentExtractionAgent (Claude Vision)');
   var r = await runExtractionAgent(file);
-  await appendAudit(trail, 'DocumentExtractionAgent', 'استخراج', 'استُخرجت البيانات بثقة إجمالية ' + (r.confidence != null ? r.confidence : '—') + '% — المورد: ' + (r.vendor_name || '—'));
+  await appendAudit(trail, 'DocumentExtractionAgent', lang==='ar'?'استخراج':'Extraction', (lang==='ar' ? ('استُخرجت البيانات بثقة إجمالية ' + (r.confidence != null ? r.confidence : '—') + '% — المورد: ' + (r.vendor_name || '—')) : ('Data extracted with overall confidence ' + (r.confidence != null ? r.confidence : '—') + '% — Vendor: ' + (r.vendor_name || '—'))));
 
-  await appendAudit(trail, 'SupervisorAgent', 'توجيه', 'توجيه النتيجة إلى ComplianceAgent (تحقق ZATCA + VAT)');
+  await appendAudit(trail, 'SupervisorAgent', lang==='ar'?'توجيه':'Routing', lang==='ar'?'توجيه النتيجة إلى ComplianceAgent (تحقق ZATCA + VAT)':'Routing result to ComplianceAgent (ZATCA + VAT check)');
   var comp = runComplianceAgent(r);
   for (var i = 0; i < comp.checks.length; i++) {
-    await appendAudit(trail, 'ComplianceAgent', comp.checks[i].pass ? 'اجتياز' : 'تنبيه', comp.checks[i].name + ' — ' + comp.checks[i].detail);
+    await appendAudit(trail, 'ComplianceAgent', comp.checks[i].pass ? (lang==='ar'?'اجتياز':'Passed') : (lang==='ar'?'تنبيه':'Alert'), comp.checks[i].name + ' — ' + comp.checks[i].detail);
   }
   r.zatca_compliant = comp.zatca_compliant;
   r.compliance = comp;
 
-  await appendAudit(trail, 'SupervisorAgent', 'توجيه', 'توجيه النتيجة إلى JournalEntryAgent (بناء القيد المحاسبي)');
+  await appendAudit(trail, 'SupervisorAgent', lang==='ar'?'توجيه':'Routing', lang==='ar'?'توجيه النتيجة إلى JournalEntryAgent (بناء القيد المحاسبي)':'Routing result to JournalEntryAgent (building journal entry)');
   var je = runJournalAgent(r);
-  await appendAudit(trail, 'JournalEntryAgent', je.escalated ? 'تصعيد' : 'إنشاء قيد', je.note);
+  await appendAudit(trail, 'JournalEntryAgent', je.escalated ? (lang==='ar'?'تصعيد':'Escalated') : (lang==='ar'?'إنشاء قيد':'Journal created'), je.note);
   r.journal = je;
 
   var needsReview = Number(r.confidence || 0) < 85 || !comp.passed || je.escalated;
-  await appendAudit(trail, 'SupervisorAgent', needsReview ? 'تصعيد للمراجعة البشرية' : 'اعتماد تلقائي مؤهل', needsReview ? 'مستوى الثقة أو نتائج التحقق تتطلب مراجعة محاسب قبل الاعتماد' : 'مستوى الثقة والتحقق الآلي كافيان — جاهز للاعتماد');
+  await appendAudit(trail, 'SupervisorAgent', needsReview ? (lang==='ar'?'تصعيد للمراجعة البشرية':'Escalated for human review') : (lang==='ar'?'اعتماد تلقائي مؤهل':'Eligible for auto-approval'), needsReview ? (lang==='ar'?'مستوى الثقة أو نتائج التحقق تتطلب مراجعة محاسب قبل الاعتماد':'Confidence level or verification results require accountant review before approval') : (lang==='ar'?'مستوى الثقة والتحقق الآلي كافيان — جاهز للاعتماد':'Confidence and automated verification are sufficient — ready for approval'));
   r.needs_review = needsReview;
   r.audit_trail = trail;
   return r;
 }
 function renderResult(r) {
   // توافق مع فواتير قديمة محفوظة قبل تفعيل بنية الوكلاء المتعددة
-  if (!r.compliance) r.compliance = runComplianceAgent(r);
-  if (!r.journal) r.journal = runJournalAgent(r);
-  var fmt = function(n) { return Number(n||0).toLocaleString('ar-SA', {minimumFractionDigits:2, maximumFractionDigits:2}); };
+  // يُعاد احتسابهما دائماً (نفس المدخلات r) حتى تُعرض نصوص التحقق والقيد بلغة الواجهة الحالية
+  r.compliance = runComplianceAgent(r);
+  r.journal = runJournalAgent(r);
+  var fmt = function(n) { return Number(n||0).toLocaleString(lang==='ar'?'ar-SA':'en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); };
   var cur = r.currency || 'SAR';
   var lbl = t('invoiceLabel');
   var vals = [
@@ -1362,40 +1551,42 @@ function renderResult(r) {
   comp.checks.forEach(function(c) {
     v += '<div class="alert-box ' + (c.pass ? 'good' : 'warn') + '"><span class="alert-box-icon">' + (c.pass ? '✅' : '⚠️') + '</span><span class="alert-box-text"><b>' + c.name + '</b> — ' + c.detail + '</span></div>';
   });
-  v += '<div class="alert-box good"><span class="alert-box-icon">📊</span><span class="alert-box-text">' + (r.account_type || 'مصروفات') + '</span></div>';
+  v += '<div class="alert-box good"><span class="alert-box-icon">📊</span><span class="alert-box-text">' + (r.account_type || (lang==='ar'?'مصروفات':'Expenses')) + '</span></div>';
   if (r.notes) {
     v += '<div class="alert-box warn"><span class="alert-box-icon">💡</span><span class="alert-box-text">' + r.notes + '</span></div>';
   }
   if (r.needs_review) {
-    v += '<div class="alert-box warn"><span class="alert-box-icon">🧑‍💼</span><span class="alert-box-text"><b>يتطلب مراجعة بشرية</b> قبل الاعتماد — SupervisorAgent صعّد هذه الفاتورة (ثقة منخفضة أو تحقق غير مكتمل)</span></div>';
+    v += '<div class="alert-box warn"><span class="alert-box-icon">🧑‍💼</span><span class="alert-box-text">' + (lang==='ar' ? '<b>يتطلب مراجعة بشرية</b> قبل الاعتماد — SupervisorAgent صعّد هذه الفاتورة (ثقة منخفضة أو تحقق غير مكتمل)' : '<b>Requires human review</b> before approval — SupervisorAgent escalated this invoice (low confidence or incomplete verification)') + '</span></div>';
   }
   document.getElementById('verifyData').innerHTML = v;
 
   // بطاقة القيد: من JournalEntryAgent مباشرة (نفس دليل حسابات Odoo)
-  var f2 = function(n) { return Number(n||0).toLocaleString('ar-SA', {minimumFractionDigits:2, maximumFractionDigits:2}); };
+  var f2 = function(n) { return Number(n||0).toLocaleString(lang==='ar'?'ar-SA':'en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); };
   var je = r.journal;
   var totCredit = je.lines.reduce(function(s,l){ return s + l.credit; }, 0);
   var j = '';
-  j += '<div class="je-head">JOURNAL ENTRY — ' + (r.invoice_date || '') + (je.escalated ? ' · ⚠️ تصعيد' : '') + '</div>';
+  j += '<div class="je-head">JOURNAL ENTRY — ' + (r.invoice_date || '') + (je.escalated ? (lang==='ar'?' · ⚠️ تصعيد':' · ⚠️ Escalated') : '') + '</div>';
   je.lines.forEach(function(line) {
     var isCredit = line.credit > 0;
     j += '<div class="je-row"><span class="je-acc' + (isCredit ? ' cr' : '') + '">' + (isCredit ? t('jeTo') : t('jeFrom')) + line.label + ' (' + line.code + ')</span><span class="je-dr">' + (line.debit ? f2(line.debit) : '') + '</span><span class="je-cr">' + (line.credit ? f2(line.credit) : '') + '</span></div>';
   });
   j += '<div class="je-total"><span class="je-total-lbl">' + t('jeTotalLbl') + '</span><span class="je-total-amt">' + f2(totCredit) + '</span><span class="je-total-amt">' + f2(totCredit) + '</span></div>';
-  j += '<div class="je-ok">' + (je.balanced ? t('jeBalanced') : '⚠️ القيد غير متزن — يحتاج مراجعة') + '</div>';
+  j += '<div class="je-ok">' + (je.balanced ? t('jeBalanced') : (lang==='ar'?'⚠️ القيد غير متزن — يحتاج مراجعة':'⚠️ Entry not balanced — needs review')) + '</div>';
   if (je.escalated) j += '<div class="je-ok" style="color:#d97757;">' + je.note + '</div>';
   document.getElementById('journalData').innerHTML = j;
 
   // بطاقة التحليل + طبقة الشفافية (Explainability)
   var an = r.analysis || '';
   if (r.explainability || r.field_confidence) {
-    an += '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #e4ddd4;font-size:11px;font-weight:700;color:#8a8070;letter-spacing:1px;">🔎 لماذا استخرج حاسِب هذه القيم؟ (Explainability)</div>';
+    an += '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #e4ddd4;font-size:11px;font-weight:700;color:#8a8070;letter-spacing:1px;">' + (lang==='ar'?'🔎 لماذا استخرج حاسِب هذه القيم؟ (Explainability)':'🔎 Why did Hasib extract these values? (Explainability)') + '</div>';
     var expl = r.explainability || {};
     var fc = r.field_confidence || {};
-    var fieldNames = { vendor_name: 'اسم المورد', vat_amount: 'مبلغ الضريبة', total_amount: 'الإجمالي', vendor_tax_number: 'الرقم الضريبي' };
+    var fieldNames = lang==='ar'
+      ? { vendor_name: 'اسم المورد', vat_amount: 'مبلغ الضريبة', total_amount: 'الإجمالي', vendor_tax_number: 'الرقم الضريبي' }
+      : { vendor_name: 'Vendor Name', vat_amount: 'VAT Amount', total_amount: 'Total', vendor_tax_number: 'Tax Number' };
     Object.keys(fieldNames).forEach(function(key) {
       if (!expl[key] && fc[key] == null) return;
-      an += '<div style="margin-top:6px;font-size:12px;"><b>' + fieldNames[key] + '</b>' + (fc[key] != null ? ' <span style="color:#8a8070;">(ثقة ' + fc[key] + '%)</span>' : '') + (expl[key] ? '<br><span style="color:#5a5040;">' + expl[key] + '</span>' : '') + '</div>';
+      an += '<div style="margin-top:6px;font-size:12px;"><b>' + fieldNames[key] + '</b>' + (fc[key] != null ? (lang==='ar' ? (' <span style="color:#8a8070;">(ثقة ' + fc[key] + '%)</span>') : (' <span style="color:#8a8070;">(confidence ' + fc[key] + '%)</span>')) : '') + (expl[key] ? '<br><span style="color:#5a5040;">' + expl[key] + '</span>' : '') + '</div>';
     });
   }
   document.getElementById('analysisData').innerHTML = an.replace(/\n/g, '<br>');
@@ -1413,7 +1604,8 @@ var AGENT_COLORS = {
   ComplianceAgent: '#4a7a38',
   JournalEntryAgent: '#d97757',
   ReconciliationAgent: '#1a6b3a',
-  المستخدم: '#c04858'
+  المستخدم: '#c04858',
+  User: '#c04858'
 };
 function renderAuditTrail(r) {
   var el = document.getElementById('auditData');
@@ -1421,19 +1613,19 @@ function renderAuditTrail(r) {
   if (!trail || !trail.length) {
     // فاتورة قديمة بدون سجل موثّق — نعرض ملخص مبسّط بدل السجل الكامل
     var now = new Date();
-    var tStr = now.toLocaleTimeString('ar-SA', {hour:'2-digit', minute:'2-digit'});
-    el.innerHTML = auditRow('#8a8070', tStr, 'لا يوجد سجل موثّق لهذه الفاتورة (تمت معالجتها قبل تفعيل Audit Trail)');
+    var tStr = now.toLocaleTimeString(lang==='ar'?'ar-SA':'en-US', {hour:'2-digit', minute:'2-digit'});
+    el.innerHTML = auditRow('#8a8070', tStr, lang==='ar' ? 'لا يوجد سجل موثّق لهذه الفاتورة (تمت معالجتها قبل تفعيل Audit Trail)' : 'No signed record for this invoice (processed before Audit Trail was enabled)');
     return;
   }
   var html = '';
   trail.forEach(function(entry) {
     var d = new Date(entry.time);
-    var tStr = isNaN(d) ? '' : d.toLocaleTimeString('ar-SA', {hour:'2-digit', minute:'2-digit'});
+    var tStr = isNaN(d) ? '' : d.toLocaleTimeString(lang==='ar'?'ar-SA':'en-US', {hour:'2-digit', minute:'2-digit'});
     var color = AGENT_COLORS[entry.agent] || '#8a8070';
     html += auditRow(color, tStr, '<b>' + entry.agent + '</b> · ' + entry.action + ' — ' + entry.detail);
   });
   html += '<div style="margin-top:8px;display:flex;align-items:center;gap:8px;">';
-  html += '<button onclick="verifyCurrentAuditChain()" style="background:transparent;border:1px solid #e4ddd4;color:#5a5040;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">🔒 تحقق من سلامة السجل (hash chain)</button>';
+  html += '<button onclick="verifyCurrentAuditChain()" style="background:transparent;border:1px solid #e4ddd4;color:#5a5040;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">' + (lang==='ar'?'🔒 تحقق من سلامة السجل (hash chain)':'🔒 Verify record integrity (hash chain)') + '</button>';
   html += '<span id="chainVerifyResult" style="font-size:11px;"></span>';
   html += '</div>';
   el.innerHTML = html;
@@ -1441,19 +1633,19 @@ function renderAuditTrail(r) {
 function verifyCurrentAuditChain() {
   if (!curResult || !curResult.audit_trail) return;
   var out = document.getElementById('chainVerifyResult');
-  out.textContent = '... جاري التحقق';
+  out.textContent = lang==='ar' ? '... جاري التحقق' : '... Verifying';
   verifyAuditChain(curResult.audit_trail).then(function(ok) {
-    out.textContent = ok ? '✅ السجل سليم ولم يتم التلاعب به' : '⚠️ تحذير: السجل غير مطابق — قد يكون تم تعديله يدوياً خارج التطبيق';
+    out.textContent = ok ? (lang==='ar'?'✅ السجل سليم ولم يتم التلاعب به':'✅ Record intact — no tampering detected') : (lang==='ar'?'⚠️ تحذير: السجل غير مطابق — قد يكون تم تعديله يدوياً خارج التطبيق':'⚠️ Warning: record mismatch — it may have been manually altered outside the app');
     out.style.color = ok ? '#4a7a38' : '#c04858';
   });
 }
 function approveAndSend() {
   if (!curResult) return;
   if (!wb) { toast(t('toastNoExcel'), 'warn'); return; }
-  if (isMonthClosed(curResult.invoice_date)) { toast('🔒 شهر ' + extractMonth(curResult.invoice_date) + ' مقفل محاسبياً (تم إغلاقه في Month-End Close) — لا يمكن إضافة قيود جديدة عليه', 'warn'); return; }
+  if (isMonthClosed(curResult.invoice_date)) { toast(lang==='ar' ? ('🔒 شهر ' + extractMonth(curResult.invoice_date) + ' مقفل محاسبياً (تم إغلاقه في Month-End Close) — لا يمكن إضافة قيود جديدة عليه') : ('🔒 ' + extractMonth(curResult.invoice_date) + ' is closed (via Month-End Close) — no new entries can be added to it'), 'warn'); return; }
   curResult.approved = true;
   if (!curResult.audit_trail) curResult.audit_trail = [];
-  appendAudit(curResult.audit_trail, 'المستخدم', 'اعتماد', 'اعتمد المحاسب الفاتورة وأرسلها إلى ملف Excel').then(function() {
+  appendAudit(curResult.audit_trail, lang==='ar'?'المستخدم':'User', lang==='ar'?'اعتماد':'Approval', lang==='ar'?'اعتمد المحاسب الفاتورة وأرسلها إلى ملف Excel':'The accountant approved the invoice and sent it to the Excel file').then(function() {
     updateInvoice(curResult);
     var ok = writeToExcel(curResult);
     if (ok) toast(t('toastApproved'));
@@ -1464,10 +1656,10 @@ function approveAndSend() {
 function doExportCSV() {
   if (!invoices.length) return;
   var csv = '\uFEFF';
-  csv += 'المورد,رقم الفاتورة,التاريخ,قبل VAT,VAT,الاجمالي,نوع الحساب,ZATCA,الحالة\n';
+  csv += (lang==='ar' ? 'المورد,رقم الفاتورة,التاريخ,قبل VAT,VAT,الاجمالي,نوع الحساب,ZATCA,الحالة\n' : 'Vendor,Invoice No.,Date,Before VAT,VAT,Total,Account Type,ZATCA,Status\n');
   for (var i = 0; i < invoices.length; i++) {
     var r = invoices[i];
-    csv += '"' + (r.vendor_name||'') + '","' + (r.invoice_number||'') + '","' + (r.invoice_date||'') + '",' + (r.subtotal||0) + ',' + (r.vat_amount||0) + ',' + (r.total_amount||0) + ',"' + (r.account_type||'') + '","' + (r.zatca_compliant?'متوافق':'غير متوافق') + '","' + (r.approved?'معتمد':'بانتظار') + '"\n';
+    csv += '"' + (r.vendor_name||'') + '","' + (r.invoice_number||'') + '","' + (r.invoice_date||'') + '",' + (r.subtotal||0) + ',' + (r.vat_amount||0) + ',' + (r.total_amount||0) + ',"' + (r.account_type||'') + '","' + (r.zatca_compliant?(lang==='ar'?'متوافق':'Compliant'):(lang==='ar'?'غير متوافق':'Non-compliant')) + '","' + (r.approved?(lang==='ar'?'معتمد':'Approved'):(lang==='ar'?'بانتظار':'Pending')) + '"\n';
   }
   var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
   var a = document.createElement('a');
@@ -1512,7 +1704,7 @@ function renderHistory() {
     var active = (i === 0 && curResult) ? ' active' : '';
     html += '<div class="hist-item' + active + '" onclick="showHist(' + i + ')">';
     html += '<div class="hist-vendor">' + (inv.vendor_name || '—') + '</div>';
-    html += '<div class="hist-amount">' + Number(inv.total_amount||0).toLocaleString('ar-SA',{minimumFractionDigits:2}) + ' ' + (inv.currency||'SAR') + '</div>';
+    html += '<div class="hist-amount">' + Number(inv.total_amount||0).toLocaleString(lang==='ar'?'ar-SA':'en-US',{minimumFractionDigits:2}) + ' ' + (inv.currency||'SAR') + '</div>';
     html += '<div class="hist-date">' + (inv.invoice_date||'—') + '</div>';
     html += '<span class="hist-badge ' + (inv.approved ? 'done' : 'pend') + '">' + (inv.approved ? t('done') : t('pend')) + '</span>';
     html += '</div>';
@@ -1528,7 +1720,7 @@ function updateStats() {
   document.getElementById('statCount').textContent = invoices.length;
   var total = 0;
   for (var i = 0; i < invoices.length; i++) total += Number(invoices[i].total_amount || 0);
-  document.getElementById('statTotal').textContent = total.toLocaleString('ar-SA', {maximumFractionDigits:0});
+  document.getElementById('statTotal').textContent = total.toLocaleString(lang==='ar'?'ar-SA':'en-US', {maximumFractionDigits:0});
 }
 function openExcel() {
   if (window.showOpenFilePicker) {
@@ -1824,20 +2016,20 @@ function getEdits() {
 }
 function saveEdit() {
   var e = getEdits();
-  if (isMonthClosed(e.invoice_date)) { toast('🔒 شهر ' + extractMonth(e.invoice_date) + ' مقفل محاسبياً — لا يمكن تعديل فواتيره', 'warn'); return; }
+  if (isMonthClosed(e.invoice_date)) { toast(lang==='ar' ? ('🔒 شهر ' + extractMonth(e.invoice_date) + ' مقفل محاسبياً — لا يمكن تعديل فواتيره') : ('🔒 ' + extractMonth(e.invoice_date) + ' is closed — its invoices cannot be edited'), 'warn'); return; }
   curResult = e;
   if (!e.audit_trail) e.audit_trail = [];
-  appendAudit(e.audit_trail, 'المستخدم', 'تعديل يدوي', 'قام المحاسب بتعديل بيانات الفاتورة يدوياً وتجاوز نتيجة DocumentExtractionAgent').then(function() {
+  appendAudit(e.audit_trail, lang==='ar'?'المستخدم':'User', lang==='ar'?'تعديل يدوي':'Manual edit', lang==='ar'?'قام المحاسب بتعديل بيانات الفاتورة يدوياً وتجاوز نتيجة DocumentExtractionAgent':'The accountant manually edited the invoice data, overriding DocumentExtractionAgent\'s result').then(function() {
     updateInvoice(e); renderResult(e); renderHistory();
     writeToExcel(e); closeEdit(); toast(t('toastEdited'));
   });
 }
 function saveEditApprove() {
   var e = getEdits();
-  if (isMonthClosed(e.invoice_date)) { toast('🔒 شهر ' + extractMonth(e.invoice_date) + ' مقفل محاسبياً — لا يمكن اعتماد فواتيره', 'warn'); return; }
+  if (isMonthClosed(e.invoice_date)) { toast(lang==='ar' ? ('🔒 شهر ' + extractMonth(e.invoice_date) + ' مقفل محاسبياً — لا يمكن اعتماد فواتيره') : ('🔒 ' + extractMonth(e.invoice_date) + ' is closed — its invoices cannot be approved'), 'warn'); return; }
   e.approved = true; curResult = e;
   if (!e.audit_trail) e.audit_trail = [];
-  appendAudit(e.audit_trail, 'المستخدم', 'تعديل واعتماد', 'قام المحاسب بتعديل بيانات الفاتورة يدوياً ثم اعتمدها').then(function() {
+  appendAudit(e.audit_trail, lang==='ar'?'المستخدم':'User', lang==='ar'?'تعديل واعتماد':'Edit & approve', lang==='ar'?'قام المحاسب بتعديل بيانات الفاتورة يدوياً ثم اعتمدها':'The accountant manually edited the invoice data and then approved it').then(function() {
     updateInvoice(e); renderResult(e); renderHistory(); updateStats();
     writeToExcel(e); closeEdit(); toast(t('toastEditApproved'));
   });
@@ -2111,19 +2303,19 @@ function renderVariance(ym) {
   var prevYm = prevMonthOf(ym);
   var prevData = getMonthInvoices(prevYm);
   if (!prevData.length) {
-    box.innerHTML = '<div style="font-size:12px;color:#8a8070;">لا توجد بيانات لشهر ' + formatMonthLabel(prevYm) + ' للمقارنة</div>';
+    box.innerHTML = '<div style="font-size:12px;color:#8a8070;">' + (lang==='ar' ? ('لا توجد بيانات لشهر ' + formatMonthLabel(prevYm) + ' للمقارنة') : ('No data for ' + formatMonthLabel(prevYm) + ' to compare against')) + '</div>';
     return;
   }
   var rows = computeVarianceByType(curData, prevData);
   var html = '<table style="width:100%;border-collapse:collapse;font-size:12px;font-family:Tajawal,sans-serif;"><thead><tr style="background:#f9f7f4;border-bottom:2px solid #e4ddd4;">' +
-    '<th style="text-align:right;padding:8px;">نوع الحساب</th><th style="text-align:right;padding:8px;">' + formatMonthLabel(prevYm) + '</th><th style="text-align:right;padding:8px;">' + formatMonthLabel(ym) + '</th><th style="text-align:right;padding:8px;">التغيّر</th></tr></thead><tbody>';
+    '<th style="text-align:right;padding:8px;">' + (lang==='ar'?'نوع الحساب':'Account Type') + '</th><th style="text-align:right;padding:8px;">' + formatMonthLabel(prevYm) + '</th><th style="text-align:right;padding:8px;">' + formatMonthLabel(ym) + '</th><th style="text-align:right;padding:8px;">' + (lang==='ar'?'التغيّر':'Change') + '</th></tr></thead><tbody>';
   rows.forEach(function(r) {
     var color = r.flagged ? (r.pct > 0 ? '#c04858' : '#4a7a38') : '#5a5040';
     var arrow = r.pct > 0 ? '▲' : (r.pct < 0 ? '▼' : '—');
     html += '<tr style="border-bottom:1px solid #f0ece4;' + (r.flagged ? 'background:rgba(192,72,88,.04);' : '') + '">' +
-      '<td style="padding:7px 8px;">' + r.type + (r.flagged ? ' <span style="font-size:9px;background:rgba(192,72,88,.12);color:#c04858;padding:1px 6px;border-radius:8px;">انحراف كبير</span>' : '') + '</td>' +
-      '<td style="padding:7px 8px;">' + r.previous.toLocaleString('ar-SA',{maximumFractionDigits:0}) + '</td>' +
-      '<td style="padding:7px 8px;">' + r.current.toLocaleString('ar-SA',{maximumFractionDigits:0}) + '</td>' +
+      '<td style="padding:7px 8px;">' + r.type + (r.flagged ? ' <span style="font-size:9px;background:rgba(192,72,88,.12);color:#c04858;padding:1px 6px;border-radius:8px;">' + (lang==='ar'?'انحراف كبير':'Large variance') + '</span>' : '') + '</td>' +
+      '<td style="padding:7px 8px;">' + r.previous.toLocaleString(lang==='ar'?'ar-SA':'en-US',{maximumFractionDigits:0}) + '</td>' +
+      '<td style="padding:7px 8px;">' + r.current.toLocaleString(lang==='ar'?'ar-SA':'en-US',{maximumFractionDigits:0}) + '</td>' +
       '<td style="padding:7px 8px;color:' + color + ';font-weight:700;">' + arrow + ' ' + Math.abs(r.pct).toFixed(1) + '%</td></tr>';
   });
   html += '</tbody></table>';
@@ -2138,11 +2330,11 @@ function renderKPIs(data) {
     if (data[i].approved) approved++;
     if (data[i].zatca_compliant) zatca++;
   }
-  var fmt = function(n) { return Number(n).toLocaleString('ar-SA', {maximumFractionDigits:0}); };
+  var fmt = function(n) { return Number(n).toLocaleString(lang==='ar'?'ar-SA':'en-US', {maximumFractionDigits:0}); };
   var kpis = [
     { icon:'📄', label: lang==='ar'?'عدد الفواتير':'Invoices', value: data.length, sub: lang==='ar'?(approved+' معتمدة'):(approved+' approved'), color:'#4a78a8' },
-    { icon:'💰', label: lang==='ar'?'إجمالي المصروفات':'Total Expenses', value: fmt(totalAmt) + ' ر.س', sub: lang==='ar'?('قبل VAT: '+fmt(totalSub)):('Before VAT: '+fmt(totalSub)), color:'#d97757' },
-    { icon:'🏛️', label: 'VAT 15%', value: fmt(totalVat) + ' ر.س', sub: lang==='ar'?(Math.round(totalVat/(totalAmt||1)*100)+'% من الإجمالي'):(Math.round(totalVat/(totalAmt||1)*100)+'% of total'), color:'#9a6ab8' },
+    { icon:'💰', label: lang==='ar'?'إجمالي المصروفات':'Total Expenses', value: fmt(totalAmt) + (lang==='ar'?' ر.س':' SAR'), sub: lang==='ar'?('قبل VAT: '+fmt(totalSub)):('Before VAT: '+fmt(totalSub)), color:'#d97757' },
+    { icon:'🏛️', label: 'VAT 15%', value: fmt(totalVat) + (lang==='ar'?' ر.س':' SAR'), sub: lang==='ar'?(Math.round(totalVat/(totalAmt||1)*100)+'% من الإجمالي'):(Math.round(totalVat/(totalAmt||1)*100)+'% of total'), color:'#9a6ab8' },
     { icon:'✅', label: lang==='ar'?'توافق ZATCA':'ZATCA Compliance', value: (data.length ? Math.round(zatca/data.length*100) : 0)+'%', sub: zatca+' / '+data.length, color:'#4a7a38' }
   ];
   var html = '';
@@ -2158,7 +2350,7 @@ function renderKPIs(data) {
   document.getElementById('reportKPIs').innerHTML = html;
 }
 function renderTable(data) {
-  var fmt = function(n) { return Number(n||0).toLocaleString('ar-SA',{minimumFractionDigits:2,maximumFractionDigits:2}); };
+  var fmt = function(n) { return Number(n||0).toLocaleString(lang==='ar'?'ar-SA':'en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); };
   var totalSub=0, totalVat=0, totalAmt=0;
   var rows = '';
   for (var i = 0; i < data.length; i++) {
@@ -2183,7 +2375,7 @@ function renderTable(data) {
   foot += '<td colspan="4" style="padding:10px;color:#1a1410;">'+(lang==='ar'?'الإجمالي':'Total')+'</td>';
   foot += '<td style="padding:10px;color:#5a5040;">'+fmt(totalSub)+'</td>';
   foot += '<td style="padding:10px;color:#4a78a8;">'+fmt(totalVat)+'</td>';
-  foot += '<td style="padding:10px;color:#d97757;font-size:15px;">'+fmt(totalAmt)+' ر.س</td>';
+  foot += '<td style="padding:10px;color:#d97757;font-size:15px;">'+fmt(totalAmt)+(lang==='ar'?' ر.س':' SAR')+'</td>';
   foot += '<td></td></tr>';
   document.getElementById('reportTfoot').innerHTML = foot;
 }
@@ -2301,7 +2493,7 @@ function renderAISummary(data, monthLabel) {
   Object.keys(types).forEach(function(k) { if(types[k]>topTypeAmt){topType=k;topTypeAmt=types[k];} });
   var topVendor = '—', topVendorAmt = 0;
   Object.keys(topVendors).forEach(function(k) { if(topVendors[k]>topVendorAmt){topVendor=k;topVendorAmt=topVendors[k];} });
-  var fmt = function(n) { return Number(n).toLocaleString('ar-SA',{minimumFractionDigits:0,maximumFractionDigits:0}); };
+  var fmt = function(n) { return Number(n).toLocaleString(lang==='ar'?'ar-SA':'en-US',{minimumFractionDigits:0,maximumFractionDigits:0}); };
   var vatPct = totalAmt ? Math.round(totalVat/totalAmt*100) : 0;
   var appPct = data.length ? Math.round(approved/data.length*100) : 0;
   var zatcaPct = data.length ? Math.round(zatca/data.length*100) : 0;
@@ -2359,7 +2551,7 @@ function getMonthlyData() {
 function buildDash() {
   var months = getMonthlyData();
   var keys = Object.keys(months).sort();
-  var fmt = function(n) { return Number(n).toLocaleString('ar-SA',{maximumFractionDigits:0}); };
+  var fmt = function(n) { return Number(n).toLocaleString(lang==='ar'?'ar-SA':'en-US',{maximumFractionDigits:0}); };
   var gTotal=0, gVat=0, gSub=0, gCount=0, gApproved=0, gZatca=0;
   for (var i = 0; i < keys.length; i++) {
     var mo = months[keys[i]];
@@ -2376,9 +2568,9 @@ function buildDash() {
   var kpiData = [
     { icon:'📅', label:lang==='ar'?'عدد الأشهر':'Months', val:keys.length, sub:'', color:'#9a5ab8' },
     { icon:'📄', label:lang==='ar'?'إجمالي الفواتير':'Total Invoices', val:gCount, sub:gApproved+(lang==='ar'?' معتمدة':' approved'), color:'#4a78a8' },
-    { icon:'💰', label:lang==='ar'?'إجمالي المصروفات':'Total Expenses', val:fmt(gTotal)+' ر.س', sub:(lang==='ar'?'قبل VAT: ':'Before VAT: ')+fmt(gSub), color:'#d97757' },
-    { icon:'🏛️', label:'VAT', val:fmt(gVat)+' ر.س', sub:gTotal?Math.round(gVat/gTotal*100)+'%':'0%', color:'#c04858' },
-    { icon:'📊', label:lang==='ar'?'متوسط شهري':'Monthly Avg', val:fmt(avgPerMonth)+' ر.س', sub:(lang==='ar'?'ZATCA: ':'ZATCA: ')+zatcaPct+'%', color:'#4a7a38' }
+    { icon:'💰', label:lang==='ar'?'إجمالي المصروفات':'Total Expenses', val:fmt(gTotal)+(lang==='ar'?' ر.س':' SAR'), sub:(lang==='ar'?'قبل VAT: ':'Before VAT: ')+fmt(gSub), color:'#d97757' },
+    { icon:'🏛️', label:'VAT', val:fmt(gVat)+(lang==='ar'?' ر.س':' SAR'), sub:gTotal?Math.round(gVat/gTotal*100)+'%':'0%', color:'#c04858' },
+    { icon:'📊', label:lang==='ar'?'متوسط شهري':'Monthly Avg', val:fmt(avgPerMonth)+(lang==='ar'?' ر.س':' SAR'), sub:(lang==='ar'?'ZATCA: ':'ZATCA: ')+zatcaPct+'%', color:'#4a7a38' }
   ];
   var kpiHtml = '';
   for (var i = 0; i < kpiData.length; i++) {
@@ -2409,7 +2601,7 @@ function buildDash() {
     typeHtml += '<div style="margin-bottom:10px;">';
     typeHtml += '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">';
     typeHtml += '<span style="font-size:12px;color:#1a1410;font-weight:600;">'+k+'</span>';
-    typeHtml += '<span style="font-size:11px;color:#8a8070;">'+fmt(types[k])+' ر.س ('+pct+'%)</span>';
+    typeHtml += '<span style="font-size:11px;color:#8a8070;">'+fmt(types[k])+(lang==='ar'?' ر.س':' SAR')+' ('+pct+'%)</span>';
     typeHtml += '</div>';
     typeHtml += '<div style="height:5px;background:#e4ddd4;border-radius:3px;overflow:hidden;">';
     typeHtml += '<div style="height:100%;width:'+w+'%;background:'+COLORS[i % COLORS.length]+';border-radius:3px;transition:width .6s;"></div>';
@@ -2464,7 +2656,7 @@ function buildDash() {
   foot += '<td style="padding:10px 12px;color:#fff;">'+gN+'</td>';
   foot += '<td style="padding:10px 12px;color:#e0d8cc;">'+fmt(gS)+'</td>';
   foot += '<td style="padding:10px 12px;color:#e0d8cc;">'+fmt(gV)+'</td>';
-  foot += '<td style="padding:10px 12px;color:#d97757;font-size:15px;">'+fmt(gT)+' ر.س</td>';
+  foot += '<td style="padding:10px 12px;color:#d97757;font-size:15px;">'+fmt(gT)+(lang==='ar'?' ر.س':' SAR')+'</td>';
   foot += '<td colspan="2"></td></tr>';
   document.getElementById('dashTableFoot').innerHTML = foot;
   buildDashAI(months, keys, gTotal, gVat, gCount, vendors, types);
@@ -2535,7 +2727,7 @@ function buildDashAI(months, keys, gTotal, gVat, gCount, vendors, types) {
     document.getElementById('dashAISummary').textContent = lang==='ar'?'لا توجد بيانات كافية للتحليل.':'Not enough data for analysis.';
     return;
   }
-  var fmt = function(n) { return Number(n).toLocaleString('ar-SA',{maximumFractionDigits:0}); };
+  var fmt = function(n) { return Number(n).toLocaleString(lang==='ar'?'ar-SA':'en-US',{maximumFractionDigits:0}); };
   var peakKey = keys[0], peakVal = 0;
   var lowKey = keys[0], lowVal = Infinity;
   for (var i = 0; i < keys.length; i++) {
@@ -2634,10 +2826,10 @@ function renderBudgetInputs() {
     html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;">';
     html += '<span style="font-size:12px;color:#1a1410;font-weight:500;">'+tp+'</span>';
     html += '<div style="display:flex;align-items:center;gap:6px;">';
-    html += '<input type="number" min="0" step="100" placeholder="غير محدد" value="'+saved+'"';
+    html += '<input type="number" min="0" step="100" placeholder="'+(lang==='ar'?'غير محدد':'Not set')+'" value="'+saved+'"';
     html += ' data-type="'+tp+'"';
     html += ' style="width:110px;background:#fff;border:1px solid #e4ddd4;border-radius:7px;padding:5px 8px;font-family:Tajawal,sans-serif;font-size:12px;outline:none;text-align:left;direction:ltr;">';
-    html += '<span style="font-size:11px;color:#8a8070;">ر.س</span>';
+    html += '<span style="font-size:11px;color:#8a8070;">'+(lang==='ar'?'ر.س':'SAR')+'</span>';
     html += '</div></div>';
   }
   document.getElementById('budgetInputs').innerHTML = html;
@@ -2654,7 +2846,7 @@ function renderBudgetStatus() {
     spending[at] = (spending[at]||0) + Number(monthData[i].total_amount||0);
     totalSpent += Number(monthData[i].total_amount||0);
   }
-  var fmt = function(n) { return Number(n).toLocaleString('ar-SA',{maximumFractionDigits:0}); };
+  var fmt = function(n) { return Number(n).toLocaleString(lang==='ar'?'ar-SA':'en-US',{maximumFractionDigits:0}); };
   var totalBudget = Number(budget.total || 0);
   var html = '';
   if (totalBudget > 0) {
@@ -2663,7 +2855,7 @@ function renderBudgetStatus() {
     html += '<div style="margin-bottom:10px;">';
     html += '<div style="display:flex;justify-content:space-between;margin-bottom:6px;">';
     html += '<span style="font-size:13px;font-weight:700;color:#1a1410;">'+(lang==='ar'?'الإجمالي هذا الشهر':'This Month Total')+'</span>';
-    html += '<span style="font-size:13px;font-weight:700;color:'+color+';">'+fmt(totalSpent)+' / '+fmt(totalBudget)+' ر.س</span>';
+    html += '<span style="font-size:13px;font-weight:700;color:'+color+';">'+fmt(totalSpent)+' / '+fmt(totalBudget)+(lang==='ar'?' ر.س':' SAR')+'</span>';
     html += '</div>';
     html += '<div style="height:8px;background:#e4ddd4;border-radius:4px;overflow:hidden;">';
     html += '<div style="height:100%;width:'+pct+'%;background:'+color+';border-radius:4px;transition:width .5s;"></div>';
@@ -2722,11 +2914,11 @@ function checkBudgetNow() {
   }
   var alerts = [];
   var thresh = budget.threshold || 80;
-  var fmt = function(n) { return Number(n).toLocaleString('ar-SA',{maximumFractionDigits:0}); };
+  var fmt = function(n) { return Number(n).toLocaleString(lang==='ar'?'ar-SA':'en-US',{maximumFractionDigits:0}); };
   if (budget.total > 0) {
     var pct = Math.round(totalSpent/budget.total*100);
     if (pct >= 100) {
-      alerts.push({ type:'danger', title: lang==='ar'?'⚠️ تجاوز الميزانية الكلية!':'⚠️ Total Budget Exceeded!', msg: (lang==='ar'?'صرفت ':'Spent ')+fmt(totalSpent)+(lang==='ar'?' من ':' of ')+fmt(budget.total)+' ر.س ('+pct+'%)' });
+      alerts.push({ type:'danger', title: lang==='ar'?'⚠️ تجاوز الميزانية الكلية!':'⚠️ Total Budget Exceeded!', msg: (lang==='ar'?'صرفت ':'Spent ')+fmt(totalSpent)+(lang==='ar'?' من ':' of ')+fmt(budget.total)+(lang==='ar'?' ر.س':' SAR')+' ('+pct+'%)' });
     } else if (pct >= thresh) {
       alerts.push({ type:'warn', title: lang==='ar'?'🔔 تنبيه ميزانية':'🔔 Budget Alert', msg: (lang==='ar'?'وصلت إلى ':'Reached ')+pct+'% '+(lang==='ar'?'من الميزانية الكلية':'of total budget') });
     }
@@ -2738,7 +2930,7 @@ function checkBudgetNow() {
       var spent = spending[tp] || 0;
       var pct = Math.round(spent/budgetAmt*100);
       if (pct >= 100) {
-        alerts.push({ type:'danger', title: (lang==='ar'?'⚠️ تجاوز: ':'⚠️ Exceeded: ')+tp, msg: fmt(spent)+(lang==='ar'?' من ':' / ')+fmt(budgetAmt)+' ر.س' });
+        alerts.push({ type:'danger', title: (lang==='ar'?'⚠️ تجاوز: ':'⚠️ Exceeded: ')+tp, msg: fmt(spent)+(lang==='ar'?' من ':' / ')+fmt(budgetAmt)+(lang==='ar'?' ر.س':' SAR') });
       } else if (pct >= thresh) {
         alerts.push({ type:'warn', title: (lang==='ar'?'🔔 تنبيه: ':'🔔 Alert: ')+tp, msg: pct+'% '+(lang==='ar'?'من الميزانية المحددة':'of set budget') });
       }
@@ -2752,11 +2944,11 @@ function checkBudgetNow() {
     if (btn) {
       var hasDanger = alerts.some(function(a){return a.type==='danger';});
       btn.style.background = hasDanger ? '#a02030' : '#d97757';
-      btn.textContent = '🎯 الميزانية (' + alerts.length + ')';
+      btn.textContent = (lang==='ar'?'🎯 الميزانية (':'🎯 Budget (') + alerts.length + ')';
     }
   } else {
     if (dot) dot.style.display = 'none';
-    if (btn) { btn.style.background = '#c04858'; btn.textContent = '🎯 الميزانية'; }
+    if (btn) { btn.style.background = '#c04858'; btn.textContent = lang==='ar'?'🎯 الميزانية':'🎯 Budget'; }
     if (!budget.total && (!budget.types || !Object.keys(budget.types).length)) return;
     showBudgetAlerts([{ type:'ok', title: lang==='ar'?'✅ الميزانية بخير':'✅ Budget OK', msg: lang==='ar'?'لم تتجاوز أي حد بعد':'No limits exceeded yet' }]);
   }
@@ -2845,10 +3037,10 @@ function updateQPreview() {
   var f = function(n) { return Number(n).toFixed(2); };
   previewContent.innerHTML =
     'Dr. / ' + accType + ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ' + f(sub) + '<br>' +
-    'Dr. / ضريبة القيمة المضافة &nbsp;&nbsp; ' + f(vat) + '<br>' +
-    'Cr. / الدائنون — ' + vendor + ' &nbsp; ' + f(total) + '<br>' +
+    'Dr. / ' + (lang==='ar'?'ضريبة القيمة المضافة':'VAT') + ' &nbsp;&nbsp; ' + f(vat) + '<br>' +
+    'Cr. / ' + (lang==='ar'?'الدائنون — ':'Accounts Payable — ') + vendor + ' &nbsp; ' + f(total) + '<br>' +
     '<span style="color:#4a7a38;">────────────────────────────<br>' +
-    '✓ متوازن: ' + f(total) + ' = ' + f(total) + '</span>';
+    (lang==='ar' ? ('✓ متوازن: ' + f(total) + ' = ' + f(total)) : ('✓ Balanced: ' + f(total) + ' = ' + f(total))) + '</span>';
 }
 function qAutoFill() {
   var q = document.getElementById('qVendor').value.trim().toLowerCase();
@@ -2901,8 +3093,8 @@ function buildQuickResult() {
   var docType = document.getElementById('qDocType').value;
   var desc    = document.getElementById('qDesc').value.trim();
   var pay     = document.getElementById('qPayMethod').value;
-  if (!vendor) { toast('⚠️ أدخل اسم المورّد', 'warn'); return null; }
-  if (!total)  { toast('⚠️ أدخل المبلغ الإجمالي', 'warn'); return null; }
+  if (!vendor) { toast(lang==='ar'?'⚠️ أدخل اسم المورّد':'⚠️ Enter vendor name', 'warn'); return null; }
+  if (!total)  { toast(lang==='ar'?'⚠️ أدخل المبلغ الإجمالي':'⚠️ Enter the total amount', 'warn'); return null; }
   if (!invNum) {
     var d = date ? date.replace(/-/g,'').slice(2) : new Date().toISOString().slice(2,10).replace(/-/g,'');
     invNum = 'Q-' + d + '-' + String(invoices.length + 1).padStart(3,'0');
@@ -2922,11 +3114,11 @@ function buildQuickResult() {
     payment_method:    pay,
     account_type:      accType,
     debit_account:     accType,
-    credit_account:    'الدائنون — ' + vendor,
-    vat_account:       'ضريبة القيمة المضافة — مدخلات',
+    credit_account:    (lang==='ar'?'الدائنون — ':'Accounts Payable — ') + vendor,
+    vat_account:       lang==='ar'?'ضريبة القيمة المضافة — مدخلات':'VAT — Input',
     zatca_compliant:   docType === 'فاتورة ضريبة',
     confidence:        100,
-    analysis:          'إدخال يدوي سريع',
+    analysis:          lang==='ar'?'إدخال يدوي سريع':'Quick manual entry',
     notes:             '',
     _quick_entry:      true
   };
@@ -2938,12 +3130,12 @@ function saveQuickEntry() {
   saveInvoice(result);
   if (wb) {
     writeToExcel(result);
-    toast('✅ ' + result.invoice_number + ' — حُفظ في Excel');
+    toast('✅ ' + result.invoice_number + (lang==='ar'?' — حُفظ في Excel':' — saved to Excel'));
   } else {
-    toast('✅ ' + result.invoice_number + ' — حُفظ في السجل');
+    toast('✅ ' + result.invoice_number + (lang==='ar'?' — حُفظ في السجل':' — saved to history'));
   }
   quickSavedCount++;
-  document.getElementById('quickSaveCount').textContent = 'تم حفظ ' + quickSavedCount + ' فاتورة';
+  document.getElementById('quickSaveCount').textContent = lang==='ar' ? ('تم حفظ ' + quickSavedCount + ' فاتورة') : (quickSavedCount + ' invoice(s) saved');
   clearQuickForm();
   closeQuickEntry();
 }
@@ -2954,8 +3146,8 @@ function saveQuickAndNew() {
   saveInvoice(result);
   if (wb) writeToExcel(result);
   quickSavedCount++;
-  document.getElementById('quickSaveCount').textContent = 'تم حفظ ' + quickSavedCount + ' فاتورة ✓';
-  toast('✅ ' + result.invoice_number + ' — جاهز للتالية');
+  document.getElementById('quickSaveCount').textContent = lang==='ar' ? ('تم حفظ ' + quickSavedCount + ' فاتورة ✓') : (quickSavedCount + ' invoice(s) saved ✓');
+  toast('✅ ' + result.invoice_number + (lang==='ar'?' — جاهز للتالية':' — ready for next'));
   var keptDate = document.getElementById('qDate').value;
   var keptAcc = document.getElementById('qAccType').value;
   var keptPay = document.getElementById('qPayMethod').value;
@@ -2986,7 +3178,7 @@ function startQuickCam() {
     document.getElementById('quickCamVideo').srcObject = stream;
     document.getElementById('captureCamBtn').disabled = false;
     document.getElementById('captureCamBtn').style.opacity = '1';
-    document.getElementById('startCamBtn').textContent = '✓ الكاميرا تعمل';
+    document.getElementById('startCamBtn').textContent = lang==='ar'?'✓ الكاميرا تعمل':'✓ Camera running';
   })
   .catch(function(e) { toast('❌ ' + e.message, 'error'); });
 }
@@ -3011,7 +3203,7 @@ function stopQuickCam() {
   var btn = document.getElementById('captureCamBtn');
   if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; }
   var startBtn = document.getElementById('startCamBtn');
-  if (startBtn) startBtn.textContent = '📷 تشغيل الكاميرا';
+  if (startBtn) startBtn.textContent = t('startCamBtn');
 }
 function parseBulk() {
   var text = document.getElementById('qBulkText').value.trim();
@@ -3034,27 +3226,27 @@ function parseBulk() {
       vat_rate:       15,
       account_type:   parts[4] || 'م تشغلية',
       debit_account:  parts[4] || 'م تشغلية',
-      credit_account: 'الدائنون',
-      vat_account:    'ضريبة القيمة المضافة',
+      credit_account: lang==='ar'?'الدائنون':'Accounts Payable',
+      vat_account:    lang==='ar'?'ضريبة القيمة المضافة':'VAT',
       currency:       'SAR',
       description:    parts[0] || '',
       payment_method: 'بنك الاهلي مؤسسة',
       zatca_compliant: true,
       confidence:     100,
       approved:       true,
-      analysis:       'إدخال جماعي',
+      analysis:       lang==='ar'?'إدخال جماعي':'Bulk entry',
       _quick_entry:   true
     });
   });
   var countEl = document.getElementById('bulkCount');
-  if (countEl) countEl.textContent = 'تم تحليل ' + bulkParsed.length + ' فاتورة';
+  if (countEl) countEl.textContent = lang==='ar' ? ('تم تحليل ' + bulkParsed.length + ' فاتورة') : (bulkParsed.length + ' invoice(s) parsed');
   var html = '<table style="width:100%;border-collapse:collapse;font-size:11px;">';
   html += '<tr style="background:#f9f7f4;">';
-  html += '<th style="padding:6px;text-align:right;border:1px solid #e4ddd4;">المورد</th>';
-  html += '<th style="padding:6px;border:1px solid #e4ddd4;">رقم الفاتورة</th>';
-  html += '<th style="padding:6px;border:1px solid #e4ddd4;">التاريخ</th>';
-  html += '<th style="padding:6px;border:1px solid #e4ddd4;">الإجمالي</th>';
-  html += '<th style="padding:6px;border:1px solid #e4ddd4;">النوع</th>';
+  html += '<th style="padding:6px;text-align:right;border:1px solid #e4ddd4;">' + (lang==='ar'?'المورد':'Vendor') + '</th>';
+  html += '<th style="padding:6px;border:1px solid #e4ddd4;">' + (lang==='ar'?'رقم الفاتورة':'Invoice No.') + '</th>';
+  html += '<th style="padding:6px;border:1px solid #e4ddd4;">' + (lang==='ar'?'التاريخ':'Date') + '</th>';
+  html += '<th style="padding:6px;border:1px solid #e4ddd4;">' + (lang==='ar'?'الإجمالي':'Total') + '</th>';
+  html += '<th style="padding:6px;border:1px solid #e4ddd4;">' + (lang==='ar'?'النوع':'Type') + '</th>';
   html += '</tr>';
   bulkParsed.forEach(function(r) {
     html += '<tr>';
@@ -3110,22 +3302,22 @@ function updateOdooConnStatus(state) {
   var btn  = document.getElementById('sendOdooBtn');
   if (state === 'connected') {
     dot.style.background = '#4a7a38';
-    txt.textContent = 'متصل بـ ' + (odooCfg.url || 'Odoo') + ' ✓';
+    txt.textContent = (lang==='ar' ? ('متصل بـ ' + (odooCfg.url || 'Odoo')) : ('Connected to ' + (odooCfg.url || 'Odoo'))) + ' ✓';
     txt.style.color = '#4a7a38';
     if (btn) { btn.disabled = false; btn.style.background='#714b67'; btn.style.color='#fff'; btn.style.cursor='pointer'; }
     odooConnected = true;
   } else if (state === 'testing') {
     dot.style.background = '#d97757';
-    txt.textContent = 'جاري الاتصال...';
+    txt.textContent = lang==='ar'?'جاري الاتصال...':'Connecting...';
     txt.style.color = '#d97757';
   } else if (state === 'error') {
     dot.style.background = '#c04858';
-    txt.textContent = 'فشل الاتصال — تحقق من البيانات';
+    txt.textContent = lang==='ar'?'فشل الاتصال — تحقق من البيانات':'Connection failed — check your details';
     txt.style.color = '#c04858';
     odooConnected = false;
   } else {
     dot.style.background = '#e4ddd4';
-    txt.textContent = 'غير متصل — أدخل بيانات الاتصال';
+    txt.textContent = lang==='ar'?'غير متصل — أدخل بيانات الاتصال':'Not connected — enter connection details';
     txt.style.color = '#8a8070';
     odooConnected = false;
   }
@@ -3139,29 +3331,29 @@ function saveOdooSettings() {
     journal: document.getElementById('odooJournal').value
   };
   localStorage.setItem('h_odoo', JSON.stringify(odooCfg));
-  toast('✅ تم حفظ إعدادات Odoo');
+  toast(lang==='ar'?'✅ تم حفظ إعدادات Odoo':'✅ Odoo settings saved');
 }
 function testOdooConnection() {
   saveOdooSettings();
   if (!odooCfg.url || !odooCfg.db || !odooCfg.user || !odooCfg.apiKey) {
-    toast('⚠️ أدخل جميع بيانات الاتصال', 'warn');
+    toast(lang==='ar'?'⚠️ أدخل جميع بيانات الاتصال':'⚠️ Enter all connection details', 'warn');
     return;
   }
   updateOdooConnStatus('testing');
   odooCall('common', 'version', [])
   .then(function(res) {
     if (res && res.server_version) {
-      addOdooLog('✅ Odoo ' + res.server_version + ' — الاتصال ناجح');
+      addOdooLog(lang==='ar' ? ('✅ Odoo ' + res.server_version + ' — الاتصال ناجح') : ('✅ Odoo ' + res.server_version + ' — connected successfully'));
       updateOdooConnStatus('connected');
-      toast('✅ متصل بـ Odoo ' + res.server_version);
+      toast(lang==='ar' ? ('✅ متصل بـ Odoo ' + res.server_version) : ('✅ Connected to Odoo ' + res.server_version));
     } else {
       updateOdooConnStatus('error');
-      addOdooLog('❌ فشل الاتصال — تحقق من الرابط');
+      addOdooLog(lang==='ar'?'❌ فشل الاتصال — تحقق من الرابط':'❌ Connection failed — check the URL');
     }
   })
   .catch(function(e) {
     updateOdooConnStatus('error');
-    addOdooLog('❌ خطأ: ' + e.message);
+    addOdooLog((lang==='ar'?'❌ خطأ: ':'❌ Error: ') + e.message);
     toast('❌ ' + e.message, 'error');
   });
 }
@@ -3223,7 +3415,7 @@ function selectProvider(key) {
   if (!settingsArea) return;
   settingsArea.style.display = 'block';
   var titleEl = document.getElementById('acctSettingsTitle');
-  if (titleEl) titleEl.textContent = 'إعدادات ' + p.label;
+  if (titleEl) titleEl.textContent = (lang==='ar'?'إعدادات ':'Settings — ') + p.label;
   if (p.authType === 'apikey') {
     if (apiFields)  apiFields.style.display  = 'flex';
     if (oauthInfo)  oauthInfo.style.display  = 'none';
@@ -3234,9 +3426,9 @@ function selectProvider(key) {
     var extraHtml = '';
     if (key === 'odoo') {
       extraHtml += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
-      extraHtml += '<div style="display:flex;flex-direction:column;gap:4px;"><label style="font-size:11px;font-weight:600;color:#8a8070;">قاعدة البيانات</label>';
+      extraHtml += '<div style="display:flex;flex-direction:column;gap:4px;"><label style="font-size:11px;font-weight:600;color:#8a8070;">' + (lang==='ar'?'قاعدة البيانات':'Database') + '</label>';
       extraHtml += '<input id="acctDb" type="text" placeholder="mycompany" dir="ltr" value="' + (accountingCfg.acctDb || '') + '" style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:8px 10px;font-family:monospace;font-size:12px;outline:none;"></div>';
-      extraHtml += '<div style="display:flex;flex-direction:column;gap:4px;"><label style="font-size:11px;font-weight:600;color:#8a8070;">البريد الإلكتروني</label>';
+      extraHtml += '<div style="display:flex;flex-direction:column;gap:4px;"><label style="font-size:11px;font-weight:600;color:#8a8070;">' + (lang==='ar'?'البريد الإلكتروني':'Email') + '</label>';
       extraHtml += '<input id="acctUser" type="text" placeholder="admin@co.com" dir="ltr" value="' + (accountingCfg.acctUser || '') + '" style="background:#f9f7f4;border:1px solid #e4ddd4;border-radius:8px;padding:8px 10px;font-family:monospace;font-size:12px;outline:none;"></div>';
       extraHtml += '</div>';
     }
@@ -3246,7 +3438,7 @@ function selectProvider(key) {
     if (apiFields)  apiFields.style.display  = 'none';
     if (oauthInfo)  oauthInfo.style.display  = 'block';
     var oauthDesc = document.getElementById('acctOAuthDesc');
-    if (oauthDesc) oauthDesc.textContent = p.label + ' يستخدم OAuth2 — متاح في النسخة المؤسسية من حاسِب';
+    if (oauthDesc) oauthDesc.textContent = lang==='ar' ? (p.label + ' يستخدم OAuth2 — متاح في النسخة المؤسسية من حاسِب') : (p.label + ' uses OAuth2 — available in Hasib Enterprise');
   }
   var discBtn = document.getElementById('acctDisconnectBtn');
   if (discBtn) discBtn.style.display = accountingCfg.connected ? 'block' : 'none';
@@ -3254,7 +3446,7 @@ function selectProvider(key) {
 }
 function saveAccountingCfg() {
   var key = accountingCfg.provider;
-  if (!key) { toast('⚠️ اختر نظاماً أولاً', 'warn'); return; }
+  if (!key) { toast(lang==='ar'?'⚠️ اختر نظاماً أولاً':'⚠️ Choose a system first', 'warn'); return; }
   var urlEl = document.getElementById('acctUrl');
   var keyEl = document.getElementById('acctApiKey');
   if (urlEl) accountingCfg.url = urlEl.value.trim().replace(/\/$/, '');
@@ -3266,15 +3458,15 @@ function saveAccountingCfg() {
     if (userEl) accountingCfg.acctUser = userEl.value.trim();
   }
   localStorage.setItem('h_accounting', JSON.stringify(accountingCfg));
-  toast('✅ تم حفظ إعدادات ' + ACCOUNTING_PROVIDERS[key].label);
+  toast((lang==='ar'?'✅ تم حفظ إعدادات ':'✅ Settings saved — ') + ACCOUNTING_PROVIDERS[key].label);
   updateNavAccountingBtn();
 }
 function connectAccounting() {
   var key = accountingCfg.provider;
-  if (!key) { toast('⚠️ اختر نظاماً أولاً', 'warn'); return; }
+  if (!key) { toast(lang==='ar'?'⚠️ اختر نظاماً أولاً':'⚠️ Choose a system first', 'warn'); return; }
   saveAccountingCfg();
   if (ACCOUNTING_PROVIDERS[key].authType === 'oauth2') {
-    toast('⚠️ OAuth2 متاح في النسخة المؤسسية — استخدم Odoo أو قيود أو دفترة الآن', 'warn');
+    toast(lang==='ar'?'⚠️ OAuth2 متاح في النسخة المؤسسية — استخدم Odoo أو قيود أو دفترة الآن':'⚠️ OAuth2 is available in Hasib Enterprise — use Odoo, Qoyod, or Daftra for now', 'warn');
     return;
   }
   if (key === 'odoo') {
@@ -3284,8 +3476,8 @@ function connectAccounting() {
     odooCfg.user   = accountingCfg.acctUser || '';
     testOdooConnection();
   } else {
-    addAcctLog('🔌 تم حفظ إعدادات ' + ACCOUNTING_PROVIDERS[key].label);
-    toast('✅ تم حفظ ' + ACCOUNTING_PROVIDERS[key].label);
+    addAcctLog((lang==='ar'?'🔌 تم حفظ إعدادات ':'🔌 Settings saved — ') + ACCOUNTING_PROVIDERS[key].label);
+    toast((lang==='ar'?'✅ تم حفظ ':'✅ Saved — ') + ACCOUNTING_PROVIDERS[key].label);
   }
   accountingCfg.connected = true;
   localStorage.setItem('h_accounting', JSON.stringify(accountingCfg));
@@ -3301,7 +3493,7 @@ function disconnectAccounting() {
   renderProviderGrid();
   var discBtn = document.getElementById('acctDisconnectBtn');
   if (discBtn) discBtn.style.display = 'none';
-  toast('⏏ تم قطع الاتصال');
+  toast(lang==='ar'?'⏏ تم قطع الاتصال':'⏏ Disconnected');
   updateNavAccountingBtn();
 }
 function updateAcctStatus() {
@@ -3312,16 +3504,16 @@ function updateAcctStatus() {
     var pName = ACCOUNTING_PROVIDERS[accountingCfg.provider] ? ACCOUNTING_PROVIDERS[accountingCfg.provider].label : accountingCfg.provider;
     dot.style.background  = '#4a7a38';
     text.style.color      = '#4a7a38';
-    text.textContent      = 'متصل بـ ' + pName + ' ✓';
+    text.textContent      = (lang==='ar' ? ('متصل بـ ' + pName) : ('Connected to ' + pName)) + ' ✓';
   } else if (accountingCfg.provider) {
     var pName2 = ACCOUNTING_PROVIDERS[accountingCfg.provider] ? ACCOUNTING_PROVIDERS[accountingCfg.provider].label : accountingCfg.provider;
     dot.style.background  = '#d97757';
     text.style.color      = '#d97757';
-    text.textContent      = pName2 + ' — غير متصل';
+    text.textContent      = lang==='ar' ? (pName2 + ' — غير متصل') : (pName2 + ' — not connected');
   } else {
     dot.style.background  = '#e4ddd4';
     text.style.color      = '#8a8070';
-    text.textContent      = 'غير متصل — اختر نظاماً أدناه';
+    text.textContent      = lang==='ar'?'غير متصل — اختر نظاماً أدناه':'Not connected — choose a system below';
   }
 }
 function updateNavAccountingBtn() {
@@ -3329,10 +3521,10 @@ function updateNavAccountingBtn() {
   if (!btn) return;
   if (accountingCfg.connected && accountingCfg.provider) {
     var p = ACCOUNTING_PROVIDERS[accountingCfg.provider];
-    btn.textContent  = (p ? p.icon : '🔗') + ' ' + (p ? p.label : 'متصل') + ' ✓';
+    btn.textContent  = (p ? p.icon : '🔗') + ' ' + (p ? p.label : (lang==='ar'?'متصل':'Connected')) + ' ✓';
     btn.style.background = '#4a7a38';
   } else {
-    btn.textContent  = '🔗 ربط نظام';
+    btn.textContent  = lang==='ar'?'🔗 ربط نظام':'🔗 Connect System';
     btn.style.background = '#714b67';
   }
 }
@@ -3351,12 +3543,12 @@ function sendInvoiceToAnySystem(entry) {
   } else if (key === 'daftra') {
     sendToDaftra(entry);
   } else {
-    toast('⚠️ ' + ACCOUNTING_PROVIDERS[key].label + ' يحتاج النسخة المؤسسية', 'warn');
+    toast('⚠️ ' + ACCOUNTING_PROVIDERS[key].label + (lang==='ar'?' يحتاج النسخة المؤسسية':' requires the Enterprise version'), 'warn');
     copyEntryToClipboard(entry, ACCOUNTING_PROVIDERS[key].label);
   }
 }
 function sendToQoyod(r) {
-  if (!accountingCfg.apiKey) { toast('⚠️ أدخل مفتاح API لقيود', 'warn'); return; }
+  if (!accountingCfg.apiKey) { toast(lang==='ar'?'⚠️ أدخل مفتاح API لقيود':'⚠️ Enter the Qoyod API key', 'warn'); return; }
   var payload = {
     date:        r.invoice_date || new Date().toISOString().split('T')[0],
     reference:   r.invoice_number || '',
@@ -3374,13 +3566,13 @@ function sendToQoyod(r) {
   })
   .then(function(res) { return res.json(); })
   .then(function(data) {
-    if (data.id) { addAcctLog('✅ قيد في قيود — ID: ' + data.id); toast('✅ تم الإرسال لقيود'); }
+    if (data.id) { addAcctLog('✅ قيد في قيود — ID: ' + data.id); toast(lang==='ar'?'✅ تم الإرسال لقيود':'✅ Sent to Qoyod'); }
     else { copyEntryToClipboard(r, 'قيود Qoyod'); }
   })
   .catch(function() { copyEntryToClipboard(r, 'قيود Qoyod'); });
 }
 function sendToDaftra(r) {
-  if (!accountingCfg.apiKey) { toast('⚠️ أدخل مفتاح API لدفترة', 'warn'); return; }
+  if (!accountingCfg.apiKey) { toast(lang==='ar'?'⚠️ أدخل مفتاح API لدفترة':'⚠️ Enter the Daftra API key', 'warn'); return; }
   fetch((accountingCfg.url || 'https://app.daftra.com') + '/api2/accounting_journal_entries', {
     method: 'POST',
     headers: { 'APIKEY': accountingCfg.apiKey, 'Content-Type': 'application/json' },
@@ -3399,7 +3591,7 @@ function sendToDaftra(r) {
   })
   .then(function(res) { return res.json(); })
   .then(function(data) {
-    if (data.status === 1) { addAcctLog('✅ قيد في دفترة'); toast('✅ تم الإرسال لدفترة'); }
+    if (data.status === 1) { addAcctLog('✅ قيد في دفترة'); toast(lang==='ar'?'✅ تم الإرسال لدفترة':'✅ Sent to Daftra'); }
     else { copyEntryToClipboard(r, 'دفترة Daftra'); }
   })
   .catch(function() { copyEntryToClipboard(r, 'دفترة Daftra'); });
@@ -3419,7 +3611,7 @@ function addAcctLog(msg) {
   var items = document.getElementById('acctLogItems');
   if (!log || !items) return;
   log.style.display = 'block';
-  var t = new Date().toLocaleTimeString('ar-SA', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  var t = new Date().toLocaleTimeString(lang==='ar'?'ar-SA':'en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
   var div = document.createElement('div');
   div.textContent = '[' + t + '] ' + msg;
   items.appendChild(div);
@@ -3502,27 +3694,27 @@ function buildOdooEntry(r) {
   };
 }
 function sendCurrentToOdoo() {
-  if (!curResult) { toast('⚠️ لا توجد فاتورة معالجة', 'warn'); return; }
+  if (!curResult) { toast(lang==='ar'?'⚠️ لا توجد فاتورة معالجة':'⚠️ No processed invoice', 'warn'); return; }
   sendInvoiceToOdoo(curResult);
 }
 function sendToOdooDirect() {
   if (!odooConnected && (!odooCfg.url || !odooCfg.apiKey)) {
     openOdoo();
-    toast('⚠️ أعدّ اتصال Odoo أولاً', 'warn');
+    toast(lang==='ar'?'⚠️ أعدّ اتصال Odoo أولاً':'⚠️ Set up your Odoo connection first', 'warn');
     return;
   }
-  if (!curResult) { toast('⚠️ لا توجد فاتورة معالجة', 'warn'); return; }
+  if (!curResult) { toast(lang==='ar'?'⚠️ لا توجد فاتورة معالجة':'⚠️ No processed invoice', 'warn'); return; }
   sendInvoiceToOdoo(curResult);
 }
 function sendInvoiceToOdoo(r) {
   if (!odooCfg.url || !odooCfg.apiKey) {
     openOdoo();
-    toast('⚠️ أعدّ اتصال Odoo أولاً', 'warn');
+    toast(lang==='ar'?'⚠️ أعدّ اتصال Odoo أولاً':'⚠️ Set up your Odoo connection first', 'warn');
     return;
   }
   var entry = buildOdooEntry(r);
   addOdooLog('📤 إرسال قيد: ' + entry.ref + ' ...');
-  toast('⏳ جاري الإرسال لـ Odoo...');
+  toast(lang==='ar'?'⏳ جاري الإرسال لـ Odoo...':'⏳ Sending to Odoo...');
   var url = odooCfg.url + '/web/dataset/call_kw';
   var payload = {
     jsonrpc: '2.0', method: 'call', id: Date.now(),
@@ -3559,7 +3751,7 @@ function sendInvoiceToOdoo(r) {
     var moveId = data.result;
     if (moveId) {
       addOdooLog('✅ قيد #' + moveId + ' أُنشئ في Odoo');
-      toast('✅ تم إرسال القيد لـ Odoo — رقم ' + moveId);
+      toast(lang==='ar' ? ('✅ تم إرسال القيد لـ Odoo — رقم ' + moveId) : ('✅ Entry sent to Odoo — #' + moveId));
       updateOdooConnStatus('connected');
       r.odoo_move_id = moveId;
       updateInvoice(r);
@@ -3568,7 +3760,7 @@ function sendInvoiceToOdoo(r) {
   })
   .catch(function(e) {
     addOdooLog('❌ ' + e.message);
-    toast('❌ خطأ في الإرسال: ' + e.message, 'error');
+    toast((lang==='ar'?'❌ خطأ في الإرسال: ':'❌ Send error: ') + e.message, 'error');
     updateOdooConnStatus('error');
   });
 }
@@ -3593,7 +3785,7 @@ function sendViaXMLRPC(r) {
   text += 'VAT: ' + r.vat_amount + '\n';
   text += 'دائن: ' + r.credit_account + ' = ' + r.total_amount;
   navigator.clipboard.writeText(text).catch(function(){});
-  toast('📋 بيانات القيد في الحافظة — الصقها في Odoo');
+  toast(lang==='ar'?'📋 بيانات القيد في الحافظة — الصقها في Odoo':'📋 Entry copied to clipboard — paste it in Odoo');
 }
 function postOdooMove(moveId) {
   var url = odooCfg.url + '/web/dataset/call_kw';
@@ -3610,13 +3802,13 @@ function postOdooMove(moveId) {
   .then(function(d){
     if (!d.error) {
       addOdooLog('✅ القيد #' + moveId + ' مُرحَّل في Odoo');
-      toast('✅ القيد مُرحَّل في Odoo');
+      toast(lang==='ar'?'✅ القيد مُرحَّل في Odoo':'✅ Entry posted in Odoo');
     }
   })
   .catch(function(){});
 }
 function readFromOdoo() {
-  if (!odooCfg.url || !odooCfg.apiKey) { toast('⚠️ اتصل بـ Odoo أولاً', 'warn'); return; }
+  if (!odooCfg.url || !odooCfg.apiKey) { toast(lang==='ar'?'⚠️ اتصل بـ Odoo أولاً':'⚠️ Connect to Odoo first', 'warn'); return; }
   addOdooLog('📥 جاري جلب البيانات من Odoo...');
   var url = odooCfg.url + '/web/dataset/call_kw';
   var payload = {
@@ -3664,7 +3856,7 @@ function readFromOdoo() {
     localStorage.setItem('h_inv', JSON.stringify(invoices));
     renderHistory();
     updateStats();
-    toast('✅ ' + moves.length + ' قيد محمّل من Odoo');
+    toast(lang==='ar' ? ('✅ ' + moves.length + ' قيد محمّل من Odoo') : ('✅ ' + moves.length + ' entries loaded from Odoo'));
     closeOdoo();
   })
   .catch(function(e) {
@@ -3677,7 +3869,7 @@ function addOdooLog(msg) {
   var items = document.getElementById('odooLogItems');
   if (!log || !items) return;
   log.style.display = 'block';
-  var t = new Date().toLocaleTimeString('ar-SA', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  var t = new Date().toLocaleTimeString(lang==='ar'?'ar-SA':'en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
   items.innerHTML += '<div>[' + t + '] ' + msg + '</div>';
   log.scrollTop = log.scrollHeight;
 }
@@ -3735,7 +3927,7 @@ function loadBankStatement(e) {
       var rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false});
       bankTransactions = parseBankRows(rows);
       localStorage.setItem('h_bank', JSON.stringify(bankTransactions));
-      toast('✅ تم تحميل ' + bankTransactions.length + ' حركة بنكية من ' + file.name);
+      toast(lang==='ar' ? ('✅ تم تحميل ' + bankTransactions.length + ' حركة بنكية من ' + file.name) : ('✅ Loaded ' + bankTransactions.length + ' bank transactions from ' + file.name));
     } catch (err) { toast('❌ ' + err.message, 'error'); }
   };
   reader.readAsArrayBuffer(file);
@@ -3813,29 +4005,31 @@ function renderReconcile() {
   var sum = document.getElementById('reconcileSummary');
   if (!sum) return;
   sum.innerHTML =
-    '<div class="stat"><div class="stat-n grn">' + reconcileResults.matched.length + '</div><div class="stat-l">مطابقة تلقائياً</div></div>' +
-    '<div class="stat"><div class="stat-n org">' + reconcileResults.unmatchedInvoices.length + '</div><div class="stat-l">فواتير بدون سداد بنكي</div></div>' +
-    '<div class="stat"><div class="stat-n" style="color:#c04858;">' + reconcileResults.unmatchedBank.length + '</div><div class="stat-l">حركات بنكية بدون فاتورة</div></div>';
+    '<div class="stat"><div class="stat-n grn">' + reconcileResults.matched.length + '</div><div class="stat-l">' + (lang==='ar'?'مطابقة تلقائياً':'Auto-matched') + '</div></div>' +
+    '<div class="stat"><div class="stat-n org">' + reconcileResults.unmatchedInvoices.length + '</div><div class="stat-l">' + (lang==='ar'?'فواتير بدون سداد بنكي':'Invoices without bank payment') + '</div></div>' +
+    '<div class="stat"><div class="stat-n" style="color:#c04858;">' + reconcileResults.unmatchedBank.length + '</div><div class="stat-l">' + (lang==='ar'?'حركات بنكية بدون فاتورة':'Bank transactions without invoice') + '</div></div>';
   var html = '';
   if (reconcileResults.matched.length) {
-    html += '<div style="font-size:12px;font-weight:700;color:#4a7a38;margin-bottom:8px;">✅ مطابقات تلقائية (ReconciliationAgent)</div>';
+    html += '<div style="font-size:12px;font-weight:700;color:#4a7a38;margin-bottom:8px;">' + (lang==='ar'?'✅ مطابقات تلقائية (ReconciliationAgent)':'✅ Automatic matches (ReconciliationAgent)') + '</div>';
     reconcileResults.matched.forEach(function(m) {
-      html += '<div class="alert-box good"><span class="alert-box-icon">🔗</span><span class="alert-box-text">' + (m.invoice.vendor_name || '—') + ' — ' + Number(m.invoice.total_amount || 0).toFixed(2) + ' ر.س — فاتورة ' + (m.invoice.invoice_date || '') + ' ↔ حركة بنكية ' + m.bank.date + ' (فرق ' + m.dayDiff + ' يوم) — "' + m.bank.description + '"</span></div>';
+      html += '<div class="alert-box good"><span class="alert-box-icon">🔗</span><span class="alert-box-text">' + (lang==='ar'
+        ? ((m.invoice.vendor_name || '—') + ' — ' + Number(m.invoice.total_amount || 0).toFixed(2) + ' ر.س — فاتورة ' + (m.invoice.invoice_date || '') + ' ↔ حركة بنكية ' + m.bank.date + ' (فرق ' + m.dayDiff + ' يوم) — "' + m.bank.description + '"')
+        : ((m.invoice.vendor_name || '—') + ' — SAR ' + Number(m.invoice.total_amount || 0).toFixed(2) + ' — invoice ' + (m.invoice.invoice_date || '') + ' ↔ bank txn ' + m.bank.date + ' (' + m.dayDiff + '-day diff) — "' + m.bank.description + '"')) + '</span></div>';
     });
   }
   if (reconcileResults.unmatchedInvoices.length) {
-    html += '<div style="font-size:12px;font-weight:700;color:#d97757;margin:14px 0 8px;">⚠️ فواتير معتمدة بدون سداد بنكي مطابق</div>';
+    html += '<div style="font-size:12px;font-weight:700;color:#d97757;margin:14px 0 8px;">' + (lang==='ar'?'⚠️ فواتير معتمدة بدون سداد بنكي مطابق':'⚠️ Approved invoices without a matching bank payment') + '</div>';
     reconcileResults.unmatchedInvoices.forEach(function(inv) {
-      html += '<div class="alert-box warn"><span class="alert-box-icon">📄</span><span class="alert-box-text">' + (inv.vendor_name || '—') + ' — ' + Number(inv.total_amount || 0).toFixed(2) + ' ر.س — ' + (inv.invoice_date || '') + '</span></div>';
+      html += '<div class="alert-box warn"><span class="alert-box-icon">📄</span><span class="alert-box-text">' + (inv.vendor_name || '—') + ' — ' + (lang==='ar' ? (Number(inv.total_amount || 0).toFixed(2) + ' ر.س') : ('SAR ' + Number(inv.total_amount || 0).toFixed(2))) + ' — ' + (inv.invoice_date || '') + '</span></div>';
     });
   }
   if (reconcileResults.unmatchedBank.length) {
-    html += '<div style="font-size:12px;font-weight:700;color:#c04858;margin:14px 0 8px;">❗ حركات بنكية بدون فاتورة مقابلة</div>';
+    html += '<div style="font-size:12px;font-weight:700;color:#c04858;margin:14px 0 8px;">' + (lang==='ar'?'❗ حركات بنكية بدون فاتورة مقابلة':'❗ Bank transactions without a matching invoice') + '</div>';
     reconcileResults.unmatchedBank.forEach(function(b) {
-      html += '<div class="alert-box warn"><span class="alert-box-icon">🏦</span><span class="alert-box-text">' + b.date + ' — ' + Number(b.amount).toFixed(2) + ' ر.س — "' + b.description + '"</span></div>';
+      html += '<div class="alert-box warn"><span class="alert-box-icon">🏦</span><span class="alert-box-text">' + b.date + ' — ' + (lang==='ar' ? (Number(b.amount).toFixed(2) + ' ر.س') : ('SAR ' + Number(b.amount).toFixed(2))) + ' — "' + b.description + '"</span></div>';
     });
   }
-  document.getElementById('reconcileResultsBox').innerHTML = html || '<div style="font-size:12px;color:#8a8070;">ارفع كشف الحساب البنكي ثم اضغط "نفّذ المطابقة"</div>';
+  document.getElementById('reconcileResultsBox').innerHTML = html || '<div style="font-size:12px;color:#8a8070;">' + (lang==='ar'?'ارفع كشف الحساب البنكي ثم اضغط "نفّذ المطابقة"':'Upload the bank statement then press "Run Matching"') + '</div>';
 }
 function openReconcile() {
   document.getElementById('reconcileModal').style.display = 'block';
@@ -3877,11 +4071,11 @@ function closeMonthCloseModal() {
 }
 function checkBudgetForClose(ym) {
   var totalBudget = Number((budget && budget.total) || 0);
-  if (!totalBudget) return { ok: true, detail: 'لم تُحدَّد ميزانية إجمالية شهرية (اختياري)' };
+  if (!totalBudget) return { ok: true, detail: lang==='ar'?'لم تُحدَّد ميزانية إجمالية شهرية (اختياري)':'No total monthly budget set (optional)' };
   var data = getMonthInvoices(ym);
   var total = data.reduce(function(s, inv) { return s + Number(inv.total_amount || 0); }, 0);
   var pct = Math.round(total / totalBudget * 100);
-  return { ok: total <= totalBudget, detail: total.toFixed(0) + ' ر.س من أصل ' + totalBudget.toFixed(0) + ' ر.س (' + pct + '%)' };
+  return { ok: total <= totalBudget, detail: (lang==='ar' ? (total.toFixed(0) + ' ر.س من أصل ' + totalBudget.toFixed(0) + ' ر.س') : ('SAR ' + total.toFixed(0) + ' of SAR ' + totalBudget.toFixed(0))) + ' (' + pct + '%)' };
 }
 function evaluateCloseChecklist() {
   var sel = document.getElementById('closeMonthSelect');
@@ -3897,12 +4091,18 @@ function evaluateCloseChecklist() {
   var flaggedVariance = varianceRows.filter(function(r) { return r.flagged; });
   var alreadyClosed = closedMonths.indexOf(ym) > -1;
 
-  var items = [
+  var items = lang === 'ar' ? [
     { label: 'جميع الفواتير معتمدة', ok: unapproved.length === 0, detail: unapproved.length ? (unapproved.length + ' فاتورة بانتظار الاعتماد') : ('كل الفواتير (' + data.length + ') معتمدة') },
     { label: 'لا توجد فواتير معلّقة للمراجعة البشرية', ok: needsReview.length === 0, detail: needsReview.length ? (needsReview.length + ' فاتورة صعّدها SupervisorAgent وتحتاج مراجعة محاسب') : 'لا يوجد تصعيدات معلّقة' },
     { label: 'المطابقة البنكية مكتملة', ok: unmatchedThisMonth.length === 0, detail: unmatchedThisMonth.length ? (unmatchedThisMonth.length + ' فاتورة بدون سداد بنكي مطابق') : 'كل الفواتير المعتمدة لها سداد بنكي مطابق (أو لم يُرفع كشف حساب لهذا الشهر)' },
     { label: 'الميزانية ضمن الحدود', ok: budgetCheck.ok, detail: budgetCheck.detail },
     { label: 'لا توجد انحرافات كبيرة غير مبرّرة', ok: flaggedVariance.length === 0, detail: flaggedVariance.length ? (flaggedVariance.length + ' بند تجاوز نسبة انحراف ' + VARIANCE_THRESHOLD + '%') : 'كل البنود ضمن نسبة الانحراف المسموحة' }
+  ] : [
+    { label: 'All invoices approved', ok: unapproved.length === 0, detail: unapproved.length ? (unapproved.length + ' invoice(s) pending approval') : ('All invoices (' + data.length + ') approved') },
+    { label: 'No invoices pending human review', ok: needsReview.length === 0, detail: needsReview.length ? (needsReview.length + ' invoice(s) escalated by SupervisorAgent and need accountant review') : 'No pending escalations' },
+    { label: 'Bank reconciliation complete', ok: unmatchedThisMonth.length === 0, detail: unmatchedThisMonth.length ? (unmatchedThisMonth.length + ' invoice(s) without a matching bank payment') : 'All approved invoices have a matching bank payment (or no statement was uploaded for this month)' },
+    { label: 'Budget within limits', ok: budgetCheck.ok, detail: budgetCheck.detail },
+    { label: 'No large unexplained variances', ok: flaggedVariance.length === 0, detail: flaggedVariance.length ? (flaggedVariance.length + ' item(s) exceeded the ' + VARIANCE_THRESHOLD + '% variance threshold') : 'All items are within the allowed variance' }
   ];
   var allOk = items.every(function(i) { return i.ok; });
   document.getElementById('closeChecklist').innerHTML = items.map(function(i) {
@@ -3910,16 +4110,16 @@ function evaluateCloseChecklist() {
   }).join('');
   var varBox = document.getElementById('closeVarianceBox');
   if (flaggedVariance.length) {
-    varBox.innerHTML = '<div style="font-size:11px;font-weight:700;color:#c04858;margin-bottom:6px;">بنود بحاجة تبرير قبل الإغلاق:</div>' + flaggedVariance.map(function(r) {
+    varBox.innerHTML = '<div style="font-size:11px;font-weight:700;color:#c04858;margin-bottom:6px;">' + (lang==='ar'?'بنود بحاجة تبرير قبل الإغلاق:':'Items needing justification before closing:') + '</div>' + flaggedVariance.map(function(r) {
       return '<div style="font-size:12px;color:#5a5040;padding:4px 0;">• ' + r.type + ': ' + (r.pct > 0 ? '+' : '') + r.pct.toFixed(1) + '%</div>';
     }).join('');
   } else { varBox.innerHTML = ''; }
   var btn = document.getElementById('closeMonthBtn');
   if (alreadyClosed) {
-    btn.textContent = '🔒 هذا الشهر مقفل بالفعل';
+    btn.textContent = lang==='ar'?'🔒 هذا الشهر مقفل بالفعل':'🔒 This month is already closed';
     btn.disabled = true; btn.style.opacity = '0.5';
   } else {
-    btn.textContent = allOk ? '🔒 إغلاق الشهر نهائياً' : '⚠️ إغلاق مع وجود ملاحظات';
+    btn.textContent = allOk ? (lang==='ar'?'🔒 إغلاق الشهر نهائياً':'🔒 Close Month Permanently') : (lang==='ar'?'⚠️ إغلاق مع وجود ملاحظات':'⚠️ Close with open items');
     btn.disabled = false; btn.style.opacity = '1';
   }
 }
@@ -3929,7 +4129,7 @@ function closeMonthNow() {
   if (!ym || closedMonths.indexOf(ym) > -1) return;
   closedMonths.push(ym);
   localStorage.setItem('h_closed', JSON.stringify(closedMonths));
-  toast('🔒 تم إغلاق شهر ' + formatMonthLabel(ym) + ' محاسبياً — لن يمكن اعتماد أو تعديل فواتيره');
+  toast(lang==='ar' ? ('🔒 تم إغلاق شهر ' + formatMonthLabel(ym) + ' محاسبياً — لن يمكن اعتماد أو تعديل فواتيره') : ('🔒 ' + formatMonthLabel(ym) + ' has been closed — its invoices can no longer be approved or edited'));
   evaluateCloseChecklist();
 }
 </script>
