@@ -408,7 +408,7 @@ table td { font-variant-numeric:tabular-nums }
       <text x="352" y="300" font-family="'Playfair Display',serif" font-style="italic" font-size="380" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" clip-path="url(#nc)" opacity=".55">A</text>
       <text x="212" y="296" font-family="'Playfair Display',serif" font-style="italic" font-size="380" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" clip-path="url(#nc)">H</text>
     </svg>
-    <span class="nav-brand">حاسِب <span>AI</span></span>
+    <span class="nav-brand"><span class="brand-word">حاسِب</span> <span>AI</span></span>
     <span class="nav-pill">Beta</span>
   </a>
   <div class="nav-right">
@@ -579,10 +579,10 @@ table td { font-variant-numeric:tabular-nums }
         <div class="field"><label id="lCredit">حساب الدائن</label><input id="eCredit" type="text"></div>
       </div>
       <div class="field"><label id="lAccType">نوع الحساب</label>
-        <select id="eAccType">
-          <option>مصروفات تشغيل</option><option>مصروفات إدارية</option><option>مصروفات تسويقية</option>
-          <option>مصروفات تقنية</option><option>أصول ثابتة</option><option>مخزون</option>
-          <option>خدمات مهنية</option><option>إيجارات</option><option>مرافق</option><option>أخرى</option>
+        <select id="eAccType" class="acc-type-select">
+          <option value="مصروفات تشغيل">مصروفات تشغيل</option><option value="مصروفات إدارية">مصروفات إدارية</option><option value="مصروفات تسويقية">مصروفات تسويقية</option>
+          <option value="مصروفات تقنية">مصروفات تقنية</option><option value="أصول ثابتة">أصول ثابتة</option><option value="مخزون">مخزون</option>
+          <option value="خدمات مهنية">خدمات مهنية</option><option value="إيجارات">إيجارات</option><option value="مرافق">مرافق</option><option value="أخرى">أخرى</option>
         </select>
       </div>
       <div class="field"><label id="lNotes">ملاحظات</label><textarea id="eNotes" rows="2"></textarea></div>
@@ -698,20 +698,20 @@ table td { font-variant-numeric:tabular-nums }
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
         <div style="display:flex;flex-direction:column;gap:4px;">
           <label style="font-size:13px;font-weight:600;color:#737373;" id="qAccTypeLbl">نوع الحساب</label>
-          <select id="qAccType"
+          <select id="qAccType" class="acc-type-select"
             style="background:#fafafa;border:1px solid #e5e5e5;border-radius:8px;padding:9px 12px;font-family:inherit;font-size:14.5px;outline:none;color:#0a0a0a;">
-            <option>م تشغلية</option>
-            <option>م صيانة</option>
-            <option>م ضيافة</option>
-            <option>م دعاية واعلان</option>
-            <option>م قطع غيار</option>
-            <option>م وقود ومحروقات</option>
-            <option>م ايجار</option>
-            <option>م اجور ورواتب</option>
-            <option>م حكومية</option>
-            <option>م اتصالات</option>
-            <option>م عمومية وادارية</option>
-            <option>م تأمين</option>
+            <option value="م تشغلية">م تشغلية</option>
+            <option value="م صيانة">م صيانة</option>
+            <option value="م ضيافة">م ضيافة</option>
+            <option value="م دعاية واعلان">م دعاية واعلان</option>
+            <option value="م قطع غيار">م قطع غيار</option>
+            <option value="م وقود ومحروقات">م وقود ومحروقات</option>
+            <option value="م ايجار">م ايجار</option>
+            <option value="م اجور ورواتب">م اجور ورواتب</option>
+            <option value="م حكومية">م حكومية</option>
+            <option value="م اتصالات">م اتصالات</option>
+            <option value="م عمومية وادارية">م عمومية وادارية</option>
+            <option value="م تأمين">م تأمين</option>
           </select>
         </div>
 
@@ -1077,7 +1077,7 @@ table td { font-variant-numeric:tabular-nums }
         <text x="352" y="300" font-family="'Playfair Display',serif" font-style="italic" font-size="380" font-weight="700" fill="#fff" text-anchor="middle" dominant-baseline="middle" clip-path="url(#ac)" opacity=".55">A</text>
         <text x="212" y="296" font-family="'Playfair Display',serif" font-style="italic" font-size="380" font-weight="700" fill="#fff" text-anchor="middle" dominant-baseline="middle" clip-path="url(#ac)">H</text>
       </svg>
-      <span style="font-family:'Playfair Display',serif;font-style:italic;font-size:24px;color:#0a0a0a;">حاسِب <span>AI</span></span>
+      <span style="font-family:'Playfair Display',serif;font-style:italic;font-size:24px;color:#0a0a0a;"><span class="brand-word">حاسِب</span> <span>AI</span></span>
     </div>
 
     <!-- تسجيل الدخول -->
@@ -1110,7 +1110,7 @@ table td { font-variant-numeric:tabular-nums }
       </div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;"
               onclick="createOrg(document.getElementById('authOrgName').value.trim())">إنشاء الشركة</button>
-      <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:9px;" onclick="doLogout()">تسجيل الخروج</button>
+      <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:9px;" onclick="doLogout()" id="logoutBtnAlt">تسجيل الخروج</button>
     </div>
 
     <div id="authMsg" style="font-size:12.5px;margin-top:16px;line-height:1.6;min-height:19px;"></div>
@@ -1191,8 +1191,8 @@ table td { font-variant-numeric:tabular-nums }
     <span style="font-size:20px;color:#fff;font-family:serif;font-style:italic;font-weight:bold;">ح</span>
   </div>
   <div style="flex:1;">
-    <div style="font-size:14.5px;font-weight:700;color:#fff;">ثبّت حاسِب على جوالك</div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.6);">وصول سريع من الشاشة الرئيسية</div>
+    <div style="font-size:14.5px;font-weight:700;color:#fff;" id="installTitle">ثبّت حاسِب على جوالك</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.6);" id="installSub">وصول سريع من الشاشة الرئيسية</div>
   </div>
   <button id="installBtn" onclick="installPWA()"
     style="background:#0a0a0a;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">
@@ -1206,23 +1206,23 @@ table td { font-variant-numeric:tabular-nums }
 <div id="mobileNav">
   <button class="mob-btn active" id="mobHome" onclick="mobileTab('home')">
     <span class="mob-btn-icon">🏠</span>
-    <span class="mob-btn-label">الرئيسية</span>
+    <span class="mob-btn-label" id="mobHomeLbl">الرئيسية</span>
   </button>
   <button class="mob-btn" id="mobUpload" onclick="mobileTab('upload')">
     <span class="mob-btn-icon"></span>
-    <span class="mob-btn-label">فاتورة</span>
+    <span class="mob-btn-label" id="mobUploadLbl">فاتورة</span>
   </button>
   <button class="mob-btn" id="mobQuick" onclick="openQuickEntry()">
     <span class="mob-btn-icon"></span>
-    <span class="mob-btn-label">سريع</span>
+    <span class="mob-btn-label" id="mobQuickLbl">سريع</span>
   </button>
   <button class="mob-btn" id="mobReport" onclick="openReport()">
     <span class="mob-btn-icon"></span>
-    <span class="mob-btn-label">تقرير</span>
+    <span class="mob-btn-label" id="mobReportLbl">تقرير</span>
   </button>
   <button class="mob-btn" id="mobDash" onclick="openDash()">
     <span class="mob-btn-icon"></span>
-    <span class="mob-btn-label">لوحة</span>
+    <span class="mob-btn-label" id="mobDashLbl">لوحة</span>
   </button>
 </div>
 
@@ -1414,6 +1414,42 @@ var EXPENSE_ACCOUNTS = {
   'م اجور ورواتب':       '6100',
   'مصروفات تشغيل':       '5100'
 };
+// English display labels for the (Arabic) chart-of-accounts keys above.
+// The Arabic key stays the canonical internal value used for matching /
+// storage / Excel-template & Odoo integration — this map is ONLY used to
+// pick a display label when lang==='en', via accLabel() below.
+var EXPENSE_ACCOUNTS_EN = {
+  'م تشغلية':            'Operating Expenses',
+  'م صيانة':             'Maintenance',
+  'م ضيافة':             'Hospitality',
+  'م دعاية واعلان':      'Advertising & Marketing',
+  'م قطع غيار':          'Spare Parts',
+  'م وقود ومحروقات':     'Fuel',
+  'م ايجار':             'Rent',
+  'م اتصالات':           'Telecom',
+  'م حكومية':            'Government Fees',
+  'م تأمين':             'Insurance',
+  'مصروفات تسويقية':     'Marketing Expenses',
+  'مصروفات إدارية':      'Administrative Expenses',
+  'م عمومية وادارية':    'General & Administrative',
+  'م اجور ورواتب':       'Salaries & Wages',
+  'مصروفات تشغيل':       'Operating Expenses',
+  // extra labels used only by the free-form "eAccType" edit dropdown
+  'مصروفات تقنية':       'Technology Expenses',
+  'أصول ثابتة':          'Fixed Assets',
+  'مخزون':               'Inventory',
+  'خدمات مهنية':         'Professional Services',
+  'إيجارات':             'Rentals',
+  'مرافق':                'Utilities',
+  'أخرى':                'Other'
+};
+// يرجع تسمية الحساب بلغة الواجهة الحالية دون تغيير المفتاح الداخلي (Arabic key)
+// المستخدم في المطابقة/التخزين/تكامل Odoo وقالب Excel.
+function accLabel(key) {
+  if (!key) return key;
+  if (lang === 'ar') return key;
+  return EXPENSE_ACCOUNTS_EN[key] || key;
+}
 // الحسابات الخاصة — الطرف الدائن يُختار منها حسب طريقة السداد لا بشكل ثابت.
 // ⚠ راجع هذه الأكواد مقابل دليل حساباتك الفعلي في Odoo قبل الاعتماد على القيود.
 var SPECIAL_ACCOUNTS = {
@@ -1812,7 +1848,12 @@ var T = {
     odooJournalOpt7:'يومية متنوعة (Miscellaneous)',
     odooJournalOptCustom:'مخصص — أدخل رقم اليومية',
     odooDirectBtn:'● أرسل لـ Odoo',
-    startCamBtn:'تشغيل الكاميرا'
+    startCamBtn:'تشغيل الكاميرا',
+    logoutBtn:'خروج', logoutTitle:'تسجيل الخروج', logoutBtnAlt:'تسجيل الخروج',
+    installBtn:'تثبيت', installTitle:'ثبّت حاسِب على جوالك', installSub:'وصول سريع من الشاشة الرئيسية',
+    mobHomeLbl:'الرئيسية', mobUploadLbl:'فاتورة', mobQuickLbl:'سريع', mobReportLbl:'تقرير', mobDashLbl:'لوحة',
+    brandName:'حاسِب', pageTitle:'حاسِب AI', metaDesc:'حاسِب AI — المحاسب الذكي للشركات السعودية',
+    reloadExcelBtn:'إعادة قراءة البيانات'
   },
   en: {
     dropText:'Drop invoice here', camTxt:'Use Camera', procTxt:'Process Invoice',
@@ -1923,12 +1964,17 @@ var T = {
     alertThreshSuffix:'% of budget', exportDashBtn:'Export',
     printReportBtn:'Print', exportReportBtn:'Excel',
     reportTableTitle:'Invoice Details',
-    odooJournalOpt1:'Purchase Journal (يومية المشتريات)',
-    odooJournalOpt2:'Sales Journal (يومية المبيعات)',
-    odooJournalOpt7:'Miscellaneous (يومية متنوعة)',
+    odooJournalOpt1:'Purchase Journal',
+    odooJournalOpt2:'Sales Journal',
+    odooJournalOpt7:'Miscellaneous',
     odooJournalOptCustom:'Custom — enter journal ID',
     odooDirectBtn:'● Send to Odoo',
-    startCamBtn:'Start Camera'
+    startCamBtn:'Start Camera',
+    logoutBtn:'Logout', logoutTitle:'Log out', logoutBtnAlt:'Log out',
+    installBtn:'Install', installTitle:'Install Hasib on your phone', installSub:'Quick access from your home screen',
+    mobHomeLbl:'Home', mobUploadLbl:'Invoice', mobQuickLbl:'Quick', mobReportLbl:'Report', mobDashLbl:'Dashboard',
+    brandName:'Hasib', pageTitle:'Hasib AI', metaDesc:'Hasib AI — Smart Accountant for Saudi Businesses',
+    reloadExcelBtn:'Reload data'
   }
 };
 function t(k) { return (T[lang] || T.ar)[k] || k; }
@@ -1944,6 +1990,21 @@ function applyLang() {
   document.documentElement.lang = lang;
   var keyStatusEl = document.getElementById('keyStatusTxt');
   if (keyStatusEl) keyStatusEl.textContent = t('keyStatusTxt');
+  // --- Branding: title / meta tags / nav brand word / PWA manifest ---
+  document.title = t('pageTitle');
+  var metaDescEl = document.querySelector('meta[name="description"]');
+  if (metaDescEl) metaDescEl.setAttribute('content', t('metaDesc'));
+  var appleTitleEl = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+  if (appleTitleEl) appleTitleEl.setAttribute('content', t('brandName'));
+  document.querySelectorAll('.brand-word').forEach(function(el) { el.textContent = t('brandName'); });
+  if (typeof updateManifest === 'function') updateManifest();
+  // --- Logout button tooltip (title attr isn't covered by the textContent loop below) ---
+  var logoutBtnEl = document.getElementById('logoutBtn');
+  if (logoutBtnEl) logoutBtnEl.title = t('logoutTitle');
+  // --- Account-type <select> options: keep value=canonical key, translate the visible label only ---
+  document.querySelectorAll('select.acc-type-select option').forEach(function(opt) {
+    opt.textContent = accLabel(opt.value);
+  });
   var ids = ['dropText','camTxt','procTxt','statLbl1','statLbl2','histHdr',
     'welcomeTitle','welcomeBody','loadingTitle','card1Title','card2Title',
     'card3Title','card4Title','card5Title','confLabel','approveBtn','editBtn',
@@ -1983,7 +2044,10 @@ function applyLang() {
     // Accounting integration modal
     'acctModalTitle','acctModalSub','acctChooseLbl','acctUrlLabel','acctKeyLabel',
     'acctOAuthTitle','acctOAuthNote','acctConnectBtn','acctSaveBtn','acctDisconnectBtn',
-    'acctCancelBtn','acctLogLbl'];
+    'acctCancelBtn','acctLogLbl',
+    // Branding / logout / PWA install / mobile nav (previously untranslated)
+    'logoutBtn','logoutBtnAlt','installBtn','installTitle','installSub',
+    'mobHomeLbl','mobUploadLbl','mobQuickLbl','mobReportLbl','mobDashLbl','reloadExcelBtn'];
   ids.forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.textContent = t(id);
@@ -2049,7 +2113,7 @@ function process() {
     })
     .catch(function(err) {
       clearInterval(timer);
-      toast('× ' + (err.message || 'خطأ'), 'error');
+      toast('× ' + (err.message || (lang==='ar'?'خطأ':'Error')), 'error');
       setState('welcome');
     })
     .finally(function() {
@@ -2114,7 +2178,8 @@ function runExtractionAgent(file) {
       }).map(function(k) { return k + ' (' + EXPENSE_ACCOUNTS[k] + ')'; }).join('، ');
       var prompt = 'انت DocumentExtractionAgent داخل نظام محاسبي متعدد الوكلاء. استخرج من هذه الفاتورة البيانات وارجعها كـ JSON فقط بدون اي نص اخر. الحقول المطلوبة: vendor_name, vendor_tax_number, invoice_number, invoice_date, subtotal (رقم), vat_amount (رقم), vat_rate (رقم مثل 15), total_amount (رقم), currency, description, payment_method, account_type, debit_account, credit_account, vat_account, notes, analysis, confidence (0-100 ثقتك الكلية), field_confidence (object فيه ثقة 0-100 لكل من: vendor_tax_number, vat_amount, total_amount), explainability (object فيه جملة قصيرة توضح من اين استخرجت كل من: vendor_name, vat_amount, total_amount — مثلا "مطبوع أعلى يمين الفاتورة بجانب شعار المورد").'
         + '\n\nمهم جداً — الحقل account_type: يجب أن تختار قيمته حرفياً من هذه القائمة فقط، وتكتبها كما هي بالضبط بدون أي إضافة أو إعادة صياغة: ' + allowedAccounts + '. لا تخترع تسمية جديدة ولا تدمج تسميتين ولا تكتب الكود. اختر الأقرب لطبيعة البنود؛ فمثلاً فاتورة قطع غيار سيارات → "م قطع غيار"، وفاتورة بنزين → "م وقود ومحروقات". إن لم ينطبق أي حساب فاترك account_type فارغاً بدل التخمين.'
-        + '\n\nمهم — الحقل payment_method: حدّد طريقة السداد بدقة من الفاتورة بإحدى الصيغ: "نقدي" أو "شبكة/مدى" أو "تحويل بنكي" أو "آجل". هذا الحقل يحدد الطرف الدائن في القيد (صندوق / بنك / دائنون)، فلا تخمّن — إن لم تُذكر صراحةً اكتب "غير محدد".';
+        + '\n\nمهم — الحقل payment_method: حدّد طريقة السداد بدقة من الفاتورة بإحدى الصيغ: "نقدي" أو "شبكة/مدى" أو "تحويل بنكي" أو "آجل". هذا الحقل يحدد الطرف الدائن في القيد (صندوق / بنك / دائنون)، فلا تخمّن — إن لم تُذكر صراحةً اكتب "غير محدد".'
+        + (lang === 'en' ? '\n\nIMPORTANT — the user interface is currently set to English. Write the free-text fields description, notes, analysis, explainability (all its sentences), debit_account and credit_account in English (translate/summarize from the invoice, do not leave them in Arabic). Keep vendor_name exactly as printed on the invoice (do not translate a proper name). The account_type and payment_method fields must still be chosen literally from the fixed lists given above (in Arabic) — do not translate those two.' : '');
       // المفتاح لم يعد في المتصفح — الطلب يمر عبر وسيط الخادم /api/claude
       // الذي يضيف الترويسة السرية من متغيّر بيئة على Vercel.
       fetch(CLAUDE_ENDPOINT, {
@@ -2123,17 +2188,18 @@ function runExtractionAgent(file) {
         body: JSON.stringify({
           model: 'claude-sonnet-4-6',
           max_tokens: 1600,
+          lang: lang,
           messages: [{ role: 'user', content: [contentItem, { type: 'text', text: prompt }] }]
         })
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        if (data.error) { reject(new Error(data.error.message || 'خطأ من Claude API')); return; }
+        if (data.error) { reject(new Error(data.error.message || (lang==='ar'?'خطأ من Claude API':'Error from Claude API'))); return; }
         try {
           var text = data.content[0].text;
           text = text.replace(/```json/g, '').replace(/```/g, '').trim();
           resolve(JSON.parse(text));
-        } catch (e) { reject(new Error('تعذّر تحليل استجابة DocumentExtractionAgent')); }
+        } catch (e) { reject(new Error(lang==='ar'?'تعذّر تحليل استجابة DocumentExtractionAgent':'Could not parse DocumentExtractionAgent response')); }
       })
       .catch(reject);
     });
@@ -2168,7 +2234,7 @@ function runJournalAgent(r) {
   var credit = resolveCreditAccount(r);
   var escalated = !acct.code;                       // لا يُصعَّد إلا إذا تعذّرت المطابقة تماماً
   var debitCode  = acct.code || EXPENSE_ACCOUNTS['مصروفات تشغيل'];
-  var debitLabel = acct.key  || r.debit_account || r.account_type || 'مصروفات تشغيل';
+  var debitLabel = accLabel(acct.key || r.debit_account || r.account_type || 'مصروفات تشغيل');
   var creditLabel = credit.key === 'payable'
     ? credit.label + ' — ' + (r.vendor_name || '')
     : credit.label;
@@ -2181,9 +2247,9 @@ function runJournalAgent(r) {
 
   var ar = lang === 'ar';
   var acctNote = acct.matched === 'exact'
-    ? (ar ? ('طابق الحساب مباشرة: ' + acct.key + ' (' + debitCode + ')') : ('Account matched directly: ' + acct.key + ' (' + debitCode + ')'))
+    ? (ar ? ('طابق الحساب مباشرة: ' + acct.key + ' (' + debitCode + ')') : ('Account matched directly: ' + accLabel(acct.key) + ' (' + debitCode + ')'))
     : acct.matched === 'alias'
-      ? (ar ? ('صُنِّف "' + r.account_type + '" ضمن ' + acct.key + ' (' + debitCode + ') عبر المرادفات') : ('"' + r.account_type + '" mapped to ' + acct.key + ' (' + debitCode + ') via aliases'))
+      ? (ar ? ('صُنِّف "' + r.account_type + '" ضمن ' + acct.key + ' (' + debitCode + ') عبر المرادفات') : ('"' + r.account_type + '" mapped to ' + accLabel(acct.key) + ' (' + debitCode + ') via aliases'))
       : (ar ? ('تعذّرت مطابقة "' + (r.account_type || '—') + '" مع دليل الحسابات — استُخدم 5100 مؤقتاً ويحتاج تصنيفاً يدوياً') : ('Could not match "' + (r.account_type || '—') + '" to the chart of accounts — 5100 used provisionally, needs manual classification'));
   var creditNote = credit.key === 'cash'
     ? (ar ? ('سداد نقدي ← الطرف الدائن الصندوق (' + credit.code + ')') : ('Cash payment → credit side is Cash (' + credit.code + ')'))
@@ -2267,7 +2333,7 @@ function renderResult(r) {
     v += '<div class="alert-box ' + (c.pass ? 'good' : 'warn') + '"><span class="alert-box-icon">' + (c.pass ? '✓' : '!') + '</span><span class="alert-box-text"><b>' + c.name + '</b> — ' + c.detail + '</span></div>';
   });
   // تصنيف الحساب ليس حالة تحقق — يبقى محايداً بلا لون
-  v += '<div class="alert-box"><span class="alert-box-icon">·</span><span class="alert-box-text">' + (r.account_type || (lang==='ar'?'مصروفات':'Expenses')) + '</span></div>';
+  v += '<div class="alert-box"><span class="alert-box-icon">·</span><span class="alert-box-text">' + (accLabel(r.account_type) || (lang==='ar'?'مصروفات':'Expenses')) + '</span></div>';
   if (r.notes) {
     v += '<div class="alert-box warn"><span class="alert-box-icon"></span><span class="alert-box-text">' + r.notes + '</span></div>';
   }
@@ -2385,7 +2451,7 @@ function doExportCSV() {
   csv += (lang==='ar' ? 'المورد,رقم الفاتورة,التاريخ,قبل VAT,VAT,الاجمالي,نوع الحساب,ZATCA,الحالة\n' : 'Vendor,Invoice No.,Date,Before VAT,VAT,Total,Account Type,ZATCA,Status\n');
   for (var i = 0; i < invoices.length; i++) {
     var r = invoices[i];
-    csv += '"' + (r.vendor_name||'') + '","' + (r.invoice_number||'') + '","' + (r.invoice_date||'') + '",' + (r.subtotal||0) + ',' + (r.vat_amount||0) + ',' + (r.total_amount||0) + ',"' + (r.account_type||'') + '","' + (r.zatca_compliant?(lang==='ar'?'متوافق':'Compliant'):(lang==='ar'?'غير متوافق':'Non-compliant')) + '","' + (r.approved?(lang==='ar'?'معتمد':'Approved'):(lang==='ar'?'بانتظار':'Pending')) + '"\n';
+    csv += '"' + (r.vendor_name||'') + '","' + (r.invoice_number||'') + '","' + (r.invoice_date||'') + '",' + (r.subtotal||0) + ',' + (r.vat_amount||0) + ',' + (r.total_amount||0) + ',"' + (accLabel(r.account_type)||'') + '","' + (r.zatca_compliant?(lang==='ar'?'متوافق':'Compliant'):(lang==='ar'?'غير متوافق':'Non-compliant')) + '","' + (r.approved?(lang==='ar'?'معتمد':'Approved'):(lang==='ar'?'بانتظار':'Pending')) + '"\n';
   }
   var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
   var a = document.createElement('a');
@@ -2511,14 +2577,14 @@ function loadWb(buf, name, hasFSA) {
     document.getElementById('excelName').textContent = name;
     var stEl = document.getElementById('excelStatus');
     stEl.className = 'excel-status on';
-    stEl.innerHTML = '✓ ' + name + '<br><small style="color:#15803d;font-size:12px;">الشيت: ' + sheetName + ' — ' + dataRows + ' سجل محمّل</small>';
+    stEl.innerHTML = '✓ ' + name + '<br><small style="color:#15803d;font-size:12px;">' + (lang==='ar'?'الشيت: ':'Sheet: ') + sheetName + ' — ' + dataRows + (lang==='ar'?' سجل محمّل':' record(s) loaded') + '</small>';
     document.getElementById('saveExcelBtn').style.display = 'block';
-    document.getElementById('saveExcelBtn').textContent = hasFSA ? 'حفظ في الملف' : 'تنزيل محدّث';
+    document.getElementById('saveExcelBtn').textContent = hasFSA ? (lang==='ar'?'حفظ في الملف':'Save to file') : (lang==='ar'?'تنزيل محدّث':'Download updated');
     document.getElementById('reloadExcelBtn').style.display = 'block';
     updateBanners();
     renderHistory();
     updateStats();
-    toast('✓ ' + name + ' — ' + dataRows + ' سجل محمّل في السجل والتقارير');
+    toast('✓ ' + name + ' — ' + dataRows + (lang==='ar'?' سجل محمّل في السجل والتقارير':' record(s) loaded into history and reports'));
   } catch(e) {
     toast('× ' + e.message, 'error');
   }
@@ -2638,7 +2704,7 @@ function writeToExcel(r) {
     ws[cellRef] = {v: cols[i].v, t: cols[i].t};
   }
   ws['!ref'] = XLSX.utils.encode_range({s:{r:0,c:0}, e:{r:insertRow, c:Math.max(range.e.c, 22)}});
-  toast('فاتورة رقم ' + newNum + t('excelRow'));
+  toast((lang==='ar'?'فاتورة رقم ':'Invoice #') + newNum + t('excelRow'));
   return true;
 }
 function saveExcel() {
@@ -2814,24 +2880,26 @@ if ('serviceWorker' in navigator) {
       .catch(function() {});
   });
 }
-(function() {
+function updateManifest() {
+  var isAr = lang === 'ar';
   var manifest = {
-    name: 'حاسِب AI',
-    short_name: 'حاسِب',
-    description: 'المحاسب الذكي للشركات السعودية',
+    name: isAr ? 'حاسِب AI' : 'Hasib AI',
+    short_name: isAr ? 'حاسِب' : 'Hasib',
+    description: isAr ? 'المحاسب الذكي للشركات السعودية' : 'Smart Accountant for Saudi Businesses',
     start_url: '.',
     display: 'standalone',
     background_color: '#0a0a0a',
     theme_color: '#0a0a0a',
-    dir: 'rtl',
-    lang: 'ar',
+    dir: isAr ? 'rtl' : 'ltr',
+    lang: lang,
     icons: []
   };
-    var blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+  var blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
   var url  = URL.createObjectURL(blob);
   var link = document.getElementById('manifestLink');
   if (link) link.href = url;
-})();
+}
+updateManifest();
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   deferredPrompt = e;
@@ -2845,14 +2913,14 @@ window.addEventListener('appinstalled', function() {
   var banner = document.getElementById('installBanner');
   if (banner) banner.classList.remove('show');
   deferredPrompt = null;
-  toast('✓ تم تثبيت حاسِب على جوالك!');
+  toast(lang==='ar'?'✓ تم تثبيت حاسِب على جوالك!':'✓ Hasib installed on your phone!');
 });
 function installPWA() {
   if (deferredPrompt) {
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then(function(result) {
       if (result.outcome === 'accepted') {
-        toast('✓ جاري التثبيت...');
+        toast(lang==='ar'?'✓ جاري التثبيت...':'✓ Installing...');
       }
       deferredPrompt = null;
     });
@@ -2868,9 +2936,9 @@ function dismissInstall() {
 function showIOSInstallGuide() {
   var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
   if (isIOS) {
-    toast('iOS: اضغط ثم "Add to Home Screen"');
+    toast(lang==='ar'?'iOS: اضغط ثم "Add to Home Screen"':'iOS: tap Share then "Add to Home Screen"');
   } else {
-    toast('افتح القائمة واضغط "تثبيت التطبيق"');
+    toast(lang==='ar'?'افتح القائمة واضغط "تثبيت التطبيق"':'Open the browser menu and tap "Install app"');
   }
 }
 function mobileTab(tab) {
@@ -3068,7 +3136,7 @@ function renderVariance(ym) {
     var color = r.flagged ? (r.pct > 0 ? '#b91c1c' : '#15803d') : '#525252';
     var arrow = r.pct > 0 ? '▲' : (r.pct < 0 ? '▼' : '—');
     html += '<tr style="border-bottom:1px solid #f0f0f0;' + (r.flagged ? 'background:rgba(185,28,28,.04);' : '') + '">' +
-      '<td style="padding:7px 8px;">' + r.type + (r.flagged ? ' <span style="font-size:11px;background:rgba(185,28,28,.12);color:#b91c1c;padding:1px 6px;border-radius:8px;">' + (lang==='ar'?'انحراف كبير':'Large variance') + '</span>' : '') + '</td>' +
+      '<td style="padding:7px 8px;">' + accLabel(r.type) + (r.flagged ? ' <span style="font-size:11px;background:rgba(185,28,28,.12);color:#b91c1c;padding:1px 6px;border-radius:8px;">' + (lang==='ar'?'انحراف كبير':'Large variance') + '</span>' : '') + '</td>' +
       '<td style="padding:7px 8px;">' + r.previous.toLocaleString(lang==='ar'?'ar-SA-u-nu-latn':'en-US',{maximumFractionDigits:0}) + '</td>' +
       '<td style="padding:7px 8px;">' + r.current.toLocaleString(lang==='ar'?'ar-SA-u-nu-latn':'en-US',{maximumFractionDigits:0}) + '</td>' +
       '<td style="padding:7px 8px;color:' + color + ';font-weight:700;">' + arrow + ' ' + Math.abs(r.pct).toFixed(1) + '%</td></tr>';
@@ -3118,7 +3186,7 @@ function renderTable(data) {
     rows += '<td style="padding:8px 10px;color:#737373;">'+(i+1)+'</td>';
     rows += '<td style="padding:8px 10px;">'+(inv.invoice_date||'—')+'</td>';
     rows += '<td style="padding:8px 10px;font-weight:600;">'+(inv.vendor_name||'—')+'</td>';
-    rows += '<td style="padding:8px 10px;"><span style="font-size:12px;background:rgba(10,10,10,.1);color:#0a0a0a;padding:2px 7px;border-radius:10px;">'+(inv.account_type||'—')+'</span></td>';
+    rows += '<td style="padding:8px 10px;"><span style="font-size:12px;background:rgba(10,10,10,.1);color:#0a0a0a;padding:2px 7px;border-radius:10px;">'+(accLabel(inv.account_type)||'—')+'</span></td>';
     rows += '<td style="padding:8px 10px;color:#525252;">'+fmt(inv.subtotal)+'</td>';
     rows += '<td style="padding:8px 10px;color:#525252;">'+fmt(inv.vat_amount)+'</td>';
     rows += '<td style="padding:8px 10px;font-weight:700;color:#0a0a0a;">'+fmt(inv.total_amount)+'</td>';
@@ -3143,7 +3211,7 @@ function renderCharts(data) {
   var typeKeys = Object.keys(types);
   var typeVals = typeKeys.map(function(k){return types[k];});
   var folded = foldCategories(typeKeys, typeVals);
-  drawDonut('chartType', folded.keys, folded.vals);
+  drawDonut('chartType', folded.keys.map(accLabel), folded.vals);
   var daily = {};
   for (var i = 0; i < data.length; i++) {
     var d = (data[i].invoice_date||'').substring(0,10) || 'unknown';
@@ -3258,7 +3326,7 @@ function renderAISummary(data, monthLabel) {
   var summary = '';
   if (lang === 'ar') {
     summary = 'في شهر ' + monthLabel + '، بلغ إجمالي المصروفات ' + fmt(totalAmt) + ' ريال موزعة على ' + data.length + ' فاتورة. ';
-    summary += 'أعلى نوع مصروف هو "' + topType + '" بمبلغ ' + fmt(topTypeAmt) + ' ريال، ';
+    summary += 'أعلى نوع مصروف هو "' + accLabel(topType) + '" بمبلغ ' + fmt(topTypeAmt) + ' ريال، ';
     summary += 'والمورّد الأكثر تعاملاً هو "' + topVendor + '" بإجمالي ' + fmt(topVendorAmt) + ' ريال. ';
     summary += 'بلغت ضريبة القيمة المضافة ' + fmt(totalVat) + ' ريال (' + vatPct + '% من الإجمالي). ';
     summary += 'نسبة الفواتير المعتمدة: ' + appPct + '% — ';
@@ -3268,7 +3336,7 @@ function renderAISummary(data, monthLabel) {
     if (totalVat/totalAmt > 0.16) summary += ' ! نسبة VAT مرتفعة — تحقق من الفواتير.';
   } else {
     summary = 'In ' + monthLabel + ', total expenses reached SAR ' + fmt(totalAmt) + ' across ' + data.length + ' invoices. ';
-    summary += 'Highest expense type: "' + topType + '" at SAR ' + fmt(topTypeAmt) + '. ';
+    summary += 'Highest expense type: "' + accLabel(topType) + '" at SAR ' + fmt(topTypeAmt) + '. ';
     summary += 'Top vendor: "' + topVendor + '" with SAR ' + fmt(topVendorAmt) + '. ';
     summary += 'VAT paid: SAR ' + fmt(totalVat) + ' (' + vatPct + '% of total). ';
     summary += 'Approval rate: ' + appPct + '% — ZATCA compliance: ' + zatcaPct + '%.';
@@ -3358,7 +3426,7 @@ function buildDash() {
     var w = Math.round(types[k]/typeMax*100);
     typeHtml += '<div style="margin-bottom:10px;">';
     typeHtml += '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">';
-    typeHtml += '<span style="font-size:14px;color:#0a0a0a;font-weight:600;">'+k+'</span>';
+    typeHtml += '<span style="font-size:14px;color:#0a0a0a;font-weight:600;">'+accLabel(k)+'</span>';
     typeHtml += '<span style="font-size:13px;color:#737373;">'+fmt(types[k])+(lang==='ar'?' ر.س':' SAR')+' ('+pct+'%)</span>';
     typeHtml += '</div>';
     typeHtml += '<div style="height:5px;background:#e5e5e5;border-radius:3px;overflow:hidden;">';
@@ -3504,7 +3572,7 @@ function buildDashAI(months, keys, gTotal, gVat, gCount, vendors, types) {
     txt += 'المتوسط الشهري ' + fmt(avg) + ' ريال. ';
     txt += 'أعلى شهر إنفاقاً: ' + formatMonthLabel(peakKey) + ' بـ ' + fmt(peakVal) + ' ريال. ';
     txt += 'أقل شهر: ' + formatMonthLabel(lowKey) + ' بـ ' + fmt(lowVal) + ' ريال. ';
-    txt += 'أعلى نوع مصروف: "' + topType + '" (' + fmt(topTypeAmt) + ' ريال = ' + (gTotal?Math.round(topTypeAmt/gTotal*100):0) + '% من الكل). ';
+    txt += 'أعلى نوع مصروف: "' + accLabel(topType) + '" (' + fmt(topTypeAmt) + ' ريال = ' + (gTotal?Math.round(topTypeAmt/gTotal*100):0) + '% من الكل). ';
     txt += 'أكثر مورّد: "' + topVendor + '" (' + fmt(topVendorAmt) + ' ريال). ';
     txt += 'ضريبة القيمة المضافة الإجمالية: ' + fmt(gVat) + ' ريال (' + vatPct + '%).';
     if (peakVal > avg * 1.5) txt += ' ! شهر ' + formatMonthLabel(peakKey) + ' يتجاوز المتوسط بنسبة كبيرة — راجع المصروفات.';
@@ -3514,7 +3582,7 @@ function buildDashAI(months, keys, gTotal, gVat, gCount, vendors, types) {
     txt += 'Monthly average: SAR ' + fmt(avg) + '. ';
     txt += 'Peak month: ' + formatMonthLabel(peakKey) + ' at SAR ' + fmt(peakVal) + '. ';
     txt += 'Lowest month: ' + formatMonthLabel(lowKey) + ' at SAR ' + fmt(lowVal) + '. ';
-    txt += 'Top expense type: "' + topType + '" (SAR ' + fmt(topTypeAmt) + '). ';
+    txt += 'Top expense type: "' + accLabel(topType) + '" (SAR ' + fmt(topTypeAmt) + '). ';
     txt += 'Top vendor: "' + topVendor + '" (SAR ' + fmt(topVendorAmt) + '). ';
     txt += 'Total VAT: SAR ' + fmt(gVat) + ' (' + vatPct + '%).';
     if (peakVal > avg * 1.5) txt += ' ! ' + formatMonthLabel(peakKey) + ' significantly exceeds average.';
@@ -3582,7 +3650,7 @@ function renderBudgetInputs() {
     var tp = typeList[i];
     var saved = (budget.types && budget.types[tp]) || '';
     html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:#fafafa;border:1px solid #e5e5e5;border-radius:8px;">';
-    html += '<span style="font-size:14px;color:#0a0a0a;font-weight:500;">'+tp+'</span>';
+    html += '<span style="font-size:14px;color:#0a0a0a;font-weight:500;">'+accLabel(tp)+'</span>';
     html += '<div style="display:flex;align-items:center;gap:6px;">';
     html += '<input type="number" min="0" step="100" placeholder="'+(lang==='ar'?'غير محدد':'Not set')+'" value="'+saved+'"';
     html += ' data-type="'+tp+'"';
@@ -3630,7 +3698,7 @@ function renderBudgetStatus() {
       var color = pct >= 100 ? '#b91c1c' : pct >= (budget.threshold||80) ? '#0a0a0a' : '#15803d';
       html += '<div style="margin-bottom:8px;">';
       html += '<div style="display:flex;justify-content:space-between;margin-bottom:3px;">';
-      html += '<span style="font-size:13px;color:#525252;">'+tp+'</span>';
+      html += '<span style="font-size:13px;color:#525252;">'+accLabel(tp)+'</span>';
       html += '<span style="font-size:13px;color:'+color+';font-weight:600;">'+fmt(spent)+' / '+fmt(budgetAmt)+'</span>';
       html += '</div>';
       html += '<div style="height:4px;background:#e5e5e5;border-radius:2px;overflow:hidden;">';
@@ -3688,9 +3756,9 @@ function checkBudgetNow() {
       var spent = spending[tp] || 0;
       var pct = Math.round(spent/budgetAmt*100);
       if (pct >= 100) {
-        alerts.push({ type:'danger', title: (lang==='ar'?'! تجاوز: ':'! Exceeded: ')+tp, msg: fmt(spent)+(lang==='ar'?' من ':' / ')+fmt(budgetAmt)+(lang==='ar'?' ر.س':' SAR') });
+        alerts.push({ type:'danger', title: (lang==='ar'?'! تجاوز: ':'! Exceeded: ')+accLabel(tp), msg: fmt(spent)+(lang==='ar'?' من ':' / ')+fmt(budgetAmt)+(lang==='ar'?' ر.س':' SAR') });
       } else if (pct >= thresh) {
-        alerts.push({ type:'warn', title: (lang==='ar'?'تنبيه: ':'Alert: ')+tp, msg: pct+'% '+(lang==='ar'?'من الميزانية المحددة':'of set budget') });
+        alerts.push({ type:'warn', title: (lang==='ar'?'تنبيه: ':'Alert: ')+accLabel(tp), msg: pct+'% '+(lang==='ar'?'من الميزانية المحددة':'of set budget') });
       }
     });
   }
@@ -4014,7 +4082,7 @@ function parseBulk() {
     html += '<td style="padding:6px;border:1px solid #e5e5e5;font-family:monospace;">' + r.invoice_number + '</td>';
     html += '<td style="padding:6px;border:1px solid #e5e5e5;">' + r.invoice_date + '</td>';
     html += '<td style="padding:6px;border:1px solid #e5e5e5;color:#0a0a0a;font-weight:700;">' + Number(r.total_amount).toFixed(2) + '</td>';
-    html += '<td style="padding:6px;border:1px solid #e5e5e5;font-size:12px;">' + r.account_type + '</td>';
+    html += '<td style="padding:6px;border:1px solid #e5e5e5;font-size:12px;">' + accLabel(r.account_type) + '</td>';
     html += '</tr>';
   });
   html += '</table>';
@@ -4353,20 +4421,20 @@ function sendToDaftra(r) {
   })
   .then(function(res) { return res.json(); })
   .then(function(data) {
-    if (data.status === 1) { addAcctLog('✓ قيد في دفترة'); toast(lang==='ar'?'✓ تم الإرسال لدفترة':'✓ Sent to Daftra'); }
+    if (data.status === 1) { addAcctLog(lang==='ar'?'✓ قيد في دفترة':'✓ Entry in Daftra'); toast(lang==='ar'?'✓ تم الإرسال لدفترة':'✓ Sent to Daftra'); }
     else { copyEntryToClipboard(r, 'دفترة Daftra'); }
   })
   .catch(function() { copyEntryToClipboard(r, 'دفترة Daftra'); });
 }
 function copyEntryToClipboard(r, systemName) {
   var nl = '\n';
-  var text = 'قيد حاسِب | ' + (r.invoice_number || '') + ' | ' + (r.invoice_date || '') + nl +
-    'مدين: ' + (r.account_type || 'مصروف') + ' = ' + Number(r.subtotal || 0).toFixed(2) + nl +
-    'مدين: ضريبة القيمة المضافة = ' + Number(r.vat_amount || 0).toFixed(2) + nl +
-    'دائن: الدائنون = ' + Number(r.total_amount || 0).toFixed(2);
+  var text = (lang==='ar'?'قيد حاسِب | ':'Hasib entry | ') + (r.invoice_number || '') + ' | ' + (r.invoice_date || '') + nl +
+    (lang==='ar'?'مدين: ':'Debit: ') + (accLabel(r.account_type) || (lang==='ar'?'مصروف':'Expense')) + ' = ' + Number(r.subtotal || 0).toFixed(2) + nl +
+    (lang==='ar'?'مدين: ضريبة القيمة المضافة = ':'Debit: VAT = ') + Number(r.vat_amount || 0).toFixed(2) + nl +
+    (lang==='ar'?'دائن: الدائنون = ':'Credit: Accounts Payable = ') + Number(r.total_amount || 0).toFixed(2);
   navigator.clipboard.writeText(text).catch(function(){});
-  addAcctLog('بيانات القيد نُسخت — الصقها في ' + systemName);
-  toast('القيد في الحافظة — الصقه في ' + systemName);
+  addAcctLog((lang==='ar'?'بيانات القيد نُسخت — الصقها في ':'Entry data copied — paste it in ') + systemName);
+  toast((lang==='ar'?'القيد في الحافظة — الصقه في ':'Entry copied to clipboard — paste it in ') + systemName);
 }
 function addAcctLog(msg) {
   var log   = document.getElementById('acctLog');
@@ -4431,23 +4499,23 @@ function buildOdooEntry(r) {
   var vatCode    = SPECIAL_ACCOUNTS.VAT_INPUT;
   var creditCode = credit.code;
   var creditName = credit.key === 'payable'
-    ? 'الدائنون — ' + (r.vendor_name || '')
+    ? (lang==='ar'?'الدائنون — ':'Accounts Payable — ') + (r.vendor_name || '')
     : credit.label;
   return {
-    name:      'حاسِب | ' + (r.vendor_name || '') + ' | ' + ref,
+    name:      (lang==='ar'?'حاسِب | ':'Hasib | ') + (r.vendor_name || '') + ' | ' + ref,
     ref:       ref,
     date:      date,
     journal_id: jid,
     line_ids: [
       [0, 0, {
-        name:        (r.description || r.vendor_name || 'مصروف'),
+        name:        (r.description || r.vendor_name || (lang==='ar'?'مصروف':'Expense')),
         account_id:  { code: debitCode },
         debit:       sub,
         credit:      0,
         partner_id:  r.vendor_name || false
       }],
       [0, 0, {
-        name:        'ضريبة القيمة المضافة 15%',
+        name:        (lang==='ar'?'ضريبة القيمة المضافة 15%':'VAT 15%'),
         account_id:  { code: vatCode },
         debit:       vat,
         credit:      0
@@ -4481,7 +4549,7 @@ function sendInvoiceToOdoo(r) {
     return;
   }
   var entry = buildOdooEntry(r);
-  addOdooLog('إرسال قيد: ' + entry.ref + ' ...');
+  addOdooLog((lang==='ar'?'إرسال قيد: ':'Sending entry: ') + entry.ref + ' ...');
   toast(lang==='ar'?'جاري الإرسال لـ Odoo...':'Sending to Odoo...');
   var url = odooCfg.url + '/web/dataset/call_kw';
   var payload = {
@@ -4497,7 +4565,7 @@ function sendInvoiceToOdoo(r) {
         journal_id:  entry.journal_id,
         invoice_date: entry.date,
         partner_id:  false,
-        narration:   'مُنشأ تلقائياً بواسطة حاسِب AI'
+        narration:   (lang==='ar'?'مُنشأ تلقائياً بواسطة حاسِب AI':'Auto-generated by Hasib AI')
       }]],
       kwargs: {}
     }
@@ -4513,12 +4581,12 @@ function sendInvoiceToOdoo(r) {
   .then(function(res) { return res.json(); })
   .then(function(data) {
     if (data.error) {
-      addOdooLog('! جاري المحاولة بطريقة بديلة...');
+      addOdooLog(lang==='ar'?'! جاري المحاولة بطريقة بديلة...':'! Trying an alternative method...');
       return sendViaXMLRPC(r);
     }
     var moveId = data.result;
     if (moveId) {
-      addOdooLog('✓ قيد #' + moveId + ' أُنشئ في Odoo');
+      addOdooLog(lang==='ar' ? ('✓ قيد #' + moveId + ' أُنشئ في Odoo') : ('✓ Entry #' + moveId + ' created in Odoo'));
       toast(lang==='ar' ? ('✓ تم إرسال القيد لـ Odoo — رقم ' + moveId) : ('✓ Entry sent to Odoo — #' + moveId));
       updateOdooConnStatus('connected');
       r.odoo_move_id = moveId;
@@ -4542,16 +4610,16 @@ function sendViaXMLRPC(r) {
       account_id: false
     };
   });
-  addOdooLog('القيد جاهز — افتح Odoo وأدخله يدوياً أو اتصل بـ CTO لربط API الكامل');
-  addOdooLog('بيانات القيد:');
-  addOdooLog('   المدين: ' + r.debit_account + ' = ' + r.subtotal);
+  addOdooLog(lang==='ar'?'القيد جاهز — افتح Odoo وأدخله يدوياً أو اتصل بـ CTO لربط API الكامل':'Entry ready — open Odoo and enter it manually, or contact your CTO to wire up the full API integration');
+  addOdooLog(lang==='ar'?'بيانات القيد:':'Entry data:');
+  addOdooLog((lang==='ar'?'   المدين: ':'   Debit: ') + r.debit_account + ' = ' + r.subtotal);
   addOdooLog('   VAT: ' + r.vat_amount);
-  addOdooLog('   الدائن: ' + r.credit_account + ' = ' + r.total_amount);
-  var text = 'قيد حاسِب | ' + r.invoice_number + '\n';
-  text += 'التاريخ: ' + r.invoice_date + '\n';
-  text += 'مدين: ' + r.debit_account + ' = ' + r.subtotal + '\n';
+  addOdooLog((lang==='ar'?'   الدائن: ':'   Credit: ') + r.credit_account + ' = ' + r.total_amount);
+  var text = (lang==='ar'?'قيد حاسِب | ':'Hasib entry | ') + r.invoice_number + '\n';
+  text += (lang==='ar'?'التاريخ: ':'Date: ') + r.invoice_date + '\n';
+  text += (lang==='ar'?'مدين: ':'Debit: ') + r.debit_account + ' = ' + r.subtotal + '\n';
   text += 'VAT: ' + r.vat_amount + '\n';
-  text += 'دائن: ' + r.credit_account + ' = ' + r.total_amount;
+  text += (lang==='ar'?'دائن: ':'Credit: ') + r.credit_account + ' = ' + r.total_amount;
   navigator.clipboard.writeText(text).catch(function(){});
   toast(lang==='ar'?'بيانات القيد في الحافظة — الصقها في Odoo':'Entry copied to clipboard — paste it in Odoo');
 }
@@ -4569,7 +4637,7 @@ function postOdooMove(moveId) {
   .then(function(r){ return r.json(); })
   .then(function(d){
     if (!d.error) {
-      addOdooLog('✓ القيد #' + moveId + ' مُرحَّل في Odoo');
+      addOdooLog(lang==='ar' ? ('✓ القيد #' + moveId + ' مُرحَّل في Odoo') : ('✓ Entry #' + moveId + ' posted in Odoo'));
       toast(lang==='ar'?'✓ القيد مُرحَّل في Odoo':'✓ Entry posted in Odoo');
     }
   })
@@ -4577,7 +4645,7 @@ function postOdooMove(moveId) {
 }
 function readFromOdoo() {
   if (!odooCfg.url || !odooCfg.apiKey) { toast(lang==='ar'?'! اتصل بـ Odoo أولاً':'! Connect to Odoo first', 'warn'); return; }
-  addOdooLog('جاري جلب البيانات من Odoo...');
+  addOdooLog(lang==='ar'?'جاري جلب البيانات من Odoo...':'Fetching data from Odoo...');
   var url = odooCfg.url + '/web/dataset/call_kw';
   var payload = {
     jsonrpc: '2.0', method: 'call', id: Date.now(),
@@ -4599,9 +4667,9 @@ function readFromOdoo() {
   })
   .then(function(r){ return r.json(); })
   .then(function(data) {
-    if (data.error) { addOdooLog('× ' + (data.error.data ? data.error.data.message : 'خطأ')); return; }
+    if (data.error) { addOdooLog('× ' + (data.error.data ? data.error.data.message : (lang==='ar'?'خطأ':'Error'))); return; }
     var moves = data.result || [];
-    addOdooLog('✓ تم جلب ' + moves.length + ' قيد من Odoo');
+    addOdooLog(lang==='ar' ? ('✓ تم جلب ' + moves.length + ' قيد من Odoo') : ('✓ Fetched ' + moves.length + ' entries from Odoo'));
     var odooInvs = moves.map(function(m) {
       return {
         _from_odoo: true,
@@ -4652,7 +4720,9 @@ function exportReportExcel() {
   var ym = sel.value;
   var data = getMonthInvoices(ym);
   if (!data.length) data = invoices.slice();
-  var rows = [['التاريخ','المورّد','نوع الحساب','قبل VAT','VAT','الإجمالي','ZATCA','الحالة','البيان']];
+  var rows = [lang==='ar'
+    ? ['التاريخ','المورّد','نوع الحساب','قبل VAT','VAT','الإجمالي','ZATCA','الحالة','البيان']
+    : ['Date','Vendor','Account Type','Before VAT','VAT','Total','ZATCA','Status','Description']];
   var totSub=0, totVat=0, totAmt=0;
   for (var i = 0; i < data.length; i++) {
     var inv = data[i];
@@ -4662,21 +4732,21 @@ function exportReportExcel() {
     rows.push([
       inv.invoice_date||'',
       inv.vendor_name||'',
-      inv.account_type||'',
+      accLabel(inv.account_type)||'',
       Number(inv.subtotal||0),
       Number(inv.vat_amount||0),
       Number(inv.total_amount||0),
-      inv.zatca_compliant?'متوافق':'غير متوافق',
-      inv.approved?'معتمد':'بانتظار',
+      inv.zatca_compliant?(lang==='ar'?'متوافق':'Compliant'):(lang==='ar'?'غير متوافق':'Non-compliant'),
+      inv.approved?(lang==='ar'?'معتمد':'Approved'):(lang==='ar'?'بانتظار':'Pending'),
       inv.description||''
     ]);
   }
-  rows.push(['','','الإجمالي',totSub,totVat,totAmt,'','','']);
+  rows.push(['','',(lang==='ar'?'الإجمالي':'Total'),totSub,totVat,totAmt,'','','']);
   var newWb = XLSX.utils.book_new();
   var ws = XLSX.utils.aoa_to_sheet(rows);
   ws['!cols'] = [{wch:14},{wch:22},{wch:18},{wch:14},{wch:12},{wch:14},{wch:12},{wch:12},{wch:30}];
-  XLSX.utils.book_append_sheet(newWb, ws, 'تقرير شهري');
-  XLSX.writeFile(newWb, 'تقرير-حاسب-' + (ym||'شهري') + '.xlsx');
+  XLSX.utils.book_append_sheet(newWb, ws, lang==='ar'?'تقرير شهري':'Monthly Report');
+  XLSX.writeFile(newWb, (lang==='ar'?'تقرير-حاسب-':'hasib-report-') + (ym||(lang==='ar'?'شهري':'monthly')) + '.xlsx');
   toast('' + (lang==='ar'?'تم تصدير التقرير':'Report exported'));
 }
 
@@ -4826,7 +4896,7 @@ function openMonthClose() {
   sorted.forEach(function(ym) {
     var opt = document.createElement('option');
     opt.value = ym;
-    opt.textContent = formatMonthLabel(ym) + (closedMonths.indexOf(ym) > -1 ? ' (مقفل)' : '');
+    opt.textContent = formatMonthLabel(ym) + (closedMonths.indexOf(ym) > -1 ? (lang==='ar'?' (مقفل)':' (closed)') : '');
     sel.appendChild(opt);
   });
   document.getElementById('closeModal').style.display = 'block';
