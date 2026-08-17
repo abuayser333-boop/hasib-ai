@@ -446,7 +446,7 @@ table td { font-variant-numeric:tabular-nums }
 <div class="app">
   <aside class="sidebar">
     <div class="sb-top">
-      <div class="sb-label">رفع فاتورة</div>
+      <div class="sb-label" id="uploadSectionLbl">رفع فاتورة</div>
       <div class="drop-zone" id="dropZone">
         <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.webp" onchange="pickFile(event)">
         <div class="drop-icon"></div>
@@ -661,15 +661,15 @@ table td { font-variant-numeric:tabular-nums }
 
         <div style="display:flex;flex-direction:column;gap:4px;">
           <label style="font-size:13px;font-weight:600;color:#737373;" id="qPayMethodLbl">طريقة الدفع</label>
-          <select id="qPayMethod"
+          <select id="qPayMethod" class="misc-i18n-select"
             style="background:#fafafa;border:1px solid #e5e5e5;border-radius:8px;padding:9px 12px;font-family:inherit;font-size:14.5px;outline:none;color:#0a0a0a;">
-            <option>بنك الاهلي مؤسسة</option>
-            <option>بنك الراجحي</option>
-            <option>بنك الرياض</option>
-            <option>مدى</option>
-            <option>نقداً</option>
-            <option>آجل</option>
-            <option>حوالة بنكية</option>
+            <option value="بنك الاهلي مؤسسة">بنك الاهلي مؤسسة</option>
+            <option value="بنك الراجحي">بنك الراجحي</option>
+            <option value="بنك الرياض">بنك الرياض</option>
+            <option value="مدى" data-en="mada">مدى</option>
+            <option value="نقداً" data-en="Cash">نقداً</option>
+            <option value="آجل" data-en="Credit (deferred)">آجل</option>
+            <option value="حوالة بنكية" data-en="Bank transfer">حوالة بنكية</option>
           </select>
         </div>
 
@@ -717,12 +717,12 @@ table td { font-variant-numeric:tabular-nums }
 
         <div style="display:flex;flex-direction:column;gap:4px;">
           <label style="font-size:13px;font-weight:600;color:#737373;" id="qDocTypeLbl">نوع المستند</label>
-          <select id="qDocType"
+          <select id="qDocType" class="misc-i18n-select"
             style="background:#fafafa;border:1px solid #e5e5e5;border-radius:8px;padding:9px 12px;font-family:inherit;font-size:14.5px;outline:none;color:#0a0a0a;">
-            <option>فاتورة ضريبة</option>
-            <option>ف غير ضريبيه</option>
-            <option>إشعار دائن</option>
-            <option>مصروف نثرية</option>
+            <option value="فاتورة ضريبة" data-en="Tax invoice">فاتورة ضريبة</option>
+            <option value="ف غير ضريبيه" data-en="Non-tax invoice">ف غير ضريبيه</option>
+            <option value="إشعار دائن" data-en="Credit note">إشعار دائن</option>
+            <option value="مصروف نثرية" data-en="Petty cash expense">مصروف نثرية</option>
           </select>
         </div>
       </div>
@@ -776,7 +776,7 @@ table td { font-variant-numeric:tabular-nums }
         <div style="font-size:13px;color:#a3a3a3;margin-bottom:10px;direction:ltr;text-align:left;font-family:monospace;" id="bulkFormatLbl">
           التنسيق: المورد | رقم الفاتورة | التاريخ | الإجمالي | نوع الحساب
         </div>
-        <div style="background:#fafafa;border:1px solid #e5e5e5;border-radius:8px;padding:10px;font-family:monospace;font-size:13px;color:#737373;margin-bottom:10px;direction:ltr;">
+        <div style="background:#fafafa;border:1px solid #e5e5e5;border-radius:8px;padding:10px;font-family:monospace;font-size:13px;color:#737373;margin-bottom:10px;direction:ltr;" id="bulkExampleBox">
           مثال:<br>
           شركة المواد | INV-001 | 2026-08-01 | 5750 | م تشغلية<br>
           مؤسسة التقنية | INV-002 | 2026-08-03 | 11500 | م صيانة<br>
@@ -1036,7 +1036,7 @@ table td { font-variant-numeric:tabular-nums }
             <input id="totalBudgetInput" type="number" min="0" step="100"
               placeholder="0"
               style="width:130px;background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:7px 10px;font-family:inherit;font-size:15.5px;font-weight:700;color:#b91c1c;outline:none;text-align:left;direction:ltr;">
-            <span style="font-size:14px;color:#737373;">ر.س</span>
+            <span style="font-size:14px;color:#737373;" id="totalBudgetCurrency">ر.س</span>
           </div>
         </div>
         <div style="font-size:13px;color:#737373;" id="totalBudgetHint">اتركه صفراً لاستخدام مجموع أنواع الميزانية فقط</div>
@@ -1082,33 +1082,33 @@ table td { font-variant-numeric:tabular-nums }
 
     <!-- تسجيل الدخول -->
     <div id="authLoginBox">
-      <div style="font-size:19px;font-weight:600;color:#0a0a0a;margin-bottom:6px;letter-spacing:-.01em;">تسجيل الدخول</div>
-      <div style="font-size:13px;color:#a3a3a3;margin-bottom:22px;">دفاتر شركتك محفوظة على الخادم ومعزولة عن غيرها</div>
+      <div style="font-size:19px;font-weight:600;color:#0a0a0a;margin-bottom:6px;letter-spacing:-.01em;" id="authLoginTitle">تسجيل الدخول</div>
+      <div style="font-size:13px;color:#a3a3a3;margin-bottom:22px;" id="authLoginSub">دفاتر شركتك محفوظة على الخادم ومعزولة عن غيرها</div>
       <div class="field" style="margin-bottom:12px;">
-        <label>البريد الإلكتروني</label>
+        <label id="authEmailLbl">البريد الإلكتروني</label>
         <input id="authEmail" type="email" dir="ltr" autocomplete="email" placeholder="you@company.com">
       </div>
       <div class="field" style="margin-bottom:18px;">
-        <label>كلمة المرور</label>
+        <label id="authPwdLbl">كلمة المرور</label>
         <input id="authPwd" type="password" dir="ltr" autocomplete="current-password"
                onkeydown="if(event.key==='Enter')doLogin(document.getElementById('authEmail').value.trim(),document.getElementById('authPwd').value)">
       </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;"
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="authLoginBtn"
               onclick="doLogin(document.getElementById('authEmail').value.trim(),document.getElementById('authPwd').value)">دخول</button>
-      <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:9px;"
+      <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:9px;" id="authSignupBtn"
               onclick="doSignup(document.getElementById('authEmail').value.trim(),document.getElementById('authPwd').value)">إنشاء حساب جديد</button>
     </div>
 
     <!-- أول شركة -->
     <div id="authOrgBox" style="display:none;">
-      <div style="font-size:19px;font-weight:600;color:#0a0a0a;margin-bottom:6px;letter-spacing:-.01em;">أنشئ شركتك الأولى</div>
-      <div style="font-size:13px;color:#a3a3a3;margin-bottom:22px;">لكل شركة دفاتر منفصلة تماماً — لن يرى أعضاؤها دفاتر شركة أخرى</div>
+      <div style="font-size:19px;font-weight:600;color:#0a0a0a;margin-bottom:6px;letter-spacing:-.01em;" id="authOrgTitle">أنشئ شركتك الأولى</div>
+      <div style="font-size:13px;color:#a3a3a3;margin-bottom:22px;" id="authOrgSub">لكل شركة دفاتر منفصلة تماماً — لن يرى أعضاؤها دفاتر شركة أخرى</div>
       <div class="field" style="margin-bottom:18px;">
-        <label>اسم الشركة</label>
+        <label id="authOrgNameLbl">اسم الشركة</label>
         <input id="authOrgName" type="text" placeholder="مؤسسة ..."
                onkeydown="if(event.key==='Enter')createOrg(this.value.trim())">
       </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;"
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="authCreateOrgBtn"
               onclick="createOrg(document.getElementById('authOrgName').value.trim())">إنشاء الشركة</button>
       <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:9px;" onclick="doLogout()" id="logoutBtnAlt">تسجيل الخروج</button>
     </div>
@@ -1853,7 +1853,12 @@ var T = {
     installBtn:'تثبيت', installTitle:'ثبّت حاسِب على جوالك', installSub:'وصول سريع من الشاشة الرئيسية',
     mobHomeLbl:'الرئيسية', mobUploadLbl:'فاتورة', mobQuickLbl:'سريع', mobReportLbl:'تقرير', mobDashLbl:'لوحة',
     brandName:'حاسِب', pageTitle:'حاسِب AI', metaDesc:'حاسِب AI — المحاسب الذكي للشركات السعودية',
-    reloadExcelBtn:'إعادة قراءة البيانات'
+    reloadExcelBtn:'إعادة قراءة البيانات', uploadSectionLbl:'رفع فاتورة',
+    authLoginTitle:'تسجيل الدخول', authLoginSub:'دفاتر شركتك محفوظة على الخادم ومعزولة عن غيرها',
+    authEmailLbl:'البريد الإلكتروني', authPwdLbl:'كلمة المرور',
+    authLoginBtn:'دخول', authSignupBtn:'إنشاء حساب جديد',
+    authOrgTitle:'أنشئ شركتك الأولى', authOrgSub:'لكل شركة دفاتر منفصلة تماماً — لن يرى أعضاؤها دفاتر شركة أخرى',
+    authOrgNameLbl:'اسم الشركة', authCreateOrgBtn:'إنشاء الشركة'
   },
   en: {
     dropText:'Drop invoice here', camTxt:'Use Camera', procTxt:'Process Invoice',
@@ -1974,7 +1979,12 @@ var T = {
     installBtn:'Install', installTitle:'Install Hasib on your phone', installSub:'Quick access from your home screen',
     mobHomeLbl:'Home', mobUploadLbl:'Invoice', mobQuickLbl:'Quick', mobReportLbl:'Report', mobDashLbl:'Dashboard',
     brandName:'Hasib', pageTitle:'Hasib AI', metaDesc:'Hasib AI — Smart Accountant for Saudi Businesses',
-    reloadExcelBtn:'Reload data'
+    reloadExcelBtn:'Reload data', uploadSectionLbl:'Upload Invoice',
+    authLoginTitle:'Log In', authLoginSub:'Your company\'s books are stored server-side and isolated from others',
+    authEmailLbl:'Email', authPwdLbl:'Password',
+    authLoginBtn:'Log In', authSignupBtn:'Create new account',
+    authOrgTitle:'Create your first company', authOrgSub:'Each company has fully separate books — members cannot see another company\'s books',
+    authOrgNameLbl:'Company name', authCreateOrgBtn:'Create Company'
   }
 };
 function t(k) { return (T[lang] || T.ar)[k] || k; }
@@ -2005,6 +2015,28 @@ function applyLang() {
   document.querySelectorAll('select.acc-type-select option').forEach(function(opt) {
     opt.textContent = accLabel(opt.value);
   });
+  // --- Misc <select> options with an explicit English label (payment method / document type).
+  //     Options without data-en (e.g. real bank names) are left as-is, like vendor names. ---
+  document.querySelectorAll('select.misc-i18n-select option[data-en]').forEach(function(opt) {
+    opt.textContent = isAr ? opt.value : opt.getAttribute('data-en');
+  });
+  // --- Placeholders that aren't covered by the textContent ids[] loop below ---
+  var qVendorEl = document.getElementById('qVendor');
+  if (qVendorEl) qVendorEl.placeholder = isAr ? 'مثال: شركة المواد التجارية' : 'e.g. Materials Trading Co.';
+  var qDescEl = document.getElementById('qDesc');
+  if (qDescEl) qDescEl.placeholder = isAr ? 'مثال: خدمات صيانة شهر أغسطس' : 'e.g. August maintenance services';
+  var qBulkTextEl = document.getElementById('qBulkText');
+  if (qBulkTextEl) qBulkTextEl.placeholder = isAr ? 'شركة المواد | INV-001 | 2026-08-01 | 5750 | م تشغلية' : 'Materials Co. | INV-001 | 2026-08-01 | 5750 | Operating Expenses';
+  var authOrgNameEl = document.getElementById('authOrgName');
+  if (authOrgNameEl) authOrgNameEl.placeholder = isAr ? 'مؤسسة ...' : 'Company ...';
+  var totalBudgetCurrencyEl = document.getElementById('totalBudgetCurrency');
+  if (totalBudgetCurrencyEl) totalBudgetCurrencyEl.textContent = isAr ? 'ر.س' : 'SAR';
+  var bulkExampleBoxEl = document.getElementById('bulkExampleBox');
+  if (bulkExampleBoxEl) {
+    bulkExampleBoxEl.innerHTML = isAr
+      ? 'مثال:<br>\n          شركة المواد | INV-001 | 2026-08-01 | 5750 | م تشغلية<br>\n          مؤسسة التقنية | INV-002 | 2026-08-03 | 11500 | م صيانة<br>\n          محطة الوقود | INV-003 | 2026-08-05 | 690 | م وقود ومحروقات'
+      : 'Example:<br>\n          Materials Co. | INV-001 | 2026-08-01 | 5750 | Operating Expenses<br>\n          Tech Est. | INV-002 | 2026-08-03 | 11500 | Maintenance<br>\n          Fuel Station | INV-003 | 2026-08-05 | 690 | Fuel';
+  }
   var ids = ['dropText','camTxt','procTxt','statLbl1','statLbl2','histHdr',
     'welcomeTitle','welcomeBody','loadingTitle','card1Title','card2Title',
     'card3Title','card4Title','card5Title','confLabel','approveBtn','editBtn',
@@ -2047,7 +2079,10 @@ function applyLang() {
     'acctCancelBtn','acctLogLbl',
     // Branding / logout / PWA install / mobile nav (previously untranslated)
     'logoutBtn','logoutBtnAlt','installBtn','installTitle','installSub',
-    'mobHomeLbl','mobUploadLbl','mobQuickLbl','mobReportLbl','mobDashLbl','reloadExcelBtn'];
+    'mobHomeLbl','mobUploadLbl','mobQuickLbl','mobReportLbl','mobDashLbl','reloadExcelBtn','uploadSectionLbl',
+    // Auth gate (Supabase login / first-company screens)
+    'authLoginTitle','authLoginSub','authEmailLbl','authPwdLbl','authLoginBtn','authSignupBtn',
+    'authOrgTitle','authOrgSub','authOrgNameLbl','authCreateOrgBtn'];
   ids.forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.textContent = t(id);
@@ -3621,6 +3656,10 @@ function exportDashExcel() {
 var BUDGET_KEY = 'h_budget';
 var budget = {};
 try { budget = JSON.parse(localStorage.getItem(BUDGET_KEY) || '{}'); } catch(e) { budget = {}; }
+// applyLang() runs once at boot BEFORE this point (budget/checkBudgetNow didn't exist
+// yet, guarded by typeof there) — so budgetNavBtn's label never got localized on a
+// fresh page load. Run it once now that everything it needs is defined.
+if (typeof checkBudgetNow === 'function') checkBudgetNow();
 var ACCOUNT_TYPES = [
   'م تشغلية','م صيانة','م ضيافة','م دعاية واعلان','م قطع غيار',
   'م وقود ومحروقات','م ايجار','م اجور ورواتب','م حكومية',
