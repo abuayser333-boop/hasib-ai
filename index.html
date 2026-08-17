@@ -5044,5 +5044,173 @@ function closeMonthNow() {
 })();
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
+<script>
+/* ============================================================
+   حاسِب AI — Invite Flow (دعوة عضو لنفس الشركة) — إضافة مستقلة
+   لا يعدّل أي كود موجود؛ فقط يضيف زر "دعوة عضو" بجانب orgBar
+   ويتحقق من الدعوات المعلّقة بعد كل تسجيل دخول.
+   يعتمد على: sb (Supabase client), currentOrg, currentUser,
+   loadMyOrgs(), switchOrg(), toast(), roleLabel() — الموجودة أصلاً.
+   لو أي اسم تغيّر مستقبلاً، هذا الكود يفشل بصمت ولا يكسر التطبيق.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  function safe(fn) {
+    try { return fn(); } catch (e) { console.warn('[invite-flow]', e); }
+  }
+
+  function ensureInviteBtn() {
+    return safe(function () {
+      var btn = document.getElementById('inviteBtn');
+      if (btn) return btn;
+      var bar = document.getElementById('orgBar');
+      var logoutBtn = document.getElementById('logoutBtn');
+      if (!bar || !logoutBtn) return null;
+      btn = document.createElement('button');
+      btn.id = 'inviteBtn';
+      btn.className = 'nav-btn';
+      btn.type = 'button';
+      btn.style.display = 'none';
+      btn.textContent = 'دعوة عضو';
+      btn.onclick = function () { openInviteModal(); };
+      bar.insertBefore(btn, logoutBtn);
+      return btn;
+    });
+  }
+
+  function refreshInviteBtnVisibility() {
+    safe(function () {
+      var btn = ensureInviteBtn();
+      if (!btn) return;
+      var org = (typeof currentOrg !== 'undefined') ? currentOrg : null;
+      btn.style.display = (org && org.role === 'owner') ? 'inline-flex' : 'none';
+    });
+  }
+
+  // نلف الدوال الأصلية بدون تعديلها — نضيف خطاف بعدها فقط
+  safe(function () {
+    if (typeof switchOrg === 'function' && !switchOrg.__invitePatched) {
+      var _switchOrg = switchOrg;
+      window.switchOrg = function () {
+        var r = _switchOrg.apply(this, arguments);
+        setTimeout(refreshInviteBtnVisibility, 0);
+        return r;
+      };
+      window.switchOrg.__invitePatched = true;
+    }
+  });
+
+  safe(function () {
+    if (typeof loadMyOrgs === 'function' && !loadMyOrgs.__invitePatched) {
+      var _loadMyOrgs = loadMyOrgs;
+      window.loadMyOrgs = async function () {
+        var r = await _loadMyOrgs.apply(this, arguments);
+        setTimeout(refreshInviteBtnVisibility, 0);
+        safe(function () { checkPendingInvites(); });
+        return r;
+      };
+      window.loadMyOrgs.__invitePatched = true;
+    }
+  });
+
+  window.openInviteModal = function () {
+    safe(function () {
+      if (typeof currentOrg === 'undefined' || !currentOrg) return;
+      var email = prompt('البريد الإلكتروني للعضو المدعو:');
+      if (!email) return;
+      email = email.trim().toLowerCase();
+      var role = (prompt('الدور: owner / accountant / viewer', 'accountant') || '').trim();
+      if (['owner', 'accountant', 'viewer'].indexOf(role) === -1) {
+        if (typeof toast === 'function') toast('دور غير صالح', 'error');
+        return;
+      }
+      sendInvite(email, role);
+    });
+  };
+
+  async function sendInvite(email, role) {
+    try {
+      var res = await sb.from('invites').insert({
+        org_id: currentOrg.id,
+        email: email,
+        role: role,
+        invited_by: currentUser.id
+      });
+      if (res.error) {
+        if (typeof toast === 'function') toast(res.error.message, 'error');
+        return;
+      }
+      if (typeof toast === 'function') toast('تم إرسال الدعوة إلى ' + email, 'ok');
+    } catch (e) {
+      console.warn('[invite-flow] sendInvite', e);
+      if (typeof toast === 'function') toast('تعذّر إرسال الدعوة', 'error');
+    }
+  }
+
+  window.checkPendingInvites = async function () {
+    try {
+      if (typeof currentUser === 'undefined' || !currentUser) return;
+      var res = await sb.from('invites')
+        .select('id, role, organizations(name)')
+        .eq('status', 'pending');
+      if (res.error || !res.data || !res.data.length) return;
+      showInviteBanner(res.data);
+    } catch (e) {
+      console.warn('[invite-flow] checkPendingInvites', e);
+    }
+  };
+
+  function showInviteBanner(invites) {
+    safe(function () {
+      var old = document.getElementById('inviteBanner');
+      if (old) old.remove();
+      var banner = document.createElement('div');
+      banner.id = 'inviteBanner';
+      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;' +
+        'background:#0a0a0a;color:#fff;padding:10px 16px;display:flex;gap:12px;' +
+        'align-items:center;justify-content:center;flex-wrap:wrap;font-size:14px';
+      invites.forEach(function (inv) {
+        var orgName = (inv.organizations && inv.organizations.name) || '';
+        var label = (typeof roleLabel === 'function') ? roleLabel(inv.role) : inv.role;
+        var span = document.createElement('span');
+        span.textContent = 'لديك دعوة للانضمام إلى "' + orgName + '" بدور ' + label;
+        var btn = document.createElement('button');
+        btn.textContent = 'قبول';
+        btn.type = 'button';
+        btn.className = 'btn btn-primary';
+        btn.style.cssText = 'padding:4px 14px;border-radius:6px;cursor:pointer';
+        btn.onclick = function () { acceptInvite(inv.id); };
+        banner.appendChild(span);
+        banner.appendChild(btn);
+      });
+      document.body.prepend(banner);
+    });
+  }
+
+  window.acceptInvite = async function (inviteId) {
+    try {
+      var res = await sb.rpc('accept_invite', { p_invite_id: inviteId });
+      if (res.error) {
+        if (typeof toast === 'function') toast(res.error.message, 'error');
+        return;
+      }
+      if (typeof toast === 'function') toast('تم الانضمام للشركة', 'ok');
+      var banner = document.getElementById('inviteBanner');
+      if (banner) banner.remove();
+      if (typeof loadMyOrgs === 'function') loadMyOrgs();
+    } catch (e) {
+      console.warn('[invite-flow] acceptInvite', e);
+      if (typeof toast === 'function') toast('تعذّر قبول الدعوة', 'error');
+    }
+  };
+
+  // أول تشغيل: لو فيه جلسة محفوظة أصلاً وقت تحميل الصفحة
+  setTimeout(function () {
+    refreshInviteBtnVisibility();
+    safe(function () { checkPendingInvites(); });
+  }, 1800);
+})();
+</script>
 </body>
 </html>
