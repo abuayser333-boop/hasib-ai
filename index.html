@@ -1388,6 +1388,7 @@ var CLAUDE_ENDPOINT = '/api/claude';
 try { if (localStorage.getItem('h_key')) localStorage.removeItem('h_key'); } catch(e) {}
 var invoices = [];
 var curFile = null;
+var curFileHash = null;
 var curResult = null;
 var wb = null;
 var wbFile = null;
@@ -1549,29 +1550,30 @@ function roleLabel(role) {
 
 // ---------- تحويل بين شكل التطبيق وشكل الجدول ----------
 function invoiceToRow(r) {
-  return {
-    org_id: currentOrg.id,
-    vendor_name: r.vendor_name || null,
-    vendor_tax_number: r.vendor_tax_number || null,
-    invoice_number: r.invoice_number || null,
-    invoice_date: /^\d{4}-\d{2}-\d{2}$/.test(r.invoice_date || '') ? r.invoice_date : null,
-    subtotal: Number(r.subtotal || 0),
-    vat_amount: Number(r.vat_amount || 0),
-    vat_rate: Number(r.vat_rate || 15),
-    total_amount: Number(r.total_amount || 0),
-    currency: r.currency || 'SAR',
-    description: r.description || null,
-    payment_method: r.payment_method || null,
-    account_type: r.account_type || null,
-    debit_account: r.debit_account || null,
-    credit_account: r.credit_account || null,
-    zatca_compliant: !!r.zatca_compliant,
-    confidence: Math.round(Number(r.confidence || 0)),
-    approved: !!r.approved,
-    needs_review: !!r.needs_review,
-    reconciled: !!r.reconciled,
-    payload: r
-  };
+return {
+org_id: currentOrg.id,
+vendor_name: r.vendor_name || null,
+vendor_tax_number: (r.vendor_tax_number || '').trim() || null,
+invoice_number: (r.invoice_number || '').trim() || null,
+invoice_date: /^\d{4}-\d{2}-\d{2}$/.test(r.invoice_date || '') ? r.invoice_date : null,
+subtotal: Number(r.subtotal || 0),
+vat_amount: Number(r.vat_amount || 0),
+vat_rate: Number(r.vat_rate || 15),
+total_amount: Number(r.total_amount || 0),
+currency: r.currency || 'SAR',
+description: r.description || null,
+payment_method: r.payment_method || null,
+account_type: r.account_type || null,
+debit_account: r.debit_account || null,
+credit_account: r.credit_account || null,
+zatca_compliant: !!r.zatca_compliant,
+confidence: Math.round(Number(r.confidence || 0)),
+approved: !!r.approved,
+needs_review: !!r.needs_review,
+reconciled: !!r.reconciled,
+file_hash: r.file_hash || null,
+payload: r
+};
 }
 function rowToInvoice(row) {
   var r = Object.assign({}, row.payload || {});
@@ -2127,40 +2129,60 @@ dz.addEventListener('dragleave', function() { dz.classList.remove('drag'); });
 dz.addEventListener('drop', function(e) { e.preventDefault(); dz.classList.remove('drag'); if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); });
 function pickFile(e) { if (e.target.files[0]) setFile(e.target.files[0]); }
 function setFile(f) {
-  curFile = f;
-  document.getElementById('fileName').textContent = f.name;
-  document.getElementById('fileSize').textContent = (f.size/1024).toFixed(1) + ' KB';
-  document.getElementById('fileInfo').style.display = 'block';
-  document.getElementById('procBtn').disabled = false;
-  toast('' + f.name);
+curFile = f;
+curFileHash = null;
+document.getElementById('fileName').textContent = f.name;
+document.getElementById('fileSize').textContent = (f.size/1024).toFixed(1) + ' KB';
+document.getElementById('fileInfo').style.display = 'block';
+document.getElementById('procBtn').disabled = false;
+toast('' + f.name);
+hashFile(f).then(function(h) { if (curFile === f) curFileHash = h; });
 }
 function process() {
-  // لم تعد هناك حاجة للتحقق من مفتاح في المتصفح — الخادم يملكه
-  if (!curFile) { toast(t('toastNoFile'), 'warn'); return; }
-  setState('loading');
-  document.getElementById('procBtn').disabled = true;
-  var steps = t('steps');
-  var si = 0;
-  var stepEl = document.getElementById('loadingStep');
-  var timer = setInterval(function() {
-    if (si < steps.length) { stepEl.textContent = steps[si++]; }
-  }, 1200);
-  orchestrate(curFile)
-    .then(function(result) {
-      clearInterval(timer);
-      curResult = result;
-      renderResult(result);
-      saveInvoice(result);
-      setState('result');
-    })
-    .catch(function(err) {
-      clearInterval(timer);
-      toast('× ' + (err.message || (lang==='ar'?'خطأ':'Error')), 'error');
-      setState('welcome');
-    })
-    .finally(function() {
-      document.getElementById('procBtn').disabled = false;
-    });
+// لم تعد هناك حاجة للتحقق من مفتاح في المتصفح — الخادم يملكه
+if (!curFile) { toast(t('toastNoFile'), 'warn'); return; }
+var fileForCheck = curFile;
+document.getElementById('procBtn').disabled = true;
+(curFileHash ? Promise.resolve(curFileHash) : hashFile(fileForCheck)).then(function(hash) {
+curFileHash = hash;
+return findDuplicateByHash(hash);
+}).then(function(dupe) {
+if (dupe && curFile === fileForCheck) {
+document.getElementById('procBtn').disabled = false;
+toast(lang==='ar'
+? ('! سبق رفع هذا الملف بعينه — ' + (dupe.vendor_name || '') + (dupe.invoice_date ? (' بتاريخ ' + dupe.invoice_date) : ''))
+: ('! This exact file was already uploaded — ' + (dupe.vendor_name || '') + (dupe.invoice_date ? (' on ' + dupe.invoice_date) : '')),
+'warn');
+return;
+}
+runProcessPipeline();
+});
+}
+function runProcessPipeline() {
+setState('loading');
+var steps = t('steps');
+var si = 0;
+var stepEl = document.getElementById('loadingStep');
+var timer = setInterval(function() {
+if (si < steps.length) { stepEl.textContent = steps[si++]; }
+}, 1200);
+orchestrate(curFile)
+.then(function(result) {
+clearInterval(timer);
+result.file_hash = curFileHash;
+curResult = result;
+renderResult(result);
+saveInvoice(result);
+setState('result');
+})
+.catch(function(err) {
+clearInterval(timer);
+toast('× ' + (err.message || (lang==='ar'?'خطأ':'Error')), 'error');
+setState('welcome');
+})
+.finally(function() {
+document.getElementById('procBtn').disabled = false;
+});
 }
 
 // ============================================================
@@ -2177,6 +2199,36 @@ function sha256Hex(str) {
     for (var i = 0; i < bytes.length; i++) { hex += bytes[i].toString(16).padStart(2, '0'); }
     return hex;
   });
+}
+
+function sha256HexBuffer(buf) {
+return crypto.subtle.digest('SHA-256', buf).then(function(hbuf) {
+var bytes = new Uint8Array(hbuf);
+var hex = '';
+for (var i = 0; i < bytes.length; i++) { hex += bytes[i].toString(16).padStart(2, '0'); }
+return hex;
+});
+}
+function hashFile(file) {
+return (file.arrayBuffer ? file.arrayBuffer() : new Promise(function(resolve, reject) {
+var r = new FileReader();
+r.onload = function() { resolve(r.result); };
+r.onerror = reject;
+r.readAsArrayBuffer(file);
+})).then(sha256HexBuffer);
+}
+function findDuplicateByHash(hash) {
+if (!hash) return Promise.resolve(null);
+for (var i = 0; i < invoices.length; i++) {
+if (invoices[i].file_hash === hash) return Promise.resolve(invoices[i]);
+}
+if (DB_ON && sb && currentOrg) {
+return sb.from('invoices').select('id, vendor_name, invoice_date, total_amount')
+.eq('org_id', currentOrg.id).eq('file_hash', hash).limit(1).maybeSingle()
+.then(function(res) { return (res && res.data) ? res.data : null; })
+.catch(function() { return null; });
+}
+return Promise.resolve(null);
 }
 var GENESIS_HASH = '0'.repeat(64);
 function appendAudit(trailArr, agent, action, detail) {
@@ -2509,22 +2561,27 @@ function resetApp() {
   setState('welcome');
 }
 function saveInvoice(r) {
-  r.saved_at = new Date().toISOString();
-  r.approved = false;
-  invoices.unshift(r);
-  if (DB_ON) {
-    // الحفظ على الخادم؛ يعود الصف بمعرّفه فنربطه بالكائن ليعمل التعديل لاحقاً
-    dbInsertInvoice(r).then(function(row) {
-      if (row) { r.id = row.id; r.saved_at = row.created_at; }
-      renderHistory(); updateStats();
-    });
-  } else {
-    if (invoices.length > 100) invoices.pop();
-    localStorage.setItem('h_inv', JSON.stringify(invoices));
-  }
-  renderHistory();
-  updateStats();
-  autoBudgetCheck();
+r.saved_at = new Date().toISOString();
+r.approved = false;
+invoices.unshift(r);
+if (DB_ON) {
+// الحفظ على الخادم؛ يعود الصف بمعرّفه فنربطه بالكائن ليعمل التعديل لاحقاً
+dbInsertInvoice(r).then(function(row) {
+if (row) {
+r.id = row.id; r.saved_at = row.created_at;
+} else {
+var idx = invoices.indexOf(r);
+if (idx > -1) invoices.splice(idx, 1);
+}
+renderHistory(); updateStats();
+});
+} else {
+if (invoices.length > 100) invoices.pop();
+localStorage.setItem('h_inv', JSON.stringify(invoices));
+}
+renderHistory();
+updateStats();
+autoBudgetCheck();
 }
 function updateInvoice(r) {
   for (var i = 0; i < invoices.length; i++) {
