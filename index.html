@@ -432,6 +432,7 @@ table td { font-variant-numeric:tabular-nums }
     <span class="nav-sep"></span>
     <button class="nav-btn" onclick="openReport()" id="openReportBtn">تقرير شهري</button>
     <button class="nav-btn" onclick="openDash()" id="openDashBtn">لوحة التحكم</button>
+<button class="nav-btn" onclick="openTrialBalance()" id="openTBBtn">ميزان المراجعة</button>
     <button class="nav-btn" onclick="openBudget()" id="budgetNavBtn">الميزانية</button>
     <button class="nav-btn" onclick="openQuickEntry()" id="openQuickBtn">إدخال سريع</button>
     <span class="nav-sep"></span>
@@ -1304,6 +1305,44 @@ table td { font-variant-numeric:tabular-nums }
   </div>
 </div>
 
+<!-- TRIAL BALANCE MODAL -->
+<div id="tbModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:700;overflow-y:auto;padding:20px 16px;">
+<div style="max-width:920px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.15);">
+
+<div style="padding:16px 24px;background:#fafafa;border-bottom:1px solid #e5e5e5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+<div>
+<div style="font-size:17.5px;font-weight:700;color:#0a0a0a;" id="tbTitle">ميزان المراجعة</div>
+<div style="font-size:13px;color:#737373;" id="tbSubtitle">أرصدة الحسابات المجمّعة من كل القيود المحاسبية حتى تاريخ محدد</div>
+</div>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+<span style="font-size:13px;color:#737373;" id="tbAsOfLbl">حتى نهاية شهر:</span>
+<select id="tbMonth" onchange="buildTrialBalance()" style="background:#fafafa;border:1px solid #e5e5e5;border-radius:8px;padding:6px 10px;font-family:inherit;font-size:14.5px;color:#0a0a0a;outline:none;"></select>
+<button onclick="printTrialBalance()" class="nav-btn" style="border:1px solid #e5e5e5;" id="printTBBtn">طباعة</button>
+<button onclick="exportTrialBalanceExcel()" class="nav-btn" style="border:1px solid #e5e5e5;" id="exportTBBtn">Excel</button>
+<button onclick="closeTrialBalance()" style="background:transparent;border:1px solid #e5e5e5;color:#737373;width:30px;height:30px;border-radius:7px;cursor:pointer;font-size:15.5px;">✕</button>
+</div>
+</div>
+
+<div id="tbBalanceBanner" style="padding:10px 24px;font-size:13.5px;font-weight:600;"></div>
+
+<div style="padding:4px 24px 24px;max-height:70vh;overflow-y:auto;">
+<table style="width:100%;border-collapse:collapse;font-size:14px;">
+<thead>
+<tr style="border-bottom:2px solid #0a0a0a;">
+<th style="text-align:right;padding:8px 6px;font-size:12.5px;color:#737373;" id="thTBCode">كود الحساب</th>
+<th style="text-align:right;padding:8px 6px;font-size:12.5px;color:#737373;" id="thTBAccount">اسم الحساب</th>
+<th style="text-align:left;padding:8px 6px;font-size:12.5px;color:#737373;" id="thTBDebit">مدين</th>
+<th style="text-align:left;padding:8px 6px;font-size:12.5px;color:#737373;" id="thTBCredit">دائن</th>
+<th style="text-align:left;padding:8px 6px;font-size:12.5px;color:#737373;" id="thTBBalance">الرصيد</th>
+</tr>
+</thead>
+<tbody id="tbBody"></tbody>
+</table>
+</div>
+
+</div>
+</div>
+
 <!-- REPORT MODAL -->
 <div id="reportModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:700;overflow-y:auto;padding:20px 16px;">
   <div style="max-width:800px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.15);">
@@ -1795,6 +1834,11 @@ var T = {
     saveKeyBtn:'حفظ', openExcelBtn:'افتح Excel',
     openReportBtn:'تقرير شهري', openDashBtn:'لوحة التحكم',
     openQuickBtn:'إدخال سريع', openReconcileBtn:'مطابقة بنكية', openCloseBtn:'إغلاق الشهر',
+    openTBBtn:'ميزان المراجعة',
+    tbTitle:'ميزان المراجعة', tbSubtitle:'أرصدة الحسابات المجمّعة من كل القيود المحاسبية حتى تاريخ محدد',
+    tbAsOfLbl:'حتى نهاية شهر:', thTBCode:'كود الحساب', thTBAccount:'اسم الحساب', thTBDebit:'مدين', thTBCredit:'دائن', thTBBalance:'الرصيد',
+    tbTotalsLbl:'الإجمالي', tbSectionAssets:'الأصول', tbSectionLiabilities:'الالتزامات', tbSectionExpenses:'المصروفات',
+    printTBBtn:'طباعة', exportTBBtn:'Excel', tbBalancedYes:'✓ ميزان متوازن (مدين = دائن)', tbBalancedNo:'⚠ غير متوازن — يلزم المراجعة', tbEmptyMsg:'لا توجد بيانات لهذه الفترة.',
     reportSubtitle:'ملخص تلقائي من الفواتير المعالجة',
     chartTypeLbl:'توزيع المصروفات بالنوع', chartDailyLbl:'المصروفات اليومية',
     varianceSectionLbl:'تحليل الانحرافات (Variance Analysis) — مقارنة بالشهر السابق',
@@ -1921,6 +1965,11 @@ var T = {
     saveKeyBtn:'Save', openExcelBtn:'Open Excel',
     openReportBtn:'Monthly Report', openDashBtn:'Dashboard',
     openQuickBtn:'Quick Entry', openReconcileBtn:'Bank Reconciliation', openCloseBtn:'Month-End Close',
+    openTBBtn:'Trial Balance',
+    tbTitle:'Trial Balance', tbSubtitle:'Account balances aggregated from all journal entries as of a given date',
+    tbAsOfLbl:'As of end of month:', thTBCode:'Account Code', thTBAccount:'Account Name', thTBDebit:'Debit', thTBCredit:'Credit', thTBBalance:'Balance',
+    tbTotalsLbl:'Total', tbSectionAssets:'Assets', tbSectionLiabilities:'Liabilities', tbSectionExpenses:'Expenses',
+    printTBBtn:'Print', exportTBBtn:'Excel', tbBalancedYes:'✓ Balanced (Debit = Credit)', tbBalancedNo:'⚠ Not balanced — needs review', tbEmptyMsg:'No data for this period.',
     reportSubtitle:'Automatic summary from processed invoices',
     chartTypeLbl:'Expenses by Type', chartDailyLbl:'Daily Expenses',
     varianceSectionLbl:'Variance Analysis — vs. previous month',
@@ -2054,12 +2103,16 @@ function applyLang() {
     'lAccType','lNotes','lZatca','saveEditBtn','saveApproveBtn','cancelBtn',
     'camTitle','captureBtn','cancelCamBtn','odooDirectBtn',
     // Nav bar
-    'openExcelBtn','openReportBtn','openDashBtn','openQuickBtn',
+    'openExcelBtn','openReportBtn','openDashBtn','openTBBtn','openQuickBtn',
     'openReconcileBtn','openCloseBtn',
     // Report modal
     'reportSubtitle','chartTypeLbl','chartDailyLbl','varianceSectionLbl',
     'thDate','thVendor','thType','thSub','thVat','thTotal','thStatus','aiSummaryTitle',
     'printReportBtn','exportReportBtn','reportTableTitle',
+// Trial Balance modal
+'tbTitle','tbSubtitle','tbAsOfLbl','thTBCode','thTBAccount','thTBDebit','thTBCredit','thTBBalance',
+'tbTotalsLbl','tbSectionAssets','tbSectionLiabilities','tbSectionExpenses',
+'printTBBtn','exportTBBtn','tbEmptyMsg',
     // Dashboard modal
     'dashTitle','dashSubtitle','dashTrendLabel','dashTypeLabel','dashVendorLabel',
     'dashTableLabel','dashAILabel','dthMonth','dthCount','dthSub','dthVat','dthTotal',
@@ -2112,6 +2165,7 @@ function applyLang() {
   }
   if (isVisible('stateResult') && curResult) renderResult(curResult);
   if (isVisible('reportModal')) buildReport();
+if (isVisible('tbModal')) buildTrialBalance();
   if (isVisible('dashModal')) buildDash();
   if (isVisible('budgetModal')) { renderBudgetStatus(); renderBudgetInputs(); }
   if (isVisible('reconcileModal')) renderReconcile();
@@ -2360,6 +2414,174 @@ function runJournalAgent(r) {
     creditKind: credit.key,
     note: acctNote + ' · ' + creditNote
   };
+}
+
+// ============================================================
+// TRIAL BALANCE — ميزان المراجعة (يعيد استخدام JournalEntryAgent
+// نفسه المستخدم مع كل فاتورة، فيبقى الميزان متسقاً دوماً مع القيد الفعلي)
+// ============================================================
+function openTrialBalance() {
+  populateTBSelector();
+  buildTrialBalance();
+  document.getElementById('tbModal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+function closeTrialBalance() {
+  document.getElementById('tbModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+function populateTBSelector() {
+  var sel = document.getElementById('tbMonth');
+  sel.innerHTML = '';
+  var months = {};
+  for (var i = 0; i < invoices.length; i++) {
+    var d = invoices[i].invoice_date || invoices[i].saved_at || '';
+    var m = extractMonth(d);
+    if (m) months[m] = true;
+  }
+  var now = new Date();
+  var curM = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  months[curM] = true;
+  var sorted = Object.keys(months).sort().reverse();
+  for (var i = 0; i < sorted.length; i++) {
+    var opt = document.createElement('option');
+    opt.value = sorted[i];
+    opt.textContent = formatMonthLabel(sorted[i]);
+    sel.appendChild(opt);
+  }
+}
+function accountLabelByCode(code) {
+  var ar = lang === 'ar';
+  if (code === SPECIAL_ACCOUNTS.CASH) return ar ? 'الصندوق' : 'Cash';
+  if (code === SPECIAL_ACCOUNTS.BANK) return ar ? 'البنك' : 'Bank';
+  if (code === SPECIAL_ACCOUNTS.PAYABLES) return ar ? 'الدائنون' : 'Accounts Payable';
+  if (code === SPECIAL_ACCOUNTS.VAT_INPUT) return ar ? 'ضريبة القيمة المضافة — المدخلات' : 'VAT — Input';
+  for (var k in EXPENSE_ACCOUNTS) { if (EXPENSE_ACCOUNTS[k] === code) return accLabel(k); }
+  return code;
+}
+function accountSectionByCode(code) {
+  if (code === SPECIAL_ACCOUNTS.CASH || code === SPECIAL_ACCOUNTS.BANK || code === SPECIAL_ACCOUNTS.VAT_INPUT) return 'assets';
+  if (code === SPECIAL_ACCOUNTS.PAYABLES) return 'liabilities';
+  return 'expenses';
+}
+function buildTrialBalanceRows(data) {
+  var map = {};
+  for (var i = 0; i < data.length; i++) {
+    var je = runJournalAgent(data[i]);
+    for (var j = 0; j < je.lines.length; j++) {
+      var line = je.lines[j];
+      if (!map[line.code]) map[line.code] = { code: line.code, debit: 0, credit: 0 };
+      map[line.code].debit += line.debit;
+      map[line.code].credit += line.credit;
+    }
+  }
+  var codes = Object.keys(map).sort();
+  var rows = [];
+  for (var i = 0; i < codes.length; i++) {
+    var c = codes[i];
+    var m = map[c];
+    var debit = Math.round(m.debit * 100) / 100;
+    var credit = Math.round(m.credit * 100) / 100;
+    rows.push({
+      code: c,
+      label: accountLabelByCode(c),
+      section: accountSectionByCode(c),
+      debit: debit,
+      credit: credit,
+      balance: Math.round((debit - credit) * 100) / 100
+    });
+  }
+  return rows;
+}
+function buildTrialBalance() {
+  var sel = document.getElementById('tbMonth');
+  if (!sel) return;
+  var ym = sel.value;
+  var data = ym ? invoices.filter(function(inv) {
+    var d = inv.invoice_date || inv.saved_at || '';
+    var m = extractMonth(d) || extractMonth(inv.saved_at || '');
+    return !!m && m <= ym;
+  }) : invoices.slice();
+  window.__tbRows = buildTrialBalanceRows(data);
+  window.__tbYm = ym;
+  renderTrialBalance(window.__tbRows);
+}
+function renderTrialBalance(rows) {
+  var ar = lang === 'ar';
+  var fmt = function(n) { return Number(n).toLocaleString(ar?'ar-SA-u-nu-latn':'en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); };
+  var sections = [
+    { key: 'assets', label: t('tbSectionAssets') },
+    { key: 'liabilities', label: t('tbSectionLiabilities') },
+    { key: 'expenses', label: t('tbSectionExpenses') }
+  ];
+  var html = '';
+  var gDebit = 0, gCredit = 0;
+  if (!rows.length) {
+    html = '<tr><td colspan="5" style="text-align:center;padding:24px;color:#a3a3a3;">' + t('tbEmptyMsg') + '</td></tr>';
+  } else {
+    for (var s = 0; s < sections.length; s++) {
+      var sec = sections[s];
+      var secRows = rows.filter(function(r) { return r.section === sec.key; });
+      if (!secRows.length) continue;
+      html += '<tr><td colspan="5" style="padding:12px 6px 6px;font-size:12.5px;font-weight:700;color:#737373;letter-spacing:.5px;border-top:1px solid #e5e5e5;">' + sec.label + '</td></tr>';
+      var secDebit = 0, secCredit = 0;
+      for (var r = 0; r < secRows.length; r++) {
+        var row = secRows[r];
+        secDebit += row.debit; secCredit += row.credit;
+        var balColor = row.balance >= 0 ? '#0a0a0a' : '#b91c1c';
+        var balSide = row.balance >= 0 ? (ar ? ' مدين' : ' Dr') : (ar ? ' دائن' : ' Cr');
+        html += '<tr style="border-bottom:1px solid #f5f5f5;">' +
+          '<td style="padding:7px 6px;color:#737373;">' + row.code + '</td>' +
+          '<td style="padding:7px 6px;color:#0a0a0a;">' + row.label + '</td>' +
+          '<td style="padding:7px 6px;text-align:left;">' + (row.debit ? fmt(row.debit) : '—') + '</td>' +
+          '<td style="padding:7px 6px;text-align:left;">' + (row.credit ? fmt(row.credit) : '—') + '</td>' +
+          '<td style="padding:7px 6px;text-align:left;color:' + balColor + ';">' + fmt(Math.abs(row.balance)) + balSide + '</td>' +
+          '</tr>';
+      }
+      gDebit += secDebit; gCredit += secCredit;
+      html += '<tr style="background:#fafafa;font-weight:600;">' +
+        '<td></td><td style="padding:7px 6px;">' + sec.label + ' — ' + t('tbTotalsLbl') + '</td>' +
+        '<td style="padding:7px 6px;text-align:left;">' + fmt(secDebit) + '</td>' +
+        '<td style="padding:7px 6px;text-align:left;">' + fmt(secCredit) + '</td>' +
+        '<td></td></tr>';
+    }
+    html += '<tr style="border-top:2px solid #0a0a0a;font-weight:700;">' +
+      '<td></td><td style="padding:9px 6px;">' + t('tbTotalsLbl') + '</td>' +
+      '<td style="padding:9px 6px;text-align:left;">' + fmt(gDebit) + '</td>' +
+      '<td style="padding:9px 6px;text-align:left;">' + fmt(gCredit) + '</td>' +
+      '<td></td></tr>';
+  }
+  document.getElementById('tbBody').innerHTML = html;
+  var balanced = Math.abs(gDebit - gCredit) < 0.01;
+  var banner = document.getElementById('tbBalanceBanner');
+  banner.style.background = balanced ? '#f0fdf4' : '#fef2f2';
+  banner.style.color = balanced ? '#15803d' : '#b91c1c';
+  banner.textContent = balanced ? t('tbBalancedYes') : t('tbBalancedNo');
+}
+function printTrialBalance() {
+  window.print();
+}
+function exportTrialBalanceExcel() {
+  var rows = window.__tbRows || [];
+  var ar = lang === 'ar';
+  var sectionLabel = { assets: t('tbSectionAssets'), liabilities: t('tbSectionLiabilities'), expenses: t('tbSectionExpenses') };
+  var header = ar
+    ? ['كود الحساب','اسم الحساب','التصنيف','مدين','دائن','الرصيد']
+    : ['Account Code','Account Name','Section','Debit','Credit','Balance'];
+  var out = [header];
+  var gDebit2 = 0, gCredit2 = 0;
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    gDebit2 += r.debit; gCredit2 += r.credit;
+    out.push([r.code, r.label, sectionLabel[r.section] || r.section, r.debit, r.credit, r.balance]);
+  }
+  out.push(['', '', t('tbTotalsLbl'), Math.round(gDebit2*100)/100, Math.round(gCredit2*100)/100, Math.round((gDebit2-gCredit2)*100)/100]);
+  var newWb = XLSX.utils.book_new();
+  var ws = XLSX.utils.aoa_to_sheet(out);
+  ws['!cols'] = [{wch:12},{wch:26},{wch:14},{wch:14},{wch:14},{wch:14}];
+  XLSX.utils.book_append_sheet(newWb, ws, ar ? 'ميزان المراجعة' : 'Trial Balance');
+  XLSX.writeFile(newWb, (ar ? 'ميزان-مراجعة-' : 'trial-balance-') + (window.__tbYm || (ar ? 'كل-الفترات' : 'all')) + '.xlsx');
+  toast('' + (ar ? 'تم تصدير ميزان المراجعة' : 'Trial balance exported'));
 }
 
 // --- SupervisorAgent: ينسّق تسلسل الوكلاء ويبني audit trail موقّع بسلسلة hash ---
@@ -5271,3 +5493,7 @@ function closeMonthNow() {
 </script>
 </body>
 </html>
+
+Claude is active in this tab group
+Open chat
+Dismiss
