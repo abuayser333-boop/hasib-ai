@@ -459,7 +459,11 @@ table td { font-variant-numeric:tabular-nums }
         <div class="file-name" id="fileName"></div>
         <div class="file-size" id="fileSize"></div>
       </div>
-      <div class="excel-status off" id="excelStatus"><span id="excelStatusTxt">لم يُفتح ملف Excel بعد</span></div>
+      <div id="filePreviewWrap" style="display:none;margin-top:10px;text-align:center;">
+<img id="filePreviewImg" style="display:none;max-width:100%;max-height:220px;border-radius:8px;border:1px solid var(--line);" />
+<embed id="filePreviewEmbed" style="display:none;width:100%;height:220px;border-radius:8px;border:1px solid var(--line);" />
+</div>
+<div class="excel-status off" id="excelStatus"><span id="excelStatusTxt">لم يُفتح ملف Excel بعد</span></div>
       <button class="save-excel-btn" id="saveExcelBtn" onclick="saveExcel()">حفظ في الملف</button>
       <button id="reloadExcelBtn" onclick="reloadFromExcel()" style="display:none;width:100%;margin-top:4px;padding:7px;background:transparent;color:#525252;border:1px solid #bbf7d0;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">إعادة قراءة البيانات</button>
       <button class="proc-btn" id="procBtn" onclick="process()" disabled>
@@ -534,7 +538,15 @@ table td { font-variant-numeric:tabular-nums }
         <div class="card-body"><div id="auditData"></div></div>
       </div>
 
-      <div id="bannerExcel" class="banner green" style="display:none;"><span id="bannerTxt">الملف مفتوح — اضغط اعتماد وإرسال</span></div>
+      <div class="card" id="previewCard" style="display:none;">
+<div class="card-hdr"><span class="card-icon">🖼️</span><span class="card-title" id="cardPreviewTitle">معاينة الفاتورة الأصلية</span></div>
+<div class="card-body" style="text-align:center;">
+<img id="resultPreviewImg" style="display:none;max-width:100%;max-height:500px;border-radius:8px;border:1px solid var(--line);" />
+<embed id="resultPreviewEmbed" style="display:none;width:100%;height:500px;border-radius:8px;border:1px solid var(--line);" />
+</div>
+</div>
+
+<div id="bannerExcel" class="banner green" style="display:none;"><span id="bannerTxt">الملف مفتوح — اضغط اعتماد وإرسال</span></div>
       <div id="bannerNoExcel" class="banner orange">! <span id="bannerNoTxt">افتح ملف Excel أولاً من الأعلى ثم اعتمد القيد</span></div>
 
       <div class="actions">
@@ -1428,6 +1440,7 @@ try { if (localStorage.getItem('h_key')) localStorage.removeItem('h_key'); } cat
 var invoices = [];
 var curFile = null;
 var curFileHash = null;
+var curFilePreviewUrl = null;
 var curResult = null;
 var wb = null;
 var wbFile = null;
@@ -1792,6 +1805,7 @@ var T = {
     loadingTitle:'حاسِب يعمل...',
     card1Title:'بيانات الفاتورة', card2Title:'التحقق والامتثال',
     card3Title:'القيد المحاسبي', card4Title:'تحليل حاسِب', card5Title:'Audit Trail',
+cardPreviewTitle:'معاينة الفاتورة الأصلية',
     confLabel:'مستوى الثقة',
     approveBtn:'✓ اعتماد وإرسال', editBtn:'تعديل', csvBtn:'CSV', resetBtn:'↩ جديدة',
     bannerTxt:'الملف مفتوح — اضغط اعتماد وإرسال للكتابة في الشيت',
@@ -1923,6 +1937,7 @@ var T = {
     loadingTitle:'Hasib is working...',
     card1Title:'Invoice Data', card2Title:'Verification',
     card3Title:'Journal Entry', card4Title:'Hasib Analysis', card5Title:'Audit Trail',
+cardPreviewTitle:'Original Invoice Preview',
     confLabel:'Confidence',
     approveBtn:'✓ Approve & Send', editBtn:'Edit', csvBtn:'CSV', resetBtn:'↩ New',
     bannerTxt:'File open — Press Approve & Send to write to sheet',
@@ -2097,7 +2112,7 @@ function applyLang() {
   }
   var ids = ['dropText','camTxt','procTxt','statLbl1','statLbl2','histHdr',
     'welcomeTitle','welcomeBody','loadingTitle','card1Title','card2Title',
-    'card3Title','card4Title','card5Title','confLabel','approveBtn','editBtn',
+    'card3Title','card4Title','card5Title','cardPreviewTitle','confLabel','approveBtn','editBtn',
     'csvBtn','resetBtn','bannerTxt','bannerNoTxt','editTitle','lVendor','lTax',
     'lInvNum','lDate','lSub','lRate','lVat','lTotal','lDesc','lDebit','lCredit',
     'lAccType','lNotes','lZatca','saveEditBtn','saveApproveBtn','cancelBtn',
@@ -2182,6 +2197,67 @@ dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.classList.a
 dz.addEventListener('dragleave', function() { dz.classList.remove('drag'); });
 dz.addEventListener('drop', function(e) { e.preventDefault(); dz.classList.remove('drag'); if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); });
 function pickFile(e) { if (e.target.files[0]) setFile(e.target.files[0]); }
+function showFilePreview(f) {
+try { if (curFilePreviewUrl) URL.revokeObjectURL(curFilePreviewUrl); } catch(e) {}
+curFilePreviewUrl = URL.createObjectURL(f);
+var wrap = document.getElementById('filePreviewWrap');
+var img = document.getElementById('filePreviewImg');
+var embed = document.getElementById('filePreviewEmbed');
+if (!wrap || !img || !embed) return;
+if (f.type === 'application/pdf') {
+img.style.display = 'none'; img.src = '';
+embed.src = curFilePreviewUrl;
+embed.type = 'application/pdf';
+embed.style.display = 'block';
+wrap.style.display = 'block';
+} else if (f.type.indexOf('image/') === 0) {
+embed.style.display = 'none'; embed.src = '';
+img.src = curFilePreviewUrl;
+img.style.display = 'block';
+wrap.style.display = 'block';
+} else {
+wrap.style.display = 'none';
+}
+}
+
+function clearFilePreview() {
+try { if (curFilePreviewUrl) URL.revokeObjectURL(curFilePreviewUrl); } catch(e) {}
+curFilePreviewUrl = null;
+var wrap = document.getElementById('filePreviewWrap');
+var img = document.getElementById('filePreviewImg');
+var embed = document.getElementById('filePreviewEmbed');
+if (wrap) wrap.style.display = 'none';
+if (img) { img.style.display = 'none'; img.src = ''; }
+if (embed) { embed.style.display = 'none'; embed.src = ''; }
+var card = document.getElementById('previewCard');
+if (card) card.style.display = 'none';
+}
+
+function updateResultPreview() {
+var card = document.getElementById('previewCard');
+var img = document.getElementById('resultPreviewImg');
+var embed = document.getElementById('resultPreviewEmbed');
+if (!card || !img || !embed) return;
+if (curFilePreviewUrl && curFile) {
+if (curFile.type === 'application/pdf') {
+img.style.display = 'none'; img.src = '';
+embed.src = curFilePreviewUrl;
+embed.type = 'application/pdf';
+embed.style.display = 'block';
+card.style.display = 'block';
+} else if (curFile.type.indexOf('image/') === 0) {
+embed.style.display = 'none'; embed.src = '';
+img.src = curFilePreviewUrl;
+img.style.display = 'block';
+card.style.display = 'block';
+} else {
+card.style.display = 'none';
+}
+} else {
+card.style.display = 'none';
+}
+}
+
 function setFile(f) {
 curFile = f;
 curFileHash = null;
@@ -2189,6 +2265,7 @@ document.getElementById('fileName').textContent = f.name;
 document.getElementById('fileSize').textContent = (f.size/1024).toFixed(1) + ' KB';
 document.getElementById('fileInfo').style.display = 'block';
 document.getElementById('procBtn').disabled = false;
+showFilePreview(f);
 toast('' + f.name);
 hashFile(f).then(function(h) { if (curFile === f) curFileHash = h; });
 }
@@ -2616,6 +2693,7 @@ function renderResult(r) {
   // يُعاد احتسابهما دائماً (نفس المدخلات r) حتى تُعرض نصوص التحقق والقيد بلغة الواجهة الحالية
   r.compliance = runComplianceAgent(r);
   r.journal = runJournalAgent(r);
+updateResultPreview();
   var fmt = function(n) { return Number(n||0).toLocaleString(lang==='ar'?'ar-SA-u-nu-latn':'en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); };
   var cur = r.currency || 'SAR';
   var lbl = t('invoiceLabel');
@@ -2780,6 +2858,7 @@ function resetApp() {
   document.getElementById('fileInput').value = '';
   document.getElementById('fileInfo').style.display = 'none';
   document.getElementById('procBtn').disabled = true;
+  clearFilePreview();
   setState('welcome');
 }
 function saveInvoice(r) {
