@@ -3,6 +3,9 @@ export const config = {
   };
 
   export default function middleware(request) {
+    const { pathname } = new URL(request.url);
+    if (pathname === '/landing.html') return; // صفحة تسويقية عامة — يجب أن يراها الزوار بلا كلمة مرور
+
     const authHeader = request.headers.get('authorization');
 
       if (authHeader) {

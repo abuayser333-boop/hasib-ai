@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>لوحة تحكم المؤسس — حاسِب AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  window.HASIB_SUPABASE_URL      = 'https://fnyapmxlozoqygrjfxou.supabase.co';
+  window.HASIB_SUPABASE_ANON_KEY = 'sb_publishable_ArON3OArgEncWACCl9czag_cQEb_MWq';
+</script>
+<style>
+:root{
+  --bg:#ffffff; --bg-sunken:#fafafa; --bg-inset:#f5f5f5;
+  --ink:#0a0a0a; --ink-soft:#525252; --ink-muted:#737373; --ink-faint:#a3a3a3;
+  --line:#e5e5e5; --line-faint:#f0f0f0;
+  --ok:#15803d; --ok-bg:#f0fdf4; --ok-line:#bbf7d0;
+  --warn:#b45309; --warn-bg:#fffbeb; --warn-line:#fde68a;
+  --bad:#b91c1c; --bad-bg:#fef2f2; --bad-line:#fecaca;
+  --sans:'IBM Plex Sans Arabic','IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --r:10px; --r-lg:14px;
+}
+*{ margin:0; padding:0; box-sizing:border-box; }
+body{ font-family:var(--sans); background:var(--bg-sunken); color:var(--ink); min-height:100vh; -webkit-font-smoothing:antialiased; }
+.wrap{ max-width:1080px; margin:0 auto; padding:36px 24px 80px; }
+.top{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:28px; flex-wrap:wrap; }
+.top h1{ font-size:22px; font-weight:700; }
+.top .sub{ font-size:13px; color:var(--ink-muted); margin-top:4px; }
+.who{ font-size:13px; color:var(--ink-muted); }
+.who button{ margin-inline-start:10px; background:none; border:1px solid var(--line); border-radius:8px; padding:5px 12px; font-family:var(--sans); font-size:12.5px; color:var(--ink-soft); cursor:pointer; }
+.who button:hover{ background:var(--bg-inset); }
+
+/* ---- login gate ---- */
+.gate{ max-width:380px; margin:14vh auto 0; background:var(--bg); border:1px solid var(--line); border-radius:var(--r-lg); padding:32px; display:flex; flex-direction:column; gap:14px; }
+.gate h2{ font-size:18px; }
+.gate p{ font-size:13px; color:var(--ink-muted); line-height:1.6; }
+.gate input{ font-family:var(--sans); font-size:14px; padding:11px 13px; border:1px solid var(--line); border-radius:var(--r); background:var(--bg); }
+.gate input:focus{ outline:none; border-color:var(--ink-faint); }
+.gate button{ font-family:var(--sans); font-size:14px; font-weight:600; padding:11px; border-radius:var(--r); border:none; background:var(--ink); color:#fff; cursor:pointer; }
+.gate button:hover{ opacity:.9; }
+.gate .err{ font-size:12.5px; color:var(--bad); }
+.denied{ max-width:420px; margin:16vh auto 0; text-align:center; display:flex; flex-direction:column; gap:10px; }
+.denied .code{ font-family:var(--mono); font-size:12px; color:var(--ink-faint); }
+
+/* ---- sections ---- */
+.card{ background:var(--bg); border:1px solid var(--line); border-radius:var(--r-lg); overflow:hidden; margin-bottom:24px; }
+.card-head{ padding:16px 20px; border-bottom:1px solid var(--line); display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+.card-head h2{ font-size:15px; font-weight:600; }
+.card-head .count{ font-family:var(--mono); font-size:12.5px; color:var(--ink-muted); }
+table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+th{ text-align:right; font-size:11.5px; font-weight:600; letter-spacing:.04em; color:var(--ink-muted); text-transform:uppercase; padding:10px 20px; background:var(--bg-sunken); border-bottom:1px solid var(--line); white-space:nowrap; }
+td{ padding:12px 20px; border-bottom:1px solid var(--line-faint); color:var(--ink-soft); }
+tr:last-child td{ border-bottom:none; }
+td:first-child{ color:var(--ink); font-weight:500; }
+.num{ font-family:var(--mono); font-variant-numeric:tabular-nums; direction:ltr; unicode-bidi:isolate; }
+.empty{ padding:30px 20px; text-align:center; color:var(--ink-faint); font-size:13.5px; }
+.pill{ display:inline-block; font-size:11.5px; font-weight:600; padding:2px 9px; border-radius:999px; background:var(--bg-inset); color:var(--ink-soft); border:1px solid var(--line); }
+.pill.starter{ }
+.pill.growth{ background:var(--ok-bg); color:var(--ok); border-color:var(--ok-line); }
+.pill.business{ background:var(--warn-bg); color:var(--warn); border-color:var(--warn-line); }
+.hint{ font-size:12px; color:var(--ink-faint); padding:12px 20px; border-top:1px solid var(--line-faint); }
+</style>
+</head>
+<body>
+
+<div id="gateView" class="gate">
+  <h2>لوحة تحكم المؤسس</h2>
+  <p>هذه الصفحة داخلية — سجّل الدخول بحساب حاسِب الخاص بك.</p>
+  <input id="gEmail" type="email" placeholder="البريد الإلكتروني" autocomplete="username">
+  <input id="gPass" type="password" placeholder="كلمة المرور" autocomplete="current-password">
+  <button onclick="doAdminLogin()">دخول</button>
+  <div id="gErr" class="err"></div>
+</div>
+
+<div id="deniedView" class="denied" style="display:none;">
+  <h2>ليس لديك صلاحية الوصول لهذه الصفحة</h2>
+  <p style="color:var(--ink-muted);font-size:13.5px;">هذه اللوحة مخصصة لمؤسس المنصة فقط.</p>
+  <span class="code" id="deniedEmail"></span>
+</div>
+
+<div id="mainView" class="wrap" style="display:none;">
+  <div class="top">
+    <div>
+      <h1>لوحة تحكم المؤسس</h1>
+      <div class="sub">نظرة عامة على كل الشركات المسجّلة في حاسِب AI</div>
+    </div>
+    <div class="who"><span id="whoEmail"></span><button onclick="doAdminLogout()">خروج</button></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <h2>الشركات</h2>
+      <span class="count" id="orgCount">—</span>
+    </div>
+    <div id="orgTableWrap"></div>
+    <div class="hint">تقدير التكلفة تقريبي (~0.03 ر.س لكل فاتورة تمت معالجتها عبر Claude Vision) — وليس قياساً فعلياً للتوكنات.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <h2>طلبات التجربة (من صفحة الهبوط)</h2>
+      <span class="count" id="leadCount">—</span>
+    </div>
+    <div id="leadTableWrap"></div>
+  </div>
+</div>
+
+<script>
+var sb = window.supabase.createClient(window.HASIB_SUPABASE_URL, window.HASIB_SUPABASE_ANON_KEY);
+var PLAN_LABEL = { starter: 'انطلاقة', growth: 'نمو', business: 'أعمال' };
+var COST_PER_INVOICE_SAR = 0.03;
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+  });
+}
+function fmtDate(iso) {
+  if (!iso) return '—';
+  try { return new Date(iso).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }); }
+  catch (e) { return iso; }
+}
+
+function showGate(msg) {
+  document.getElementById('gateView').style.display = 'flex';
+  document.getElementById('deniedView').style.display = 'none';
+  document.getElementById('mainView').style.display = 'none';
+  document.getElementById('gErr').textContent = msg || '';
+}
+function showDenied(email) {
+  document.getElementById('gateView').style.display = 'none';
+  document.getElementById('deniedView').style.display = 'flex';
+  document.getElementById('mainView').style.display = 'none';
+  document.getElementById('deniedEmail').textContent = email || '';
+}
+function showMain(email) {
+  document.getElementById('gateView').style.display = 'none';
+  document.getElementById('deniedView').style.display = 'none';
+  document.getElementById('mainView').style.display = 'block';
+  document.getElementById('whoEmail').textContent = email || '';
+}
+
+async function doAdminLogin() {
+  var email = document.getElementById('gEmail').value.trim();
+  var pass = document.getElementById('gPass').value;
+  if (!email || !pass) { document.getElementById('gErr').textContent = 'أدخل البريد وكلمة المرور'; return; }
+  var res = await sb.auth.signInWithPassword({ email: email, password: pass });
+  if (res.error) { document.getElementById('gErr').textContent = 'بيانات الدخول غير صحيحة'; return; }
+  await checkAccessAndLoad();
+}
+async function doAdminLogout() {
+  await sb.auth.signOut();
+  showGate('');
+}
+
+async function checkAccessAndLoad() {
+  var sess = await sb.auth.getSession();
+  var user = sess.data.session ? sess.data.session.user : null;
+  if (!user) { showGate(''); return; }
+
+  var adminCheck = await sb.rpc('is_platform_admin', { uid: user.id });
+  if (adminCheck.error || adminCheck.data !== true) { showDenied(user.email); return; }
+
+  showMain(user.email);
+  loadOrgs();
+  loadLeads();
+}
+
+function renderOrgTable(rows) {
+  var wrap = document.getElementById('orgTableWrap');
+  document.getElementById('orgCount').textContent = rows.length + ' شركة';
+  if (!rows.length) { wrap.innerHTML = '<div class="empty">لا توجد شركات مسجّلة بعد</div>'; return; }
+  var html = '<table><thead><tr>' +
+    '<th>الشركة</th><th>الباقة</th><th>الأعضاء</th><th>فواتير هذا الشهر</th><th>تقدير التكلفة</th><th>تاريخ التسجيل</th>' +
+    '</tr></thead><tbody>';
+  rows.forEach(function(r) {
+    var planKey = r.plan_id || 'starter';
+    var cost = (Number(r.invoices_this_month || 0) * COST_PER_INVOICE_SAR).toFixed(2);
+    html += '<tr>' +
+      '<td>' + esc(r.org_name) + '</td>' +
+      '<td><span class="pill ' + esc(planKey) + '">' + esc(PLAN_LABEL[planKey] || planKey) + '</span></td>' +
+      '<td class="num">' + esc(r.member_count) + '</td>' +
+      '<td class="num">' + esc(r.invoices_this_month) + '</td>' +
+      '<td class="num">~' + cost + ' ر.س</td>' +
+      '<td>' + fmtDate(r.created_at) + '</td>' +
+      '</tr>';
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function renderLeadTable(rows) {
+  var wrap = document.getElementById('leadTableWrap');
+  document.getElementById('leadCount').textContent = rows.length + ' طلب';
+  if (!rows.length) { wrap.innerHTML = '<div class="empty">لا توجد طلبات تجربة بعد</div>'; return; }
+  var html = '<table><thead><tr>' +
+    '<th>الاسم</th><th>الشركة</th><th>الجوال</th><th>البريد</th><th>ملاحظة</th><th>التاريخ</th>' +
+    '</tr></thead><tbody>';
+  rows.forEach(function(r) {
+    html += '<tr>' +
+      '<td>' + esc(r.name) + '</td>' +
+      '<td>' + esc(r.company_name) + '</td>' +
+      '<td class="num">' + esc(r.phone) + '</td>' +
+      '<td>' + esc(r.email) + '</td>' +
+      '<td>' + esc(r.message) + '</td>' +
+      '<td>' + fmtDate(r.created_at) + '</td>' +
+      '</tr>';
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+async function loadOrgs() {
+  var res = await sb.rpc('admin_org_overview');
+  renderOrgTable(res.error ? [] : (res.data || []));
+}
+async function loadLeads() {
+  var res = await sb.from('leads').select('*').order('created_at', { ascending: false });
+  renderLeadTable(res.error ? [] : (res.data || []));
+}
+
+checkAccessAndLoad();
+</script>
+</body>
+</html>

@@ -2510,6 +2510,16 @@ return sb.from('invoices').select('id, vendor_name, invoice_date, total_amount')
 }
 return Promise.resolve(null);
 }
+// --- فحص حد الاستخدام الشهري قبل توجيه أي ملف لـ DocumentExtractionAgent ---
+// (يوفّر استدعاء Claude API غير الضروري عند تجاوز حدود الباقة، بدل رفضه بعد الدفع)
+function checkInvoiceQuota() {
+  if (!DB_ON || !sb || !currentOrg) return Promise.resolve({ allowed: true });
+  return sb.rpc('invoice_quota_status', { p_org_id: currentOrg.id }).then(function(res) {
+    if (res.error || !res.data || !res.data.length) return { allowed: true };
+    return res.data[0];
+  }).catch(function() { return { allowed: true }; });
+}
+
 var GENESIS_HASH = '0'.repeat(64);
 function appendAudit(trailArr, agent, action, detail) {
   var prevHash = trailArr.length ? trailArr[trailArr.length - 1].hash : GENESIS_HASH;
@@ -3070,6 +3080,12 @@ function exportTrialBalanceExcel() {
 
 // --- SupervisorAgent: ينسّق تسلسل الوكلاء ويبني audit trail موقّع بسلسلة hash ---
 async function orchestrate(file) {
+  var quota = await checkInvoiceQuota();
+  if (quota && quota.allowed === false) {
+    throw new Error(lang==='ar'
+      ? ('وصلت للحد الشهري لباقتك (' + quota.used + '/' + quota.cap + ' فاتورة) — قم بالترقية لمواصلة المعالجة')
+      : ('You have reached your plan\'s monthly limit (' + quota.used + '/' + quota.cap + ' invoices) — upgrade to continue processing'));
+  }
   var trail = [];
   await appendAudit(trail, 'SupervisorAgent', lang==='ar'?'استلام':'Received', (lang==='ar'?'استلام الملف: ':'Received file: ') + file.name + ' (' + Math.round(file.size / 1024) + ' KB)');
   await appendAudit(trail, 'SupervisorAgent', lang==='ar'?'توجيه':'Routing', lang==='ar'?'توجيه المستند إلى DocumentExtractionAgent (Claude Vision)':'Routing document to DocumentExtractionAgent (Claude Vision)');
@@ -5902,6 +5918,12 @@ function closeMonthNow() {
 
   async function sendInvite(email, role) {
     try {
+      var mq = await sb.rpc('member_quota_status', { p_org_id: currentOrg.id });
+      if (!mq.error && mq.data && mq.data.length && mq.data[0].allowed === false) {
+        var q = mq.data[0];
+        if (typeof toast === 'function') toast('وصلت للحد الأقصى لعدد الأعضاء في باقتك (' + q.used + '/' + q.cap + ') — قم بالترقية لإضافة أعضاء', 'error');
+        return;
+      }
       var res = await sb.from('invites').insert({
         org_id: currentOrg.id,
         email: email,
