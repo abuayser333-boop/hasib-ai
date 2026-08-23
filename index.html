@@ -514,7 +514,7 @@ table td { font-variant-numeric:tabular-nums }
         </svg>
       </div>
       <div class="loading-text" id="loadingTitle">حاسِب يعمل...</div>
-      <div class="loading-step" id="loadingStep">يقرأ الفاتورة...</div>
+      <div class="loading-step" id="loadingStep">DocumentExtractionAgent يقرأ الفاتورة...</div>
     </div>
 
     <div class="result" id="stateResult">
@@ -1277,7 +1277,7 @@ table td { font-variant-numeric:tabular-nums }
     </div>
 
     <!-- Overall KPIs -->
-    <div id="dashKPIs" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:20px 24px;background:#fff;border-bottom:1px solid #e5e5e5;"></div>
+    <div id="dashKPIs" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;padding:20px 24px;background:#fff;border-bottom:1px solid #e5e5e5;"></div>
 
     <!-- Monthly Trend Chart -->
     <div style="padding:20px 24px;background:#fff;border-bottom:1px solid #e5e5e5;">
@@ -1952,7 +1952,7 @@ cardPreviewTitle:'معاينة الفاتورة الأصلية',
     camTitle:'وجّه الكاميرا نحو الفاتورة', captureBtn:'التقط', cancelCamBtn:'إلغاء',
     excelStatusOff:'لم يُفتح ملف Excel بعد',
     keyStatusTxt:'المفتاح محمي على الخادم',
-    steps:['يقرأ الفاتورة...','يستخرج البيانات...','يتحقق من VAT 15%...','يُنشئ القيد المحاسبي...','يكتب سجل القرارات...'],
+    steps:['DocumentExtractionAgent يقرأ الفاتورة...','DocumentExtractionAgent يستخرج البيانات...','ComplianceAgent يتحقق من VAT 15%...','JournalEntryAgent يُنشئ القيد المحاسبي...','SupervisorAgent يكتب سجل القرارات...'],
     toastKeySaved:'✓ تم حفظ API Key',
     toastNoKey:'! مفتاح الخادم غير مضبوط — راجع إعدادات Vercel',
     toastNoFile:'! ارفع فاتورة أولاً',
@@ -2085,7 +2085,7 @@ cardPreviewTitle:'Original Invoice Preview',
     camTitle:'Point camera at invoice', captureBtn:'Capture', cancelCamBtn:'Cancel',
     excelStatusOff:'No Excel file open',
     keyStatusTxt:'Key secured server-side',
-    steps:['Reading invoice...','Extracting data...','Verifying VAT 15%...','Creating journal entry...','Writing audit trail...'],
+    steps:['DocumentExtractionAgent reading invoice...','DocumentExtractionAgent extracting data...','ComplianceAgent verifying VAT 15%...','JournalEntryAgent creating journal entry...','SupervisorAgent writing audit trail...'],
     toastKeySaved:'✓ API Key saved',
     toastNoKey:'! Server key not configured — check Vercel settings',
     toastNoFile:'! Upload an invoice first',
@@ -3121,7 +3121,7 @@ updateResultPreview();
   }
   document.getElementById('invoiceData').innerHTML = html;
   var conf = Number(r.confidence || 75);
-  var confColor = conf >= 85 ? '#15803d' : conf >= 60 ? '#0a0a0a' : '#b91c1c';
+  var confColor = conf >= 85 ? 'var(--ok)' : conf >= 60 ? 'var(--warn)' : 'var(--bad)';
   document.getElementById('confBar').style.width = conf + '%';
   document.getElementById('confBar').style.background = confColor;
   var confWord = conf >= 85 ? t('highConf') : conf >= 60 ? t('midConf') : t('lowConf');
@@ -3801,7 +3801,7 @@ setTimeout(function() {
 function toast(msg, type) {
   var el = document.getElementById('toast');
   el.textContent = msg;
-  el.style.borderColor = type === 'warn' ? '#0a0a0a' : type === 'error' ? '#b91c1c' : '#15803d';
+  el.style.borderColor = type === 'warn' ? 'var(--warn)' : type === 'error' ? 'var(--bad)' : 'var(--ok)';
   el.classList.add('show');
   setTimeout(function() { el.classList.remove('show'); }, 3500);
 }
@@ -3997,7 +3997,7 @@ function renderTable(data) {
     rows += '<td style="padding:8px 10px;color:#525252;">'+fmt(inv.subtotal)+'</td>';
     rows += '<td style="padding:8px 10px;color:#525252;">'+fmt(inv.vat_amount)+'</td>';
     rows += '<td style="padding:8px 10px;font-weight:700;color:#0a0a0a;">'+fmt(inv.total_amount)+'</td>';
-    rows += '<td style="padding:8px 10px;"><span style="font-size:12px;padding:2px 7px;border-radius:10px;'+(inv.approved?'background:rgba(21,128,61,.12);color:#15803d;':'background:rgba(10,10,10,.1);color:#0a0a0a;')+'">'+(inv.approved?(lang==='ar'?'✓ معتمد':'✓ Approved'):(lang==='ar'?'بانتظار':'Pending'))+'</span></td>';
+    rows += '<td style="padding:8px 10px;"><span style="font-size:12px;padding:2px 7px;border-radius:10px;'+(inv.approved?'background:var(--ok-bg);color:var(--ok);':'background:var(--warn-bg);color:var(--warn);')+'">'+(inv.approved?(lang==='ar'?'✓ معتمد':'✓ Approved'):(lang==='ar'?'بانتظار':'Pending'))+'</span></td>';
     rows += '</tr>';
   }
   document.getElementById('reportTbody').innerHTML = rows;
@@ -4170,7 +4170,7 @@ function getMonthlyData() {
     var inv = invoices[i];
     var d = inv.invoice_date || inv.saved_at || '';
     var m = extractMonth(d) || extractMonth(inv.saved_at || '') || 'unknown';
-    if (!months[m]) months[m] = { invoices:[], total:0, vat:0, sub:0, approved:0, zatca:0 };
+    if (!months[m]) months[m] = { invoices:[], total:0, vat:0, sub:0, approved:0, zatca:0, confSum:0, confCount:0 };
     var mo = months[m];
     mo.invoices.push(inv);
     mo.total += Number(inv.total_amount || 0);
@@ -4178,6 +4178,7 @@ function getMonthlyData() {
     mo.sub   += Number(inv.subtotal || 0);
     if (inv.approved) mo.approved++;
     if (inv.zatca_compliant) mo.zatca++;
+    if (inv.confidence != null) { mo.confSum += Number(inv.confidence); mo.confCount++; }
   }
   return months;
 }
@@ -4185,7 +4186,7 @@ function buildDash() {
   var months = getMonthlyData();
   var keys = Object.keys(months).sort();
   var fmt = function(n) { return Number(n).toLocaleString(lang==='ar'?'ar-SA-u-nu-latn':'en-US',{maximumFractionDigits:0}); };
-  var gTotal=0, gVat=0, gSub=0, gCount=0, gApproved=0, gZatca=0;
+  var gTotal=0, gVat=0, gSub=0, gCount=0, gApproved=0, gZatca=0, gConfSum=0, gConfCount=0;
   for (var i = 0; i < keys.length; i++) {
     var mo = months[keys[i]];
     gTotal   += mo.total;
@@ -4194,16 +4195,21 @@ function buildDash() {
     gCount   += mo.invoices.length;
     gApproved+= mo.approved;
     gZatca   += mo.zatca;
+    gConfSum += mo.confSum;
+    gConfCount += mo.confCount;
   }
   var avgPerMonth = keys.length ? Math.round(gTotal / keys.length) : 0;
   var appPct = gCount ? Math.round(gApproved/gCount*100) : 0;
   var zatcaPct = gCount ? Math.round(gZatca/gCount*100) : 0;
+  var avgConf = gConfCount ? Math.round(gConfSum / gConfCount) : null;
+  var confColorDash = avgConf == null ? '#525252' : avgConf >= 85 ? 'var(--ok)' : avgConf >= 60 ? 'var(--warn)' : 'var(--bad)';
   var kpiData = [
     { icon:'📅', label:lang==='ar'?'عدد الأشهر':'Months', val:keys.length, sub:'', color:'#525252' },
     { icon:'', label:lang==='ar'?'إجمالي الفواتير':'Total Invoices', val:gCount, sub:gApproved+(lang==='ar'?' معتمدة':' approved'), color:'#525252' },
     { icon:'', label:lang==='ar'?'إجمالي المصروفات':'Total Expenses', val:fmt(gTotal)+(lang==='ar'?' ر.س':' SAR'), sub:(lang==='ar'?'قبل VAT: ':'Before VAT: ')+fmt(gSub), color:'#0a0a0a' },
     { icon:'', label:'VAT', val:fmt(gVat)+(lang==='ar'?' ر.س':' SAR'), sub:gTotal?Math.round(gVat/gTotal*100)+'%':'0%', color:'#b91c1c' },
-    { icon:'', label:lang==='ar'?'متوسط شهري':'Monthly Avg', val:fmt(avgPerMonth)+(lang==='ar'?' ر.س':' SAR'), sub:(lang==='ar'?'ZATCA: ':'ZATCA: ')+zatcaPct+'%', color:'#15803d' }
+    { icon:'', label:lang==='ar'?'متوسط شهري':'Monthly Avg', val:fmt(avgPerMonth)+(lang==='ar'?' ر.س':' SAR'), sub:(lang==='ar'?'ZATCA: ':'ZATCA: ')+zatcaPct+'%', color:'#15803d' },
+    { icon:'', label:lang==='ar'?'دقة الاستخراج (AI)':'Extraction Accuracy (AI)', val:(avgConf==null?'—':avgConf+'%'), sub:(lang==='ar'?(gConfCount+' فاتورة قرأها DocumentExtractionAgent'):(gConfCount+' invoices read by DocumentExtractionAgent')), color:confColorDash }
   ];
   var kpiHtml = '';
   for (var i = 0; i < kpiData.length; i++) {
@@ -4279,8 +4285,8 @@ function buildDash() {
     tbody += '<td style="padding:9px 12px;color:#525252;">'+fmt(mo.sub)+'</td>';
     tbody += '<td style="padding:9px 12px;color:#525252;">'+fmt(mo.vat)+'</td>';
     tbody += '<td style="padding:9px 12px;color:#0a0a0a;font-weight:700;">'+fmt(mo.total)+'</td>';
-    tbody += '<td style="padding:9px 12px;"><span style="font-size:12px;padding:2px 7px;border-radius:10px;'+(zatP>=80?'background:rgba(21,128,61,.12);color:#15803d;':'background:rgba(10,10,10,.1);color:#0a0a0a;')+'">'+zatP+'%</span></td>';
-    tbody += '<td style="padding:9px 12px;"><span style="font-size:12px;padding:2px 7px;border-radius:10px;'+(appP>=80?'background:rgba(21,128,61,.12);color:#15803d;':'background:rgba(10,10,10,.1);color:#0a0a0a;')+'">'+appP+'%</span></td>';
+    tbody += '<td style="padding:9px 12px;"><span style="font-size:12px;padding:2px 7px;border-radius:10px;'+(zatP>=80?'background:var(--ok-bg);color:var(--ok);':zatP>=50?'background:var(--warn-bg);color:var(--warn);':'background:var(--bad-bg);color:var(--bad);')+'">'+zatP+'%</span></td>';
+    tbody += '<td style="padding:9px 12px;"><span style="font-size:12px;padding:2px 7px;border-radius:10px;'+(appP>=80?'background:var(--ok-bg);color:var(--ok);':appP>=50?'background:var(--warn-bg);color:var(--warn);':'background:var(--bad-bg);color:var(--bad);')+'">'+appP+'%</span></td>';
     tbody += '</tr>';
   }
   document.getElementById('dashTableBody').innerHTML = tbody;
@@ -4488,7 +4494,7 @@ function renderBudgetStatus() {
   var html = '';
   if (totalBudget > 0) {
     var pct = Math.min(100, Math.round(totalSpent/totalBudget*100));
-    var color = pct >= 100 ? '#b91c1c' : pct >= (budget.threshold||80) ? '#0a0a0a' : '#15803d';
+    var color = pct >= 100 ? 'var(--bad)' : pct >= (budget.threshold||80) ? 'var(--warn)' : 'var(--ok)';
     html += '<div style="margin-bottom:10px;">';
     html += '<div style="display:flex;justify-content:space-between;margin-bottom:6px;">';
     html += '<span style="font-size:14.5px;font-weight:700;color:#0a0a0a;">'+(lang==='ar'?'الإجمالي هذا الشهر':'This Month Total')+'</span>';
@@ -4506,7 +4512,7 @@ function renderBudgetStatus() {
       if (!budgetAmt) return;
       var spent = spending[tp] || 0;
       var pct = Math.min(100, Math.round(spent/budgetAmt*100));
-      var color = pct >= 100 ? '#b91c1c' : pct >= (budget.threshold||80) ? '#0a0a0a' : '#15803d';
+      var color = pct >= 100 ? 'var(--bad)' : pct >= (budget.threshold||80) ? 'var(--warn)' : 'var(--ok)';
       html += '<div style="margin-bottom:8px;">';
       html += '<div style="display:flex;justify-content:space-between;margin-bottom:3px;">';
       html += '<span style="font-size:13px;color:#525252;">'+accLabel(tp)+'</span>';
@@ -4598,7 +4604,7 @@ function showBudgetAlerts(alerts) {
   for (var i = 0; i < alerts.length; i++) {
     (function(alert, idx) {
       var div = document.createElement('div');
-      var bg = alert.type==='danger' ? '#b91c1c' : alert.type==='warn' ? '#0a0a0a' : '#15803d';
+      var bg = alert.type==='danger' ? 'var(--bad)' : alert.type==='warn' ? 'var(--warn)' : 'var(--ok)';
       div.style.cssText = 'background:'+bg+';color:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 4px 16px rgba(0,0,0,0.2);cursor:pointer;animation:slideIn .3s ease;min-width:260px;';
       div.innerHTML = '<div style="font-size:14.5px;font-weight:700;margin-bottom:3px;">'+alert.title+'</div><div style="font-size:13px;opacity:.85;">'+alert.msg+'</div>';
       div.onclick = function() {
@@ -5667,7 +5673,7 @@ function renderReconcile() {
     });
   }
   if (reconcileResults.unmatchedInvoices.length) {
-    html += '<div style="font-size:14px;font-weight:700;color:#0a0a0a;margin:14px 0 8px;">' + (lang==='ar'?'! فواتير معتمدة بدون سداد بنكي مطابق':'! Approved invoices without a matching bank payment') + '</div>';
+    html += '<div style="font-size:14px;font-weight:700;color:var(--warn);margin:14px 0 8px;">' + (lang==='ar'?'! فواتير معتمدة بدون سداد بنكي مطابق':'! Approved invoices without a matching bank payment') + '</div>';
     reconcileResults.unmatchedInvoices.forEach(function(inv) {
       html += '<div class="alert-box warn"><span class="alert-box-icon"></span><span class="alert-box-text">' + (inv.vendor_name || '—') + ' — ' + (lang==='ar' ? (Number(inv.total_amount || 0).toFixed(2) + ' ر.س') : ('SAR ' + Number(inv.total_amount || 0).toFixed(2))) + ' — ' + (inv.invoice_date || '') + '</span></div>';
     });
