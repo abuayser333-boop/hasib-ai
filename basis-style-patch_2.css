@@ -1,0 +1,102 @@
+/* =========================================================================
+   حاسِب AI — Basis-Style Visual Patch
+   -------------------------------------------------------------------------
+   طريقة التطبيق:
+   افتح index.html في مستودع GitHub (abuayser333-boop/hasib-ai) عبر واجهة
+   الويب → اذهب لوسم <style> الموجود بالفعل في أعلى الملف (يحتوي على
+   ":root {" و design tokens الحالية) → طبّق التعديلين التاليين:
+
+   1) عدّل قيم المتغيرات التالية داخل ":root {...}" الموجودة أصلاً
+      (لا تحذف بقية المتغيرات — فقط غيّر قيم هذه الأسطر السبعة):
+
+        --bg:            #f5f2ec;
+        --bg-sunken:     #efece3;
+        --bg-inset:      #e9e4d8;
+        --line:          #e5e1d8;
+        --line-faint:    #f0ede5;
+        --r-sm:          8px;
+        --r:             14px;
+        --r-lg:          20px;
+
+      وأضف سطراً جديداً بعدها مباشرة:
+        --r-pill:        999px;
+
+   2) الصق الكتلة الكاملة أدناه (بعد "APPEND BELOW") مباشرة قبل
+      إغلاق وسم </style> — دون حذف أي شيء موجود. هذه قواعد إضافية
+      فقط (additive)، لا تلمس أي id أو class تستخدمه الجافاسكربت،
+      لذلك لا خطر على منطق استخراج الفواتير أو الترحيل المحاسبي.
+
+   تم اختبار هذا التصميم حياً (live preview) على hasib-ai-five.vercel.app
+   عبر حقن الـ CSS في المتصفح قبل التسليم — يعطي: خلفية كريمية دافئة
+   بأسلوب Basis، بطاقات بيضاء عائمة بظل خفيف، أزرار سوداء بيضاوية
+   (pill)، وزخرفة نقطية خفيفة خلف شاشة welcome — كل ذلك بدون تغيير أي
+   HTML أو JS.
+   ========================================================================= */
+
+/* ---- APPEND BELOW: paste this whole block right before </style> ---- */
+
+.nav {
+  background: rgba(245, 242, 236, .82);
+  border-bottom: 1px solid var(--line);
+}
+
+.btn {
+  border-radius: var(--r-pill);
+  padding: 11px 22px;
+}
+
+.btn-edit {
+  border-radius: var(--r-sm);
+  padding: 8px 12px;
+}
+
+.nav-btn {
+  border-radius: var(--r-sm);
+}
+
+.card, .modal {
+  box-shadow: 0 1px 2px rgba(10, 10, 10, .03), 0 12px 32px rgba(10, 10, 10, .05);
+}
+
+.drop-zone {
+  border-radius: var(--r-lg);
+  background: var(--bg-sunken);
+}
+
+.drop-zone:hover {
+  background: var(--bg-inset);
+  border-color: var(--ink-faint);
+}
+
+.stats {
+  border-radius: var(--r);
+  overflow: hidden;
+}
+
+.sidebar {
+  background: var(--bg-sunken);
+}
+
+/* دائرة النقاط الزخرفية خلف شاشة welcome — أسلوب Basis بالضبط */
+.welcome {
+  position: relative;
+}
+
+.welcome::before {
+  content: "";
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 120px;
+  background-image: radial-gradient(var(--line) 1.5px, transparent 1.5px);
+  background-size: 14px 14px;
+  opacity: .6;
+  pointer-events: none;
+}
+
+.welcome-icon, .welcome h2, .welcome p, .welcome a {
+  position: relative;
+  z-index: 1;
+}
