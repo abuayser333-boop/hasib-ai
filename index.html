@@ -137,6 +137,11 @@ body {
   display:flex; flex-direction:column; height:calc(100vh - var(--nav-h));
   position:sticky; top:var(--nav-h); overflow:hidden;
 }
+.app.sb-collapsed { grid-template-columns:0px 1fr; }
+.app.sb-collapsed .sidebar { display:none; }
+.sb-collapse-btn { background:transparent; border:1px solid var(--line); border-radius:6px; width:26px; height:26px; cursor:pointer; color:#525252; font-size:14px; line-height:1; flex-shrink:0; }
+.sb-show-btn { position:fixed; top:calc(var(--nav-h) + 14px); right:14px; z-index:55; display:none; align-items:center; gap:6px; background:#fff; border:1px solid var(--line); border-radius:8px; padding:8px 12px; cursor:pointer; font-size:13px; color:#0a0a0a; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+.app.sb-collapsed .sb-show-btn { display:flex; }
 .sb-top { padding:24px 20px; border-bottom:1px solid var(--line) }
 .sb-label { margin-bottom:14px }
 
@@ -448,7 +453,10 @@ table td { font-variant-numeric:tabular-nums }
 <div class="app">
   <aside class="sidebar">
     <div class="sb-top">
-      <div class="sb-label" id="uploadSectionLbl">رفع فاتورة</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div class="sb-label" id="uploadSectionLbl">رفع فاتورة</div>
+        <button type="button" class="sb-collapse-btn" id="sbCollapseBtn" onclick="toggleSidebar(true)" title="طي الشريط الجانبي">›</button>
+      </div>
       <div class="drop-zone" id="dropZone">
         <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.webp" onchange="pickFile(event)">
         <div class="drop-icon"></div>
@@ -480,6 +488,10 @@ table td { font-variant-numeric:tabular-nums }
       <div class="hist-empty" id="histEmpty">لا توجد فواتير بعد.<br>ارفع أول فاتورة للبدء.</div>
     </div>
   </aside>
+
+  <button type="button" class="sb-show-btn" id="sbShowBtn" onclick="toggleSidebar(false)" title="إظهار الشريط الجانبي">
+    <span>‹</span><span id="sbShowBtnTxt">رفع فاتورة</span>
+  </button>
 
   <main class="main">
     <div class="welcome" id="stateWelcome">
@@ -1973,7 +1985,8 @@ cardPreviewTitle:'معاينة الفاتورة الأصلية',
     tbTitle:'ميزان المراجعة', tbSubtitle:'أرصدة الحسابات المجمّعة من كل القيود المحاسبية حتى تاريخ محدد',
     tbAsOfLbl:'حتى نهاية شهر:', thTBCode:'كود الحساب', thTBAccount:'اسم الحساب', thTBDebit:'مدين', thTBCredit:'دائن', thTBBalance:'الرصيد',
     tbTotalsLbl:'الإجمالي', tbSectionAssets:'الأصول', tbSectionLiabilities:'الالتزامات', tbSectionExpenses:'المصروفات',
-    printTBBtn:'طباعة', exportTBBtn:'Excel', tbBalancedYes:'✓ ميزان متوازن (مدين = دائن)', tbBalancedNo:'⚠ غير متوازن — يلزم المراجعة', tbEmptyMsg:'لا توجد بيانات لهذه الفترة.',openInvBtn:'المخزون', invTitle:'المخزون والمشتريات والمبيعات', invSubtitle:'إدارة الأصناف وفواتير الشراء والبيع مع قيود محاسبية تلقائية', invTabStockBtn:'المخزون', invTabPurchaseBtn:'فاتورة شراء', invTabSaleBtn:'فاتورة بيع', thInvCode:'الكود', thInvName:'الصنف', thInvQty:'الكمية', thInvCost:'متوسط التكلفة', thInvPrice:'سعر البيع', thInvValue:'القيمة', purSupplierLbl:'المورد', purInvNumLbl:'رقم الفاتورة (اختياري)', purDateLbl:'التاريخ', purPayLbl:'طريقة الدفع', payPayableOpt:'آجل', payCashOpt:'نقدي', payBankOpt:'بنك', purItemsLbl:'الأصناف', thItemNamePur:'اسم الصنف', thItemSku:'الكود (اختياري)', thItemQtyPur:'الكمية', thItemCost:'تكلفة الوحدة', addPurItemBtn:'+ إضافة صنف', purSubtotalLbl:'المجموع الفرعي', purVatLbl:'ضريبة القيمة المضافة', purTotalLbl:'الإجمالي', savePurchaseBtn:'حفظ فاتورة الشراء', saleCustomerLbl:'العميل', saleInvNumLbl:'رقم الفاتورة (اختياري)', saleDateLbl:'التاريخ', salePayLbl:'طريقة الدفع', payReceivableOpt:'آجل', payCashOptSale:'نقدي', payBankOptSale:'بنك', saleItemsLbl:'الأصناف', thItemNameSale:'الصنف', thItemQtySale:'الكمية', thItemPrice:'سعر الوحدة', addSaleItemBtn:'+ إضافة صنف', saleSubtotalLbl:'المجموع الفرعي', saleVatLbl:'ضريبة القيمة المضافة', saleTotalLbl:'الإجمالي', saveSaleBtn:'حفظ فاتورة البيع', tbSectionRevenue:'الإيرادات',
+    printTBBtn:'طباعة', exportTBBtn:'Excel', tbBalancedYes:'✓ ميزان متوازن (مدين = دائن)', tbBalancedNo:'⚠ غير متوازن — يلزم المراجعة', tbEmptyMsg:'لا توجد بيانات لهذه الفترة.',
+    sbShowBtnTxt:'رفع فاتورة',openInvBtn:'المخزون', invTitle:'المخزون والمشتريات والمبيعات', invSubtitle:'إدارة الأصناف وفواتير الشراء والبيع مع قيود محاسبية تلقائية', invTabStockBtn:'المخزون', invTabPurchaseBtn:'فاتورة شراء', invTabSaleBtn:'فاتورة بيع', thInvCode:'الكود', thInvName:'الصنف', thInvQty:'الكمية', thInvCost:'متوسط التكلفة', thInvPrice:'سعر البيع', thInvValue:'القيمة', purSupplierLbl:'المورد', purInvNumLbl:'رقم الفاتورة (اختياري)', purDateLbl:'التاريخ', purPayLbl:'طريقة الدفع', payPayableOpt:'آجل', payCashOpt:'نقدي', payBankOpt:'بنك', purItemsLbl:'الأصناف', thItemNamePur:'اسم الصنف', thItemSku:'الكود (اختياري)', thItemQtyPur:'الكمية', thItemCost:'تكلفة الوحدة', addPurItemBtn:'+ إضافة صنف', purSubtotalLbl:'المجموع الفرعي', purVatLbl:'ضريبة القيمة المضافة', purTotalLbl:'الإجمالي', savePurchaseBtn:'حفظ فاتورة الشراء', saleCustomerLbl:'العميل', saleInvNumLbl:'رقم الفاتورة (اختياري)', saleDateLbl:'التاريخ', salePayLbl:'طريقة الدفع', payReceivableOpt:'آجل', payCashOptSale:'نقدي', payBankOptSale:'بنك', saleItemsLbl:'الأصناف', thItemNameSale:'الصنف', thItemQtySale:'الكمية', thItemPrice:'سعر الوحدة', addSaleItemBtn:'+ إضافة صنف', saleSubtotalLbl:'المجموع الفرعي', saleVatLbl:'ضريبة القيمة المضافة', saleTotalLbl:'الإجمالي', saveSaleBtn:'حفظ فاتورة البيع', tbSectionRevenue:'الإيرادات',
     reportSubtitle:'ملخص تلقائي من الفواتير المعالجة',
     chartTypeLbl:'توزيع المصروفات بالنوع', chartDailyLbl:'المصروفات اليومية',
     varianceSectionLbl:'تحليل الانحرافات (Variance Analysis) — مقارنة بالشهر السابق',
@@ -2105,7 +2118,8 @@ cardPreviewTitle:'Original Invoice Preview',
     tbTitle:'Trial Balance', tbSubtitle:'Account balances aggregated from all journal entries as of a given date',
     tbAsOfLbl:'As of end of month:', thTBCode:'Account Code', thTBAccount:'Account Name', thTBDebit:'Debit', thTBCredit:'Credit', thTBBalance:'Balance',
     tbTotalsLbl:'Total', tbSectionAssets:'Assets', tbSectionLiabilities:'Liabilities', tbSectionExpenses:'Expenses',
-    printTBBtn:'Print', exportTBBtn:'Excel', tbBalancedYes:'✓ Balanced (Debit = Credit)', tbBalancedNo:'⚠ Not balanced — needs review', tbEmptyMsg:'No data for this period.',openInvBtn:'Inventory', invTitle:'Inventory, Purchases & Sales', invSubtitle:'Manage products and purchase/sales invoices with automatic journal entries', invTabStockBtn:'Stock', invTabPurchaseBtn:'Purchase Invoice', invTabSaleBtn:'Sales Invoice', thInvCode:'Code', thInvName:'Product', thInvQty:'Quantity', thInvCost:'Avg. Cost', thInvPrice:'Selling Price', thInvValue:'Value', purSupplierLbl:'Supplier', purInvNumLbl:'Invoice Number (optional)', purDateLbl:'Date', purPayLbl:'Payment Method', payPayableOpt:'On Credit', payCashOpt:'Cash', payBankOpt:'Bank', purItemsLbl:'Items', thItemNamePur:'Item Name', thItemSku:'Code (optional)', thItemQtyPur:'Qty', thItemCost:'Unit Cost', addPurItemBtn:'+ Add Item', purSubtotalLbl:'Subtotal', purVatLbl:'VAT', purTotalLbl:'Total', savePurchaseBtn:'Save Purchase Invoice', saleCustomerLbl:'Customer', saleInvNumLbl:'Invoice Number (optional)', saleDateLbl:'Date', salePayLbl:'Payment Method', payReceivableOpt:'On Credit', payCashOptSale:'Cash', payBankOptSale:'Bank', saleItemsLbl:'Items', thItemNameSale:'Product', thItemQtySale:'Qty', thItemPrice:'Unit Price', addSaleItemBtn:'+ Add Item', saleSubtotalLbl:'Subtotal', saleVatLbl:'VAT', saleTotalLbl:'Total', saveSaleBtn:'Save Sales Invoice', tbSectionRevenue:'Revenue',
+    printTBBtn:'Print', exportTBBtn:'Excel', tbBalancedYes:'✓ Balanced (Debit = Credit)', tbBalancedNo:'⚠ Not balanced — needs review', tbEmptyMsg:'No data for this period.',
+    sbShowBtnTxt:'Upload Invoice',openInvBtn:'Inventory', invTitle:'Inventory, Purchases & Sales', invSubtitle:'Manage products and purchase/sales invoices with automatic journal entries', invTabStockBtn:'Stock', invTabPurchaseBtn:'Purchase Invoice', invTabSaleBtn:'Sales Invoice', thInvCode:'Code', thInvName:'Product', thInvQty:'Quantity', thInvCost:'Avg. Cost', thInvPrice:'Selling Price', thInvValue:'Value', purSupplierLbl:'Supplier', purInvNumLbl:'Invoice Number (optional)', purDateLbl:'Date', purPayLbl:'Payment Method', payPayableOpt:'On Credit', payCashOpt:'Cash', payBankOpt:'Bank', purItemsLbl:'Items', thItemNamePur:'Item Name', thItemSku:'Code (optional)', thItemQtyPur:'Qty', thItemCost:'Unit Cost', addPurItemBtn:'+ Add Item', purSubtotalLbl:'Subtotal', purVatLbl:'VAT', purTotalLbl:'Total', savePurchaseBtn:'Save Purchase Invoice', saleCustomerLbl:'Customer', saleInvNumLbl:'Invoice Number (optional)', saleDateLbl:'Date', salePayLbl:'Payment Method', payReceivableOpt:'On Credit', payCashOptSale:'Cash', payBankOptSale:'Bank', saleItemsLbl:'Items', thItemNameSale:'Product', thItemQtySale:'Qty', thItemPrice:'Unit Price', addSaleItemBtn:'+ Add Item', saleSubtotalLbl:'Subtotal', saleVatLbl:'VAT', saleTotalLbl:'Total', saveSaleBtn:'Save Sales Invoice', tbSectionRevenue:'Revenue',
     reportSubtitle:'Automatic summary from processed invoices',
     chartTypeLbl:'Expenses by Type', chartDailyLbl:'Daily Expenses',
     varianceSectionLbl:'Variance Analysis — vs. previous month',
@@ -2182,6 +2196,13 @@ cardPreviewTitle:'Original Invoice Preview',
   }
 };
 function t(k) { return (T[lang] || T.ar)[k] || k; }
+function toggleSidebar(collapse) {
+  var app = document.querySelector('.app');
+  if (!app) return;
+  var willCollapse = typeof collapse === 'boolean' ? collapse : !app.classList.contains('sb-collapsed');
+  app.classList.toggle('sb-collapsed', willCollapse);
+  try { localStorage.setItem('h_sb_collapsed', willCollapse ? '1' : '0'); } catch(e) {}
+}
 function toggleLang() {
   lang = lang === 'ar' ? 'en' : 'ar';
   localStorage.setItem('h_lang', lang);
@@ -2280,7 +2301,7 @@ function applyLang() {
     'mobHomeLbl','mobUploadLbl','mobQuickLbl','mobReportLbl','mobDashLbl','reloadExcelBtn','uploadSectionLbl',
     // Auth gate (Supabase login / first-company screens)
     'authLoginTitle','authLoginSub','authEmailLbl','authPwdLbl','authLoginBtn','authSignupBtn',
-    'authOrgTitle','authOrgSub','authOrgNameLbl','authCreateOrgBtn','openInvBtn','invTitle','invSubtitle','invTabStockBtn','invTabPurchaseBtn','invTabSaleBtn','thInvCode','thInvName','thInvQty','thInvCost','thInvPrice','thInvValue','purSupplierLbl','purInvNumLbl','purDateLbl','purPayLbl','payPayableOpt','payCashOpt','payBankOpt','purItemsLbl','thItemNamePur','thItemSku','thItemQtyPur','thItemCost','addPurItemBtn','purSubtotalLbl','purVatLbl','purTotalLbl','savePurchaseBtn','saleCustomerLbl','saleInvNumLbl','saleDateLbl','salePayLbl','payReceivableOpt','payCashOptSale','payBankOptSale','saleItemsLbl','thItemNameSale','thItemQtySale','thItemPrice','addSaleItemBtn','saleSubtotalLbl','saleVatLbl','saleTotalLbl','saveSaleBtn','tbSectionRevenue',];
+    'authOrgTitle','authOrgSub','authOrgNameLbl','authCreateOrgBtn','openInvBtn','invTitle','invSubtitle','invTabStockBtn','invTabPurchaseBtn','invTabSaleBtn','thInvCode','thInvName','thInvQty','thInvCost','thInvPrice','thInvValue','purSupplierLbl','purInvNumLbl','purDateLbl','purPayLbl','payPayableOpt','payCashOpt','payBankOpt','purItemsLbl','thItemNamePur','thItemSku','thItemQtyPur','thItemCost','addPurItemBtn','purSubtotalLbl','purVatLbl','purTotalLbl','savePurchaseBtn','saleCustomerLbl','saleInvNumLbl','saleDateLbl','salePayLbl','payReceivableOpt','payCashOptSale','payBankOptSale','saleItemsLbl','thItemNameSale','thItemQtySale','thItemPrice','addSaleItemBtn','saleSubtotalLbl','saleVatLbl','saleTotalLbl','saveSaleBtn','tbSectionRevenue','sbShowBtnTxt'];
   ids.forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.textContent = t(id);
@@ -2313,6 +2334,13 @@ if (isVisible('tbModal')) buildTrialBalance();
 applyLang();
 renderHistory();
 updateStats();
+(function() {
+  var stored = null;
+  try { stored = localStorage.getItem('h_sb_collapsed'); } catch(e) {}
+  var collapsed = stored === null ? true : stored === '1';
+  var appEl = document.querySelector('.app');
+  if (appEl) appEl.classList.toggle('sb-collapsed', collapsed);
+})();
 var dz = document.getElementById('dropZone');
 dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.classList.add('drag'); });
 dz.addEventListener('dragleave', function() { dz.classList.remove('drag'); });
