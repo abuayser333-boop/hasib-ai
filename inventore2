@@ -1,0 +1,75 @@
+import { NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { productId, warehouseId, type, quantity, unitCost, referenceNumber } = body;
+
+    // 1. التحقق من وجود المنتج
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+    });
+
+    if (!product) {
+      return NextResponse.json({ error: 'المنتج غير موجود' }, { status: 404 });
+    }
+
+    // 2. معالجة الحركة وبناء القيمة الجديدة
+    let newQuantity = product.totalQuantity;
+    let newAverageCost = product.averageCost;
+
+    if (type === 'IN') {
+      // حساب متوسط التكلفة المرجح الجديد (WAC)
+      const currentTotalValue = product.totalQuantity * product.averageCost;
+      const incomingValue = quantity * unitCost;
+      newQuantity = product.totalQuantity + quantity;
+      
+      newAverageCost = newQuantity > 0 
+        ? (currentTotalValue + incomingValue) / newQuantity 
+        : unitCost;
+
+    } else if (type === 'OUT') {
+      if (product.totalQuantity < quantity) {
+        return NextResponse.json({ error: 'الكمية المتاحة في المخزون غير كافية' }, { status: 400 });
+      }
+      newQuantity = product.totalQuantity - quantity;
+      // التكلفة المتوسطة لا تتغير عند الصرف
+    }
+
+    // 3. تنفيذ العملية داخل Transaction لضمان سلامة البيانات
+    const result = await prisma.$transaction([
+      // تسجيل الحركة
+      prisma.stockMovement.create({
+        data: {
+          productId,
+          warehouseId,
+          type,
+          quantity,
+          unitCost,
+          referenceNumber,
+        },
+      }),
+      // تحديث بيانات المنتج
+      prisma.product.update({
+        where: { id: productId },
+        data: {
+          totalQuantity: newQuantity,
+          averageCost: Number(newAverageCost.toFixed(2)),
+        },
+      }),
+    ]);
+
+    return NextResponse.json({
+      success: true,
+      message: 'تم تسجيل حركة المخزون وتحديث التكلفة بنجاح',
+      movement: result[0],
+      updatedProduct: result[1],
+    }, { status: 201 });
+
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'حدث خطأ في السيرفر' }, { status: 500 });
+  }
+}
