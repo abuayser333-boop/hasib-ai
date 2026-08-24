@@ -3687,7 +3687,7 @@ var swRegistered   = false;
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
     var swCode = [
-      'var CACHE = "hasib-v1";',
+      'var CACHE = "hasib-v2";',
       'var ASSETS = ["/"];',
       'self.addEventListener("install", function(e) {',
       '  e.waitUntil(caches.open(CACHE).then(function(c){ return c.addAll(ASSETS); }));',
