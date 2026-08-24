@@ -468,6 +468,154 @@ table td { font-variant-numeric:tabular-nums }
   z-index: 1;
 }
 
+/* ---- Dark sidebar theme (scoped to .sidebar only) ---- */
+.sidebar {
+  background: #121212;
+  border-left: 1px solid #262626;
+  color: #f2f2f2;
+}
+.sb-top {
+  border-bottom: 1px solid #262626;
+}
+.sb-label {
+  color: #8a8a8a;
+}
+.sb-collapse-btn {
+  background: transparent;
+  border: 1px solid #2c2c2c;
+  color: #b8b8b8;
+}
+.sb-collapse-btn:hover {
+  border-color: #4a4a4a;
+  color: #fff;
+}
+.drop-zone {
+  background: #1a1a1a;
+  border-color: #3a3a3a;
+}
+.drop-zone:hover, .drop-zone.drag {
+  background: #212121;
+  border-color: #6a6a6a;
+}
+.drop-icon {
+  opacity: .5;
+  filter: grayscale(1) invert(1);
+}
+.drop-text {
+  color: #f2f2f2;
+}
+.drop-sub {
+  color: #7d7d7d;
+}
+.cam-btn {
+  background: transparent;
+  border-color: #2c2c2c;
+  color: #b8b8b8;
+}
+.cam-btn:hover {
+  border-color: #6a6a6a;
+  color: #fff;
+}
+.file-info {
+  background: #1a1a1a;
+  border-color: #2c2c2c;
+}
+.file-name {
+  color: #f2f2f2;
+}
+.file-size {
+  color: #7d7d7d;
+}
+.excel-status.off {
+  background: #1a1a1a;
+  border-color: #2c2c2c;
+  color: #7d7d7d;
+}
+.excel-status.on {
+  background: rgba(21,128,61,.15);
+  border-color: rgba(21,128,61,.4);
+  color: #4ade80;
+}
+.proc-btn {
+  background: #f2f2f2;
+  color: #0a0a0a;
+}
+.proc-btn:hover:not(:disabled) {
+  background: #ffffff;
+}
+.save-excel-btn {
+  background: transparent;
+  color: #f2f2f2;
+  border-color: #f2f2f2;
+}
+.save-excel-btn:hover {
+  background: #f2f2f2;
+  color: #0a0a0a;
+}
+.stats {
+  background: #262626;
+  border-bottom-color: #262626;
+}
+.stat {
+  background: #171717;
+}
+.stat-n, .stat-n.org, .stat-n.grn {
+  color: #f2f2f2;
+}
+.stat-l {
+  color: #7d7d7d;
+}
+.hist-hdr {
+  color: #8a8a8a;
+}
+.hist-list::-webkit-scrollbar-thumb {
+  background: #333;
+}
+.hist-item:hover {
+  background: #1c1c1c;
+}
+.hist-item.active {
+  background: #1c1c1c;
+  border-color: #333;
+}
+.hist-vendor {
+  color: #f2f2f2;
+}
+.hist-amount {
+  color: #b8b8b8;
+}
+.hist-date {
+  color: #7d7d7d;
+}
+.hist-badge.done {
+  background: rgba(21,128,61,.15);
+  color: #4ade80;
+  border-color: rgba(21,128,61,.4);
+}
+.hist-badge.pend {
+  background: #232323;
+  color: #9a9a9a;
+  border-color: #333;
+}
+.hist-empty {
+  color: #7d7d7d;
+}
+.app.sb-collapsed .sb-show-btn {
+  background: #121212;
+  border-color: #2c2c2c;
+  color: #f2f2f2;
+}
+.sidebar #filePreviewImg, .sidebar #filePreviewEmbed {
+  border-color: #2c2c2c !important;
+}
+.sidebar #reloadExcelBtn {
+  color: #b8b8b8 !important;
+  border-color: #2c2c2c !important;
+}
+.sidebar #excelName {
+  color: #4ade80 !important;
+}
+
 </style>
 </head>
 <body>
