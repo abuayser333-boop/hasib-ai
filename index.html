@@ -35,16 +35,16 @@
    ============================================================ */
 :root {
   /* surfaces */
-  --bg:            #f5f2ec;
-  --bg-sunken:     #efece3;
-  --bg-inset:      #e9e4d8;
+  --bg:            #ffffff;
+  --bg-sunken:     #fafafa;
+  --bg-inset:      #f5f5f5;
   --surface:       #ffffff;
   --ink:           #0a0a0a;
   --ink-soft:      #525252;
   --ink-muted:     #737373;
   --ink-faint:     #a3a3a3;
-  --line:          #e5e1d8;
-  --line-faint:    #f0ede5;
+  --line:          #e5e5e5;
+  --line-faint:    #f0f0f0;
   /* accounting status — the only colour in the system */
   --ok:            #15803d;
   --ok-bg:         #f0fdf4;
@@ -60,10 +60,10 @@
   --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --mono:  'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
   /* geometry */
-  --r-sm: 8px;
-  --r:    14px;
-  --r-lg: 20px;
-  --r-pill: 999px; --nav-h: 64px;
+  --r-sm: 6px;
+  --r:    10px;
+  --r-lg: 14px;
+  --nav-h: 64px;
 }
 * { margin:0; padding:0; box-sizing:border-box }
 body {
@@ -401,7 +401,7 @@ table td { font-variant-numeric:tabular-nums }
 }
 .toast.show { transform:translateY(0); opacity:1 }
 
-.nav { background: rgba(245, 242, 236, .82); border-bottom: 1px solid var(--line); } .btn { border-radius: var(--r-pill); padding: 11px 22px; } .btn-edit { border-radius: var(--r-sm); padding: 8px 12px; } .nav-btn { border-radius: var(--r-sm); } .card, .modal { box-shadow: 0 1px 2px rgba(10, 10, 10, .03), 0 12px 32px rgba(10, 10, 10, .05); } .drop-zone { border-radius: var(--r-lg); background: var(--bg-sunken); } .drop-zone:hover { background: var(--bg-inset); border-color: var(--ink-faint); } .stats { border-radius: var(--r); overflow: hidden; } .sidebar { background: var(--bg-sunken); } .welcome { position: relative; } .welcome::before { content: ""; position: absolute; top: 6%; left: 50%; transform: translateX(-50%); width: 180px; height: 120px; background-image: radial-gradient(var(--line) 1.5px, transparent 1.5px); background-size: 14px 14px; opacity: .6; pointer-events: none; } .welcome-icon, .welcome h2, .welcome p, .welcome a { position: relative; z-index: 1; } </style>
+</style>
 </head>
 <body>
 
@@ -439,6 +439,7 @@ table td { font-variant-numeric:tabular-nums }
     <button class="nav-btn" onclick="openDash()" id="openDashBtn">لوحة التحكم</button>
 <button class="nav-btn" onclick="openTrialBalance()" id="openTBBtn">ميزان المراجعة</button>
 <button class="nav-btn" onclick="openInventory()" id="openInvBtn">المخزون</button>
+    <button class="nav-btn" onclick="openModules()" id="openModulesBtn">موديولات إضافية</button>
     <button class="nav-btn" onclick="openBudget()" id="budgetNavBtn">الميزانية</button>
     <button class="nav-btn" onclick="openQuickEntry()" id="openQuickBtn">إدخال سريع</button>
     <span class="nav-sep"></span>
@@ -1470,6 +1471,217 @@ table td { font-variant-numeric:tabular-nums }
 </div>
 </div>
 </div>
+<!-- MODULES MODAL: أصول ثابتة / رواتب / CRM / حقوق ملكية / بنوك وعملاء -->
+<div id="modulesModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:700;overflow-y:auto;padding:20px 16px;">
+<div style="max-width:1040px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.15);">
+
+<div style="padding:16px 24px;background:#fafafa;border-bottom:1px solid #e5e5e5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+<div>
+<div style="font-size:17.5px;font-weight:700;color:#0a0a0a;">موديولات إضافية</div>
+<div style="font-size:13px;color:#737373;">الأصول الثابتة، الرواتب، CRM، حقوق الملكية، البنوك والعملاء — كل حركة تُرحَّل تلقائياً في دفتر الأستاذ العام</div>
+</div>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+<button onclick="showModTab('assets')" class="nav-btn" id="modTabAssetsBtn" style="border:1px solid #e5e5e5;">الأصول الثابتة</button>
+<button onclick="showModTab('payroll')" class="nav-btn" id="modTabPayrollBtn" style="border:1px solid #e5e5e5;">الرواتب</button>
+<button onclick="showModTab('crm')" class="nav-btn" id="modTabCrmBtn" style="border:1px solid #e5e5e5;">CRM</button>
+<button onclick="showModTab('equity')" class="nav-btn" id="modTabEquityBtn" style="border:1px solid #e5e5e5;">حقوق الملكية</button>
+<button onclick="showModTab('bank')" class="nav-btn" id="modTabBankBtn" style="border:1px solid #e5e5e5;">البنوك والعملاء</button>
+<button onclick="closeModules()" style="background:transparent;border:1px solid #e5e5e5;color:#737373;width:30px;height:30px;border-radius:7px;cursor:pointer;font-size:15.5px;">✕</button>
+</div>
+</div>
+
+<div style="padding:4px 24px 24px;max-height:75vh;overflow-y:auto;">
+
+<!-- ===== الأصول الثابتة ===== -->
+<div id="modTabAssets">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:8px;">
+<div style="font-size:13px;font-weight:700;">سجل الأصول الثابتة (IAS 16)</div>
+<div style="display:flex;gap:8px;">
+<button onclick="toggleAssetForm()" class="nav-btn" style="border:1px solid #e5e5e5;">+ أصل جديد</button>
+<button onclick="runDepreciationNow()" class="btn btn-primary" style="padding:7px 14px;">ترحيل إهلاك الشهر الحالي</button>
+</div>
+</div>
+<div id="assetFormBox" style="display:none;background:#fafafa;border:1px solid #e5e5e5;border-radius:10px;padding:14px;margin-top:10px;">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+<div><label style="font-size:12px;color:#737373;">اسم الأصل</label><input type="text" id="afName" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">الفئة</label><input type="text" id="afCategory" placeholder="سيارات، أثاث، معدات..." style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">تاريخ الشراء</label><input type="date" id="afDate" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">التكلفة</label><input type="number" id="afCost" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">القيمة المتبقية</label><input type="number" id="afSalvage" value="0" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">العمر الإنتاجي (بالأشهر)</label><input type="number" id="afLife" value="60" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">طريقة الدفع</label><select id="afPay" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"><option value="payable">آجل</option><option value="cash">نقدي</option><option value="bank">بنك</option></select></div>
+</div>
+<button onclick="submitAsset()" class="btn btn-primary" style="margin-top:12px;">حفظ الأصل + ترحيل قيد الشراء</button>
+</div>
+<table style="width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px;">
+<thead><tr style="border-bottom:2px solid #0a0a0a;">
+<th style="text-align:right;padding:7px 6px;font-size:12px;color:#737373;">الأصل</th>
+<th style="text-align:right;padding:7px 6px;font-size:12px;color:#737373;">الفئة</th>
+<th style="text-align:left;padding:7px 6px;font-size:12px;color:#737373;">التكلفة</th>
+<th style="text-align:left;padding:7px 6px;font-size:12px;color:#737373;">مجمّع الإهلاك</th>
+<th style="text-align:left;padding:7px 6px;font-size:12px;color:#737373;">القيمة الدفترية</th>
+<th style="text-align:center;padding:7px 6px;font-size:12px;color:#737373;">الحالة</th>
+<th></th>
+</tr></thead>
+<tbody id="assetsBody"></tbody>
+</table>
+</div>
+
+<!-- ===== الرواتب ===== -->
+<div id="modTabPayroll" style="display:none;">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:8px;">
+<div style="font-size:13px;font-weight:700;">الموظفون</div>
+<button onclick="toggleEmployeeForm()" class="nav-btn" style="border:1px solid #e5e5e5;">+ موظف جديد</button>
+</div>
+<div id="empFormBox" style="display:none;background:#fafafa;border:1px solid #e5e5e5;border-radius:10px;padding:14px;margin-top:10px;">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+<div><label style="font-size:12px;color:#737373;">الاسم</label><input type="text" id="empName" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">الوظيفة</label><input type="text" id="empTitle" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">الفئة (لأغراض جوسي)</label><select id="empCategory" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"><option value="saudi">سعودي</option><option value="non_saudi">غير سعودي</option></select></div>
+<div><label style="font-size:12px;color:#737373;">الراتب الأساسي</label><input type="number" id="empBasic" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">بدل السكن</label><input type="number" id="empHousing" value="0" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">بدلات أخرى</label><input type="number" id="empOther" value="0" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">تاريخ التعيين</label><input type="date" id="empHire" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+</div>
+<button onclick="submitEmployee()" class="btn btn-primary" style="margin-top:12px;">حفظ الموظف</button>
+</div>
+<table style="width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px;">
+<thead><tr style="border-bottom:2px solid #0a0a0a;">
+<th style="text-align:right;padding:7px 6px;font-size:12px;color:#737373;">الاسم</th>
+<th style="text-align:right;padding:7px 6px;font-size:12px;color:#737373;">الوظيفة</th>
+<th style="text-align:center;padding:7px 6px;font-size:12px;color:#737373;">الفئة</th>
+<th style="text-align:left;padding:7px 6px;font-size:12px;color:#737373;">الأساسي</th>
+<th style="text-align:left;padding:7px 6px;font-size:12px;color:#737373;">السكن</th>
+</tr></thead>
+<tbody id="employeesBody"></tbody>
+</table>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:22px;flex-wrap:wrap;gap:8px;">
+<div style="font-size:13px;font-weight:700;">تشغيلات الرواتب الشهرية</div>
+<button onclick="runPayrollNow()" class="btn btn-primary" style="padding:7px 14px;">تشغيل رواتب الشهر الحالي</button>
+</div>
+<table style="width:100%;border-collapse:collapse;font-size:13.5px;margin-top:10px;">
+<thead><tr style="border-bottom:2px solid #0a0a0a;">
+<th style="text-align:right;padding:7px 6px;font-size:12px;color:#737373;">الشهر</th>
+<th style="text-align:left;padding:7px 6px;font-size:12px;color:#737373;">الإجمالي</th>
+<th style="text-align:left;padding:7px 6px;font-size:12px;color:#737373;">جوسي (موظف+شركة)</th>
+<th style="text-align:left;padding:7px 6px;font-size:12px;color:#737373;">الصافي</th>
+<th style="text-align:center;padding:7px 6px;font-size:12px;color:#737373;">الحالة</th>
+<th></th>
+</tr></thead>
+<tbody id="payrollRunsBody"></tbody>
+</table>
+</div>
+
+<!-- ===== CRM ===== -->
+<div id="modTabCrm" style="display:none;">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:8px;">
+<div style="font-size:13px;font-weight:700;">قمع المبيعات (Pipeline)</div>
+<button onclick="toggleCrmForm()" class="nav-btn" style="border:1px solid #e5e5e5;">+ فرصة جديدة</button>
+</div>
+<div id="crmFormBox" style="display:none;background:#fafafa;border:1px solid #e5e5e5;border-radius:10px;padding:14px;margin-top:10px;">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+<div><label style="font-size:12px;color:#737373;">عنوان الفرصة</label><input type="text" id="crmTitle" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">اسم الشركة/العميل المحتمل</label><input type="text" id="crmCompany" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">جهة الاتصال</label><input type="text" id="crmContact" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">الجوال</label><input type="text" id="crmPhone" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">البريد الإلكتروني</label><input type="text" id="crmEmail" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">القيمة المتوقعة</label><input type="number" id="crmValue" value="0" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+</div>
+<button onclick="submitOpportunity()" class="btn btn-primary" style="margin-top:12px;">حفظ الفرصة</button>
+</div>
+<table style="width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px;">
+<thead><tr style="border-bottom:2px solid #0a0a0a;">
+<th style="text-align:right;padding:7px 6px;font-size:12px;color:#737373;">الفرصة</th>
+<th style="text-align:right;padding:7px 6px;font-size:12px;color:#737373;">الشركة</th>
+<th style="text-align:left;padding:7px 6px;font-size:12px;color:#737373;">القيمة</th>
+<th style="text-align:center;padding:7px 6px;font-size:12px;color:#737373;">المرحلة</th>
+<th></th>
+</tr></thead>
+<tbody id="crmBody"></tbody>
+</table>
+</div>
+
+<!-- ===== حقوق الملكية ===== -->
+<div id="modTabEquity" style="display:none;">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:8px;">
+<div style="font-size:13px;font-weight:700;">حركات حقوق الملكية</div>
+<button onclick="toggleEquityForm()" class="nav-btn" style="border:1px solid #e5e5e5;">+ حركة جديدة</button>
+</div>
+<div id="equityFormBox" style="display:none;background:#fafafa;border:1px solid #e5e5e5;border-radius:10px;padding:14px;margin-top:10px;">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+<div><label style="font-size:12px;color:#737373;">نوع الحركة</label><select id="eqType" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;">
+<option value="capital_injection">ضخ رأس مال</option><option value="drawing">مسحوبات المالك</option><option value="dividend">توزيعات أرباح</option>
+</select></div>
+<div><label style="font-size:12px;color:#737373;">المبلغ</label><input type="number" id="eqAmount" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">الطريقة</label><select id="eqMethod" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"><option value="bank">بنك</option><option value="cash">نقدي</option></select></div>
+<div><label style="font-size:12px;color:#737373;">التاريخ</label><input type="date" id="eqDate" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div style="grid-column:span 2;"><label style="font-size:12px;color:#737373;">وصف</label><input type="text" id="eqDesc" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+</div>
+<button onclick="submitEquity()" class="btn btn-primary" style="margin-top:12px;">حفظ الحركة</button>
+</div>
+<table style="width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px;">
+<thead><tr style="border-bottom:2px solid #0a0a0a;">
+<th style="text-align:right;padding:7px 6px;font-size:12px;color:#737373;">التاريخ</th>
+<th style="text-align:right;padding:7px 6px;font-size:12px;color:#737373;">النوع</th>
+<th style="text-align:left;padding:7px 6px;font-size:12px;color:#737373;">المبلغ</th>
+<th style="text-align:right;padding:7px 6px;font-size:12px;color:#737373;">الوصف</th>
+</tr></thead>
+<tbody id="equityBody"></tbody>
+</table>
+</div>
+
+<!-- ===== البنوك والعملاء والموردون ===== -->
+<div id="modTabBank" style="display:none;">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:8px;">
+<div style="font-size:13px;font-weight:700;">الحسابات البنكية</div>
+<div style="display:flex;gap:8px;">
+<button onclick="toggleBankForm()" class="nav-btn" style="border:1px solid #e5e5e5;">+ حساب بنكي</button>
+<button onclick="quickTransfer()" class="nav-btn" style="border:1px solid #e5e5e5;">تحويل صندوق ⇄ بنك</button>
+</div>
+</div>
+<div id="bankFormBox" style="display:none;background:#fafafa;border:1px solid #e5e5e5;border-radius:10px;padding:14px;margin-top:10px;">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+<div><label style="font-size:12px;color:#737373;">اسم الحساب</label><input type="text" id="baName" placeholder="مثال: الأهلي - جاري" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">اسم البنك</label><input type="text" id="baBank" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+<div><label style="font-size:12px;color:#737373;">آيبان IBAN</label><input type="text" id="baIban" style="width:100%;padding:7px 9px;border:1px solid #e5e5e5;border-radius:7px;font-family:inherit;"/></div>
+</div>
+<button onclick="submitBankAccount()" class="btn btn-primary" style="margin-top:12px;">حفظ الحساب</button>
+</div>
+<table style="width:100%;border-collapse:collapse;font-size:13.5px;margin-top:10px;">
+<thead><tr style="border-bottom:1px solid #e5e5e5;">
+<th style="text-align:right;padding:6px;font-size:12px;color:#737373;">الحساب</th>
+<th style="text-align:right;padding:6px;font-size:12px;color:#737373;">البنك</th>
+<th style="text-align:right;padding:6px;font-size:12px;color:#737373;">آيبان</th>
+</tr></thead>
+<tbody id="bankAccountsBody"></tbody>
+</table>
+
+<div style="font-size:13px;font-weight:700;margin-top:22px;">العملاء (ذمم مدينة)</div>
+<table style="width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px;">
+<thead><tr style="border-bottom:1px solid #e5e5e5;">
+<th style="text-align:right;padding:6px;font-size:12px;color:#737373;">العميل</th>
+<th style="text-align:left;padding:6px;font-size:12px;color:#737373;">الرصيد المستحق</th>
+<th></th>
+</tr></thead>
+<tbody id="customersBody"></tbody>
+</table>
+
+<div style="font-size:13px;font-weight:700;margin-top:22px;">الموردون (ذمم دائنة)</div>
+<table style="width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px;">
+<thead><tr style="border-bottom:1px solid #e5e5e5;">
+<th style="text-align:right;padding:6px;font-size:12px;color:#737373;">المورد</th>
+<th style="text-align:left;padding:6px;font-size:12px;color:#737373;">الرصيد المستحق</th>
+<th></th>
+</tr></thead>
+<tbody id="vendorsBody"></tbody>
+</table>
+</div>
+
+</div>
+</div>
+</div>
+
 <!-- REPORT MODAL -->
 <div id="reportModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:700;overflow-y:auto;padding:20px 16px;">
   <div style="max-width:800px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.15);">
@@ -1556,6 +1768,8 @@ var invoices = [];
 var products = []; // المخزون
 var purchaseInvoices = []; // فواتير الشراء
 var salesInvoices = []; // فواتير البيع
+var fixedAssets = [], employees = [], payrollRuns = [], crmOpportunities = [], equityTx = [],
+    bankAccountsList = [], customersList = [], vendorsList = [];
 var curFile = null;
 var curFileHash = null;
 var curFilePreviewUrl = null;
@@ -1790,6 +2004,31 @@ async function dbLoadAll() {
   bankTransactions = bk.error ? [] : (bk.data || []).map(function(b) {
     return { date: b.txn_date, description: b.description, amount: Number(b.amount), matched: !!b.matched_invoice_id };
   });
+
+  // ---- الموديولات الإضافية: أصول ثابتة / رواتب / CRM / حقوق ملكية / بنوك وعملاء ----
+  var fa = await sb.from('fixed_assets').select('*').eq('org_id', currentOrg.id).order('purchase_date', { ascending: false });
+  fixedAssets = fa.error ? [] : (fa.data || []);
+
+  var em = await sb.from('employees').select('*').eq('org_id', currentOrg.id).order('name');
+  employees = em.error ? [] : (em.data || []);
+
+  var pr = await sb.from('payroll_runs').select('*').eq('org_id', currentOrg.id).order('ym', { ascending: false });
+  payrollRuns = pr.error ? [] : (pr.data || []);
+
+  var crm = await sb.from('crm_opportunities').select('*').eq('org_id', currentOrg.id).order('created_at', { ascending: false });
+  crmOpportunities = crm.error ? [] : (crm.data || []);
+
+  var eq = await sb.from('equity_transactions').select('*').eq('org_id', currentOrg.id).order('entry_date', { ascending: false });
+  equityTx = eq.error ? [] : (eq.data || []);
+
+  var ba = await sb.from('bank_accounts').select('*').eq('org_id', currentOrg.id).order('created_at');
+  bankAccountsList = ba.error ? [] : (ba.data || []);
+
+  var cu = await sb.from('customers').select('*').eq('org_id', currentOrg.id).order('name');
+  customersList = cu.error ? [] : (cu.data || []);
+
+  var ve = await sb.from('vendors').select('*').eq('org_id', currentOrg.id).order('name');
+  vendorsList = ve.error ? [] : (ve.data || []);
 
   renderHistory(); updateStats();
 }
@@ -2933,6 +3172,355 @@ async function submitSale() {
   toast(ar?'تم حفظ فاتورة البيع بنجاح':'Sales invoice saved successfully');
   showInvTab('stock');
 }
+
+// ============================================================
+// MODULES MODAL — الأصول الثابتة / الرواتب / CRM / حقوق الملكية / البنوك والعملاء
+// كل دالة submit* هنا تستدعي RPC على الخادم يرحّل قيداً محاسبياً متوازناً
+// تلقائياً في journal_entries/journal_lines (انظر migrations 003-008).
+// ============================================================
+function fmt2(n) { return Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function currentYM() { return new Date().toISOString().slice(0,7); }
+function reqOrg() {
+  if (!DB_ON || !currentOrg) { toast(lang==='ar'?'يجب تسجيل الدخول أولاً':'Please sign in first', 'error'); return false; }
+  return true;
+}
+
+function openModules() {
+  if (!reqOrg()) return;
+  document.getElementById('modulesModal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  showModTab('assets');
+}
+function closeModules() {
+  document.getElementById('modulesModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+function showModTab(tabKey) {
+  var tabs = ['assets','payroll','crm','equity','bank'];
+  tabs.forEach(function(k) {
+    var cap = k.charAt(0).toUpperCase() + k.slice(1);
+    var panel = document.getElementById('modTab' + cap);
+    var btn = document.getElementById('modTab' + cap + 'Btn');
+    if (panel) panel.style.display = (k === tabKey) ? 'block' : 'none';
+    if (btn) { btn.style.background = (k === tabKey) ? '#0a0a0a' : ''; btn.style.color = (k === tabKey) ? '#fff' : ''; }
+  });
+  if (tabKey === 'assets') renderAssets();
+  if (tabKey === 'payroll') { renderEmployees(); renderPayrollRuns(); }
+  if (tabKey === 'crm') renderCrm();
+  if (tabKey === 'equity') renderEquity();
+  if (tabKey === 'bank') { renderBankAccounts(); renderCustomersVendors(); }
+}
+
+// ---------- الأصول الثابتة ----------
+function toggleAssetForm() {
+  var b = document.getElementById('assetFormBox');
+  b.style.display = (b.style.display === 'none') ? 'block' : 'none';
+  var d = document.getElementById('afDate'); if (d && !d.value) d.value = new Date().toISOString().slice(0,10);
+}
+function renderAssets() {
+  var body = document.getElementById('assetsBody'); if (!body) return;
+  if (!fixedAssets.length) { body.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:#a3a3a3;">لا توجد أصول مسجّلة بعد</td></tr>'; return; }
+  body.innerHTML = fixedAssets.map(function(a) {
+    var nbv = Number(a.cost) - Number(a.accumulated_depreciation);
+    var statusLbl = a.status === 'disposed' ? 'مستبعد' : 'نشط';
+    var disposeBtn = a.status === 'active'
+      ? '<button onclick="disposeAssetPrompt(\'' + a.id + '\',\'' + (a.name||'').replace(/'/g,"\\'") + '\')" style="background:transparent;border:1px solid #e5e5e5;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;">استبعاد</button>'
+      : '';
+    return '<tr style="border-bottom:1px solid #f5f5f5;">' +
+      '<td style="padding:7px 6px;">' + (a.name||'') + '</td>' +
+      '<td style="padding:7px 6px;">' + (a.category||'—') + '</td>' +
+      '<td style="padding:7px 6px;text-align:left;">' + fmt2(a.cost) + '</td>' +
+      '<td style="padding:7px 6px;text-align:left;">' + fmt2(a.accumulated_depreciation) + '</td>' +
+      '<td style="padding:7px 6px;text-align:left;font-weight:600;">' + fmt2(nbv) + '</td>' +
+      '<td style="padding:7px 6px;text-align:center;"><span style="font-size:11px;padding:2px 8px;border-radius:10px;background:' + (a.status==='disposed'?'rgba(185,28,28,.1);color:#b91c1c':'rgba(21,128,61,.1);color:#15803d') + ';">' + statusLbl + '</span></td>' +
+      '<td style="padding:7px 6px;text-align:left;">' + disposeBtn + '</td>' +
+    '</tr>';
+  }).join('');
+}
+async function submitAsset() {
+  if (!reqOrg()) return;
+  var name = document.getElementById('afName').value.trim();
+  var cost = Number(document.getElementById('afCost').value || 0);
+  var life = Number(document.getElementById('afLife').value || 0);
+  if (!name) { toast('اسم الأصل مطلوب', 'error'); return; }
+  if (!(cost > 0)) { toast('التكلفة يجب أن تكون أكبر من صفر', 'error'); return; }
+  if (!(life > 0)) { toast('العمر الإنتاجي يجب أن يكون أكبر من صفر', 'error'); return; }
+  var res = await sb.rpc('record_fixed_asset', {
+    p_org_id: currentOrg.id,
+    p_name: name,
+    p_category: document.getElementById('afCategory').value || null,
+    p_purchase_date: document.getElementById('afDate').value || null,
+    p_cost: cost,
+    p_salvage_value: Number(document.getElementById('afSalvage').value || 0),
+    p_useful_life_months: life,
+    p_payment_method: document.getElementById('afPay').value
+  });
+  if (res.error) { toast('! ' + res.error.message, 'error'); return; }
+  document.getElementById('afName').value = ''; document.getElementById('afCategory').value = ''; document.getElementById('afCost').value = '';
+  document.getElementById('assetFormBox').style.display = 'none';
+  await dbLoadAll(); renderAssets();
+  toast('تم تسجيل الأصل وترحيل قيد الشراء');
+}
+async function runDepreciationNow() {
+  if (!reqOrg()) return;
+  var ym = currentYM();
+  if (!confirm('ترحيل إهلاك شهر ' + ym + ' لكل الأصول النشطة؟ لا يمكن التراجع عن هذه الخطوة.')) return;
+  var res = await sb.rpc('run_asset_depreciation', { p_org_id: currentOrg.id, p_ym: ym });
+  if (res.error) { toast('! ' + res.error.message, 'error'); return; }
+  await dbLoadAll(); renderAssets();
+  toast('تم ترحيل إهلاك ' + ym + ' — الإجمالي: ' + fmt2(res.data && res.data.total_amount) + ' ر.س لعدد ' + (res.data && res.data.asset_count) + ' أصل');
+}
+async function disposeAssetPrompt(id, name) {
+  var proceeds = prompt('متحصلات استبعاد "' + name + '" (اترك 0 إن لم يوجد):', '0');
+  if (proceeds === null) return;
+  var method = (prompt('طريقة استلام المتحصلات: cash أو bank (اتركه فارغاً إن كانت صفر)', 'bank') || '').trim();
+  var res = await sb.rpc('dispose_fixed_asset', {
+    p_org_id: currentOrg.id, p_asset_id: id, p_disposal_date: new Date().toISOString().slice(0,10),
+    p_proceeds: Number(proceeds || 0), p_payment_method: method || 'bank'
+  });
+  if (res.error) { toast('! ' + res.error.message, 'error'); return; }
+  await dbLoadAll(); renderAssets();
+  toast('تم استبعاد الأصل وترحيل قيد الربح/الخسارة تلقائياً');
+}
+
+// ---------- الرواتب ----------
+function toggleEmployeeForm() {
+  var b = document.getElementById('empFormBox');
+  b.style.display = (b.style.display === 'none') ? 'block' : 'none';
+  var d = document.getElementById('empHire'); if (d && !d.value) d.value = new Date().toISOString().slice(0,10);
+}
+function renderEmployees() {
+  var body = document.getElementById('employeesBody'); if (!body) return;
+  if (!employees.length) { body.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#a3a3a3;">لا يوجد موظفون بعد</td></tr>'; return; }
+  body.innerHTML = employees.map(function(e) {
+    return '<tr style="border-bottom:1px solid #f5f5f5;">' +
+      '<td style="padding:7px 6px;">' + (e.name||'') + '</td>' +
+      '<td style="padding:7px 6px;">' + (e.job_title||'—') + '</td>' +
+      '<td style="padding:7px 6px;text-align:center;">' + (e.gosi_category==='saudi'?'سعودي':'غير سعودي') + '</td>' +
+      '<td style="padding:7px 6px;text-align:left;">' + fmt2(e.basic_salary) + '</td>' +
+      '<td style="padding:7px 6px;text-align:left;">' + fmt2(e.housing_allowance) + '</td>' +
+    '</tr>';
+  }).join('');
+}
+async function submitEmployee() {
+  if (!reqOrg()) return;
+  var name = document.getElementById('empName').value.trim();
+  if (!name) { toast('اسم الموظف مطلوب', 'error'); return; }
+  var res = await sb.from('employees').insert({
+    org_id: currentOrg.id, name: name,
+    job_title: document.getElementById('empTitle').value || null,
+    gosi_category: document.getElementById('empCategory').value,
+    basic_salary: Number(document.getElementById('empBasic').value || 0),
+    housing_allowance: Number(document.getElementById('empHousing').value || 0),
+    other_allowances: Number(document.getElementById('empOther').value || 0),
+    hire_date: document.getElementById('empHire').value || null
+  });
+  if (res.error) { toast('! ' + res.error.message, 'error'); return; }
+  document.getElementById('empName').value = ''; document.getElementById('empTitle').value = ''; document.getElementById('empBasic').value = '';
+  document.getElementById('empFormBox').style.display = 'none';
+  await dbLoadAll(); renderEmployees();
+  toast('تم حفظ الموظف');
+}
+function renderPayrollRuns() {
+  var body = document.getElementById('payrollRunsBody'); if (!body) return;
+  if (!payrollRuns.length) { body.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#a3a3a3;">لم تُشغَّل أي رواتب بعد</td></tr>'; return; }
+  body.innerHTML = payrollRuns.map(function(r) {
+    var payBtn = r.status === 'posted'
+      ? '<button onclick="payPayrollNow(\'' + r.id + '\')" class="btn btn-primary" style="padding:4px 12px;font-size:12px;">صرف</button>'
+      : '<span style="font-size:11px;color:#15803d;">✓ صُرفت</span>';
+    return '<tr style="border-bottom:1px solid #f5f5f5;">' +
+      '<td style="padding:7px 6px;">' + r.ym + '</td>' +
+      '<td style="padding:7px 6px;text-align:left;">' + fmt2(r.total_gross) + '</td>' +
+      '<td style="padding:7px 6px;text-align:left;">' + fmt2(Number(r.total_gosi_employee)+Number(r.total_gosi_employer)) + '</td>' +
+      '<td style="padding:7px 6px;text-align:left;font-weight:600;">' + fmt2(r.total_net) + '</td>' +
+      '<td style="padding:7px 6px;text-align:center;">' + (r.status==='paid'?'مصروفة':'مستحقة') + '</td>' +
+      '<td style="padding:7px 6px;text-align:left;">' + payBtn + '</td>' +
+    '</tr>';
+  }).join('');
+}
+async function runPayrollNow() {
+  if (!reqOrg()) return;
+  var ym = currentYM();
+  if (!confirm('تشغيل رواتب شهر ' + ym + ' لكل الموظفين النشطين؟')) return;
+  var res = await sb.rpc('run_payroll', { p_org_id: currentOrg.id, p_ym: ym });
+  if (res.error) { toast('! ' + res.error.message, 'error'); return; }
+  await dbLoadAll(); renderPayrollRuns();
+  toast('تم استحقاق رواتب ' + ym + ' — الصافي: ' + fmt2(res.data && res.data.total_net) + ' ر.س');
+}
+async function payPayrollNow(runId) {
+  var method = (prompt('طريقة الصرف: cash أو bank', 'bank') || '').trim();
+  if (!method) return;
+  var res = await sb.rpc('pay_payroll_run', { p_org_id: currentOrg.id, p_run_id: runId, p_payment_method: method });
+  if (res.error) { toast('! ' + res.error.message, 'error'); return; }
+  await dbLoadAll(); renderPayrollRuns();
+  toast('تم صرف الرواتب');
+}
+
+// ---------- CRM ----------
+var CRM_STAGES = { new:'جديدة', contacted:'تم التواصل', qualified:'مؤهلة', proposal:'عرض سعر', won:'فوز', lost:'خسارة' };
+function toggleCrmForm() {
+  var b = document.getElementById('crmFormBox');
+  b.style.display = (b.style.display === 'none') ? 'block' : 'none';
+}
+function renderCrm() {
+  var body = document.getElementById('crmBody'); if (!body) return;
+  if (!crmOpportunities.length) { body.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#a3a3a3;">لا توجد فرص بعد</td></tr>'; return; }
+  body.innerHTML = crmOpportunities.map(function(o) {
+    var stageOpts = Object.keys(CRM_STAGES).map(function(k) {
+      return '<option value="' + k + '"' + (o.stage===k?' selected':'') + '>' + CRM_STAGES[k] + '</option>';
+    }).join('');
+    var winBtn = (o.stage !== 'won' && o.stage !== 'lost')
+      ? '<button onclick="winOpportunity(\'' + o.id + '\')" class="btn btn-primary" style="padding:4px 10px;font-size:12px;">فوز → عميل</button>' : '';
+    return '<tr style="border-bottom:1px solid #f5f5f5;">' +
+      '<td style="padding:7px 6px;">' + (o.title||'') + '</td>' +
+      '<td style="padding:7px 6px;">' + (o.company_name||o.contact_name||'—') + '</td>' +
+      '<td style="padding:7px 6px;text-align:left;">' + fmt2(o.value) + '</td>' +
+      '<td style="padding:7px 6px;text-align:center;"><select onchange="changeOppStage(\'' + o.id + '\',this.value)" style="padding:4px 6px;border:1px solid #e5e5e5;border-radius:6px;font-family:inherit;font-size:12px;">' + stageOpts + '</select></td>' +
+      '<td style="padding:7px 6px;text-align:left;">' + winBtn + '</td>' +
+    '</tr>';
+  }).join('');
+}
+async function submitOpportunity() {
+  if (!reqOrg()) return;
+  var title = document.getElementById('crmTitle').value.trim();
+  if (!title) { toast('عنوان الفرصة مطلوب', 'error'); return; }
+  var res = await sb.from('crm_opportunities').insert({
+    org_id: currentOrg.id, title: title,
+    company_name: document.getElementById('crmCompany').value || null,
+    contact_name: document.getElementById('crmContact').value || null,
+    contact_phone: document.getElementById('crmPhone').value || null,
+    contact_email: document.getElementById('crmEmail').value || null,
+    value: Number(document.getElementById('crmValue').value || 0),
+    owner_id: currentUser ? currentUser.id : null
+  });
+  if (res.error) { toast('! ' + res.error.message, 'error'); return; }
+  document.getElementById('crmTitle').value = ''; document.getElementById('crmCompany').value = '';
+  document.getElementById('crmFormBox').style.display = 'none';
+  await dbLoadAll(); renderCrm();
+  toast('تم إضافة الفرصة');
+}
+async function changeOppStage(id, stage) {
+  var res = await sb.rpc('set_opportunity_stage', { p_opportunity_id: id, p_stage: stage, p_note: null });
+  if (res.error) { toast('! ' + res.error.message, 'error'); return; }
+  await dbLoadAll(); renderCrm();
+}
+async function winOpportunity(id) {
+  var res = await sb.rpc('win_opportunity', { p_opportunity_id: id });
+  if (res.error) { toast('! ' + res.error.message, 'error'); return; }
+  await dbLoadAll(); renderCrm();
+  toast('فوز! تم إنشاء بطاقة عميل جاهزة للفوترة في موديول المبيعات');
+}
+
+// ---------- حقوق الملكية ----------
+var EQUITY_TYPE_LBL = { capital_injection:'ضخ رأس مال', drawing:'مسحوبات المالك', dividend:'توزيعات أرباح' };
+function toggleEquityForm() {
+  var b = document.getElementById('equityFormBox');
+  b.style.display = (b.style.display === 'none') ? 'block' : 'none';
+  var d = document.getElementById('eqDate'); if (d && !d.value) d.value = new Date().toISOString().slice(0,10);
+}
+function renderEquity() {
+  var body = document.getElementById('equityBody'); if (!body) return;
+  if (!equityTx.length) { body.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:#a3a3a3;">لا توجد حركات بعد</td></tr>'; return; }
+  body.innerHTML = equityTx.map(function(t) {
+    return '<tr style="border-bottom:1px solid #f5f5f5;">' +
+      '<td style="padding:7px 6px;">' + (t.entry_date||'') + '</td>' +
+      '<td style="padding:7px 6px;">' + (EQUITY_TYPE_LBL[t.type]||t.type) + '</td>' +
+      '<td style="padding:7px 6px;text-align:left;">' + fmt2(t.amount) + '</td>' +
+      '<td style="padding:7px 6px;">' + (t.description||'—') + '</td>' +
+    '</tr>';
+  }).join('');
+}
+async function submitEquity() {
+  if (!reqOrg()) return;
+  var amount = Number(document.getElementById('eqAmount').value || 0);
+  if (!(amount > 0)) { toast('المبلغ يجب أن يكون أكبر من صفر', 'error'); return; }
+  var res = await sb.rpc('record_equity_transaction', {
+    p_org_id: currentOrg.id,
+    p_type: document.getElementById('eqType').value,
+    p_amount: amount,
+    p_method: document.getElementById('eqMethod').value,
+    p_entry_date: document.getElementById('eqDate').value || null,
+    p_description: document.getElementById('eqDesc').value || null
+  });
+  if (res.error) { toast('! ' + res.error.message, 'error'); return; }
+  document.getElementById('eqAmount').value = ''; document.getElementById('eqDesc').value = '';
+  document.getElementById('equityFormBox').style.display = 'none';
+  await dbLoadAll(); renderEquity();
+  toast('تم ترحيل حركة حقوق الملكية');
+}
+
+// ---------- البنوك والعملاء والموردون ----------
+function toggleBankForm() {
+  var b = document.getElementById('bankFormBox');
+  b.style.display = (b.style.display === 'none') ? 'block' : 'none';
+}
+function renderBankAccounts() {
+  var body = document.getElementById('bankAccountsBody'); if (!body) return;
+  if (!bankAccountsList.length) { body.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:16px;color:#a3a3a3;">لا توجد حسابات بنكية مضافة</td></tr>'; return; }
+  body.innerHTML = bankAccountsList.map(function(b) {
+    return '<tr style="border-bottom:1px solid #f5f5f5;"><td style="padding:6px;">' + (b.name||'') + '</td><td style="padding:6px;">' + (b.bank_name||'—') + '</td><td style="padding:6px;font-family:monospace;font-size:12px;">' + (b.iban||'—') + '</td></tr>';
+  }).join('');
+}
+async function submitBankAccount() {
+  if (!reqOrg()) return;
+  var name = document.getElementById('baName').value.trim();
+  if (!name) { toast('اسم الحساب مطلوب', 'error'); return; }
+  var res = await sb.from('bank_accounts').insert({
+    org_id: currentOrg.id, name: name,
+    bank_name: document.getElementById('baBank').value || null,
+    iban: document.getElementById('baIban').value || null
+  });
+  if (res.error) { toast('! ' + res.error.message, 'error'); return; }
+  document.getElementById('baName').value = ''; document.getElementById('baBank').value = ''; document.getElementById('baIban').value = '';
+  document.getElementById('bankFormBox').style.display = 'none';
+  await dbLoadAll(); renderBankAccounts();
+  toast('تم إضافة الحساب البنكي');
+}
+async function quickTransfer() {
+  if (!reqOrg()) return;
+  var dir = (prompt('اتجاه التحويل: اكتب cash_to_bank (من الصندوق للبنك) أو bank_to_cash (من البنك للصندوق)', 'cash_to_bank') || '').trim();
+  if (!dir) return;
+  var amount = Number(prompt('المبلغ:', '0') || 0);
+  if (!(amount > 0)) { toast('مبلغ غير صحيح', 'error'); return; }
+  var res = await sb.rpc('transfer_cash_bank', { p_org_id: currentOrg.id, p_direction: dir, p_amount: amount, p_entry_date: new Date().toISOString().slice(0,10), p_note: null });
+  if (res.error) { toast('! ' + res.error.message, 'error'); return; }
+  await dbLoadAll();
+  toast('تم ترحيل التحويل');
+}
+function renderCustomersVendors() {
+  var cBody = document.getElementById('customersBody'); var vBody = document.getElementById('vendorsBody');
+  if (cBody) {
+    cBody.innerHTML = customersList.length ? customersList.map(function(c) {
+      var btn = Number(c.balance) > 0 ? '<button onclick="collectFromCustomer(\'' + c.id + '\',\'' + (c.name||'').replace(/'/g,"\\'") + '\')" class="btn btn-primary" style="padding:4px 10px;font-size:12px;">تحصيل</button>' : '';
+      return '<tr style="border-bottom:1px solid #f5f5f5;"><td style="padding:6px;">' + (c.name||'') + '</td><td style="padding:6px;text-align:left;">' + fmt2(c.balance) + '</td><td style="padding:6px;text-align:left;">' + btn + '</td></tr>';
+    }).join('') : '<tr><td colspan="3" style="text-align:center;padding:16px;color:#a3a3a3;">لا يوجد عملاء بعد</td></tr>';
+  }
+  if (vBody) {
+    vBody.innerHTML = vendorsList.length ? vendorsList.map(function(v) {
+      var btn = Number(v.balance) > 0 ? '<button onclick="payToVendor(\'' + v.id + '\',\'' + (v.name||'').replace(/'/g,"\\'") + '\')" class="btn btn-primary" style="padding:4px 10px;font-size:12px;">سداد</button>' : '';
+      return '<tr style="border-bottom:1px solid #f5f5f5;"><td style="padding:6px;">' + (v.name||'') + '</td><td style="padding:6px;text-align:left;">' + fmt2(v.balance) + '</td><td style="padding:6px;text-align:left;">' + btn + '</td></tr>';
+    }).join('') : '<tr><td colspan="3" style="text-align:center;padding:16px;color:#a3a3a3;">لا يوجد موردون بعد</td></tr>';
+  }
+}
+async function collectFromCustomer(id, name) {
+  var amount = Number(prompt('مبلغ التحصيل من "' + name + '":', '0') || 0);
+  if (!(amount > 0)) return;
+  var method = (prompt('طريقة التحصيل: cash أو bank', 'bank') || '').trim() || 'bank';
+  var res = await sb.rpc('receive_customer_payment', { p_org_id: currentOrg.id, p_customer_id: id, p_amount: amount, p_method: method, p_date: new Date().toISOString().slice(0,10), p_note: null });
+  if (res.error) { toast('! ' + res.error.message, 'error'); return; }
+  await dbLoadAll(); renderCustomersVendors();
+  toast('تم تسجيل التحصيل');
+}
+async function payToVendor(id, name) {
+  var amount = Number(prompt('مبلغ السداد لـ "' + name + '":', '0') || 0);
+  if (!(amount > 0)) return;
+  var method = (prompt('طريقة السداد: cash أو bank', 'bank') || '').trim() || 'bank';
+  var res = await sb.rpc('pay_vendor', { p_org_id: currentOrg.id, p_vendor_id: id, p_amount: amount, p_method: method, p_date: new Date().toISOString().slice(0,10), p_note: null });
+  if (res.error) { toast('! ' + res.error.message, 'error'); return; }
+  await dbLoadAll(); renderCustomersVendors();
+  toast('تم تسجيل السداد');
+}
+
 function buildTrialBalanceRows(data, purData, saleData) {
   var map = {};
   for (var i = 0; i < data.length; i++) {
@@ -3687,7 +4275,7 @@ var swRegistered   = false;
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
     var swCode = [
-      'var CACHE = "hasib-v2";',
+      'var CACHE = "hasib-v1";',
       'var ASSETS = ["/"];',
       'self.addEventListener("install", function(e) {',
       '  e.waitUntil(caches.open(CACHE).then(function(c){ return c.addAll(ASSETS); }));',
