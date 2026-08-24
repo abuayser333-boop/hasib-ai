@@ -1,0 +1,56 @@
+datasource db {
+  provider = "postgresql" // أو sqlite / mysql حسب قاعدة بياناتك
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// بطاقة الصنف / المنتج
+model Product {
+  id               String          @id @default(uuid())
+  sku              String          @unique
+  name             String
+  barcode          String?
+  unit             String          @default("PCS") // قطعة، كيلو، إلخ
+  minStockLevel    Int             @default(5)     // حد إعادة الطلب
+  averageCost      Float           @default(0.0)   // متوسط التكلفة المرجح WAC
+  totalQuantity    Int             @default(0)     // الرصيد الإجمالي
+  
+  stockMovements   StockMovement[]
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+// المستودعات
+model Warehouse {
+  id               String          @id @default(uuid())
+  name             String
+  location         String?
+  
+  stockMovements   StockMovement[]
+  createdAt        DateTime        @default(now())
+}
+
+// حركات المخزون
+model StockMovement {
+  id              String        @id @default(uuid())
+  productId       String
+  product         Product       @relation(fields: [productId], references: [id])
+  warehouseId     String
+  warehouse       Warehouse     @relation(fields: [warehouseId], references: [id])
+  
+  type            MovementType  // IN (إدخال/مشتريات), OUT (صرف/مبيعات), ADJUSTMENT (تسوية)
+  quantity        Int
+  unitCost        Float         // تكلفة الوحدة في هذه الحركة
+  referenceNumber String?       // رقم الفاتورة أو المستند المرتبط
+  
+  createdAt       DateTime      @default(now())
+}
+
+enum MovementType {
+  IN
+  OUT
+  ADJUSTMENT
+}
