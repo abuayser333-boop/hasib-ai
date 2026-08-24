@@ -1,16 +1,16 @@
 {
-    "version": 2,
-    "rewrites": [
-          { "source": "/((?!api/|admin\\.html|landing\\.html|.*\\..*).*)", "destination": "/index.html" }
-    ],
-    "headers": [
-          {
-                  "source": "/(.*)",
-                  "headers": [
-                            { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" },
-                            { "key": "X-Content-Type-Options", "value": "nosniff" },
-                            { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
-                  ]
-          }
-    ]
+      "version": 2,
+      "rewrites": [
+              { "source": "/(.*)", "destination": "/index.html" }
+      ],
+      "headers": [
+              {
+                        "source": "/(.*)",
+                        "headers": [
+                                    { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" },
+                                    { "key": "X-Content-Type-Options", "value": "nosniff" },
+                                    { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+                        ]
+              }
+      ]
 }
