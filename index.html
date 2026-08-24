@@ -616,6 +616,91 @@ table td { font-variant-numeric:tabular-nums }
   color: #4ade80 !important;
 }
 
+/* ---- Top-bar controls moved into sidebar ---- */
+.sidebar .nav-right {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: visible;
+    overflow-y: auto;
+    max-height: 320px;
+    padding: 16px 16px 14px;
+    margin: 0;
+    border-bottom: 1px solid #262626;
+    scrollbar-width: thin;
+}
+.sidebar .nav-right::-webkit-scrollbar { width: 4px; }
+.sidebar .nav-right::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+.sidebar .nav-right .nav-btn,
+.sidebar .nav-right .nav-sep {
+    flex-shrink: 0;
+}
+.sidebar .nav-right .nav-btn {
+    width: 100%;
+    text-align: center;
+    background: #1a1a1a;
+    color: #f2f2f2;
+    border: 1px solid #2c2c2c;
+    border-radius: 8px;
+    padding: 9px 12px;
+    white-space: normal;
+}
+.sidebar .nav-right .nav-btn:hover {
+    background: #232323;
+    border-color: #4a4a4a;
+    color: #fff;
+}
+.sidebar .nav-right .nav-btn.outline {
+    background: transparent;
+    border: 1px solid #2c2c2c;
+    color: #b8b8b8;
+}
+.sidebar .nav-right .nav-btn.green {
+    background: #15803d;
+    color: #fff;
+    border-color: #15803d;
+}
+.sidebar .nav-right .nav-btn.green:hover {
+    background: #16a34a;
+}
+.sidebar .nav-right .nav-sep {
+    width: 100%;
+    height: 1px;
+    margin: 2px 0;
+    background: #262626;
+}
+.sidebar #keyStatus {
+    width: 100%;
+    justify-content: center !important;
+    color: #7d7d7d;
+    font-size: 12px;
+}
+.sidebar #orgBar {
+    width: 100%;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+}
+.sidebar #orgSelect {
+    width: 100% !important;
+    background: #1a1a1a !important;
+    border: 1px solid #2c2c2c !important;
+    color: #f2f2f2 !important;
+}
+.sidebar #orgRole {
+    color: #b8b8b8 !important;
+    border-color: #2c2c2c !important;
+    text-align: center;
+}
+.sidebar #excelName {
+    width: 100%;
+    max-width: 100% !important;
+    text-align: center;
+    display: block;
+}
 </style>
 </head>
 <body>
@@ -631,7 +716,12 @@ table td { font-variant-numeric:tabular-nums }
     <span class="nav-brand"><span class="brand-word">حاسِب</span> <span>AI</span></span>
     <span class="nav-pill">Beta</span>
   </a>
-  <div class="nav-right">
+  
+</nav>
+
+<div class="app">
+  <aside class="sidebar">
+<div class="nav-right">
     <button class="nav-btn outline" id="langBtn" onclick="toggleLang()">EN</button>
     <span class="nav-sep"></span>
     <span id="keyStatus" title="المفتاح محفوظ على الخادم ولا يصل المتصفح" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:#737373;white-space:nowrap;flex-shrink:0;">
@@ -664,10 +754,6 @@ table td { font-variant-numeric:tabular-nums }
     <button class="nav-btn" onclick="openAccountingIntegration()" id="accountingNavBtn">ربط نظام</button>
     <div id="budgetAlertDot" style="display:none;width:8px;height:8px;background:#b91c1c;border-radius:50%;position:absolute;top:10px;animation:pulseDot 1.5s ease-in-out infinite;"></div>
   </div>
-</nav>
-
-<div class="app">
-  <aside class="sidebar">
     <div class="sb-top">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
         <div class="sb-label" id="uploadSectionLbl">رفع فاتورة</div>
