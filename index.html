@@ -35,16 +35,16 @@
    ============================================================ */
 :root {
   /* surfaces */
-  --bg:            #ffffff;
-  --bg-sunken:     #fafafa;
-  --bg-inset:      #f5f5f5;
+  --bg: #f5f2ec;
+  --bg-sunken: #efece3;
+  --bg-inset: #e9e4d8;
   --surface:       #ffffff;
   --ink:           #0a0a0a;
   --ink-soft:      #525252;
   --ink-muted:     #737373;
   --ink-faint:     #a3a3a3;
-  --line:          #e5e5e5;
-  --line-faint:    #f0f0f0;
+  --line: #e5e1d8;
+  --line-faint: #f0ede5;
   /* accounting status — the only colour in the system */
   --ok:            #15803d;
   --ok-bg:         #f0fdf4;
@@ -60,9 +60,10 @@
   --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --mono:  'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
   /* geometry */
-  --r-sm: 6px;
-  --r:    10px;
-  --r-lg: 14px;
+  --r-sm: 8px;
+  --r: 14px;
+  --r-lg: 20px;
+  --r-pill: 999px;
   --nav-h: 64px;
 }
 * { margin:0; padding:0; box-sizing:border-box }
@@ -400,6 +401,72 @@ table td { font-variant-numeric:tabular-nums }
   transition:all .25s; z-index:999; max-width:340px; font-family:var(--sans);
 }
 .toast.show { transform:translateY(0); opacity:1 }
+
+/* ---- Basis-style visual patch (additive) ---- */
+.nav {
+  background: rgba(245, 242, 236, .82);
+  border-bottom: 1px solid var(--line);
+}
+
+.btn {
+  border-radius: var(--r-pill);
+  padding: 11px 22px;
+}
+
+.btn-edit {
+  border-radius: var(--r-sm);
+  padding: 8px 12px;
+}
+
+.nav-btn {
+  border-radius: var(--r-sm);
+}
+
+.card, .modal {
+  box-shadow: 0 1px 2px rgba(10, 10, 10, .03), 0 12px 32px rgba(10, 10, 10, .05);
+}
+
+.drop-zone {
+  border-radius: var(--r-lg);
+  background: var(--bg-sunken);
+}
+
+.drop-zone:hover {
+  background: var(--bg-inset);
+  border-color: var(--ink-faint);
+}
+
+.stats {
+  border-radius: var(--r);
+  overflow: hidden;
+}
+
+.sidebar {
+  background: var(--bg-sunken);
+}
+
+.welcome {
+  position: relative;
+}
+
+.welcome::before {
+  content: "";
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 120px;
+  background-image: radial-gradient(var(--line) 1.5px, transparent 1.5px);
+  background-size: 14px 14px;
+  opacity: .6;
+  pointer-events: none;
+}
+
+.welcome-icon, .welcome h2, .welcome p, .welcome a {
+  position: relative;
+  z-index: 1;
+}
 
 </style>
 </head>
