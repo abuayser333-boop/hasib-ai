@@ -14,9 +14,9 @@ const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 
 // نماذج مسموح بها فقط — يمنع استخدام المسار لتشغيل نماذج غير مقصودة
 const ALLOWED_MODELS = new Set([
-  'claude-sonnet-4-6',
-  'claude-opus-4-1',
-  'claude-haiku-4-5'
+  'claude-sonnet-5',
+  'claude-haiku-4-5-20251001',
+  'claude-sonnet-4-6'
 ]);
 
 const MAX_TOKENS_CAP = 4000;
@@ -53,7 +53,7 @@ module.exports = async function handler(req, res) {
     return res.status(413).json({ error: { message: 'الملف كبير جداً — جرّب صورة أصغر أو PDF مضغوط' } });
   }
 
-  const model = ALLOWED_MODELS.has(body.model) ? body.model : 'claude-sonnet-4-6';
+  const model = ALLOWED_MODELS.has(body.model) ? body.model : 'claude-sonnet-5';
   const maxTokens = Math.min(Number(body.max_tokens) || 1600, MAX_TOKENS_CAP);
 
   try {
